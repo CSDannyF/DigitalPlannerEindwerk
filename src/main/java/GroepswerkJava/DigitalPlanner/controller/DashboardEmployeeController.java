@@ -1,4 +1,4 @@
-package GroepswerkJava.DigitalPlanner.Controller;
+package GroepswerkJava.DigitalPlanner.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 

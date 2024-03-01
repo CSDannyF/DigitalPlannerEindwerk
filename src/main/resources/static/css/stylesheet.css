@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
 body {
   min-height: 100vh;
   min-height: -webkit-fill-available;
+  background-color: ;       /*todo Achtergrondkleur webpagina */
+  font-family: 'Roboto', sans-serif; /* Lettertype voor alle tekst op de pagina */
 }
 
 html {
@@ -32,8 +36,6 @@ main {
   pointer-events: none;
   fill: currentColor;
 }
-
-.dropdown-toggle { outline: 0; }
 
 .nav-flush .nav-link {
   border-radius: 0;
@@ -99,6 +101,87 @@ main {
 }
 
 .submenu li a {
-    color: #fff;
+    color: #fbe3e8;
     text-decoration: none;
 }
+
+/* stylesheetDashboardEmployee.css */
+
+/* Algemene stijlen */
+#sidebarContent {
+  width: 280px;
+  height: 100vh;
+  position: fixed;
+  background-color: #0f2862;    /* Achtergrondkleur van sidebar */
+  color: #fff; /* Text color */
+}
+
+#sidebarContent a {
+  color: #fff; /* Link color */
+}
+
+#sidebarContent a:hover {
+  color: #f8f9fa; /* Link color on hover */
+}
+
+#sidebarContent .dropdown-menu {
+  background-color: #212529; /* Dropdown background color */
+}
+
+#sidebarContent .dropdown-menu a {
+  color: #fff; /* Dropdown link color */
+}
+
+#sidebarContent .dropdown-menu a:hover {
+  background-color: #343a40; /* Dropdown link background color on hover */
+}
+
+/* Navigatiemenu items */
+#sidebarContent .nav-link {
+  padding: .5rem .5rem; /* Padding for nav links */
+}
+
+#sidebarContent .nav-link.active {
+  background-color: #495057; /* Active nav link background color */
+}
+
+#sidebarContent .dropdown-toggle::after {
+  display: none; /* Hide dropdown arrow */
+}
+
+/* Sidebar header */
+#sidebarContent .sidebar-header {
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Dropdown submenu */
+#sidebarContent .submenu {
+  display: none;
+}
+
+#sidebarContent .submenu li {
+  padding: 8px 16px;
+}
+
+#sidebarContent .submenu li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Profielfoto dropdown */
+#sidebarContent .dropdown-toggle {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+}
+
+#sidebarContent .dropdown-toggle img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Einde sidebarContent */
