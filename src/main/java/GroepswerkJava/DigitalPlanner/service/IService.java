@@ -1,13 +1,17 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+
 import GroepswerkJava.DigitalPlanner.model.Staff;
 
 import java.util.List;
 
-public interface StaffService {
-    List<Staff> getAllStaff();
+public interface IService<T> {
+    List<T> getAll();
 
-    void saveStaff(Staff staff);
+    void save(T t);
 
-    Staff getStaffById(Long id);
+    T getById(long id);
+
+    //void delete(T t);
+
 }
