@@ -12,8 +12,14 @@ public class Planning {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningId;
 
+    //TODO waarom set van workingDays? moet dit planningDetails zijn?
+
     @OneToMany(mappedBy = "planning")
     private Set<WorkingDay> workingDays;
+
+
+    //TODO moet dit uniek zijn? Planning met id 1 kan status "volledig ingevuld" hebben,
+    // maar ook planningen met andere id's kunnen dezelfde status hebben
 
     @ManyToOne
     @JoinColumn(name = "planningStatusId", nullable=false,unique = true)

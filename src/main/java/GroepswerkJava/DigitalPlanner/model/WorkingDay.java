@@ -17,9 +17,13 @@ public class WorkingDay {
     @JoinColumn(name="planning_id", nullable=false,unique = true)
     private Planning planning;
 
+    //TODO Ik denk dat company_id niet uniek moet zijn, nu kan een companyId maar 1 werkdag hebben?
+
     @ManyToOne
     @JoinColumn(name="company_id", nullable=false,unique = true)
     private Company companyId;
+
+    //TODO Moet Date uniek zijn? Wat als er een tweede company is die op eenzelfde dag open is als company één?
 
     @Column(nullable = false, unique = true, name = "date")
     private Date date;

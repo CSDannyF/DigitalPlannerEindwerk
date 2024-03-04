@@ -10,6 +10,10 @@ public class ContractType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long contractTypeId;
 
+
+    //TODO  moet contractTypeName uniek zijn? vb 2 werknemers hebben zelfde contractTypeName
+    // maar een verschillend aantal uren per week, ik denk dat we dit nu niet kunnen opslaan in de DB
+
     @Column(name = "contract_type_name", unique = true, nullable = false)
     private String contractTypeName;
 

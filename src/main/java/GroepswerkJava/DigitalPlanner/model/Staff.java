@@ -22,8 +22,12 @@ public class Staff {
     @JoinColumn(name = "companyId", nullable = false)
     private Company company;
 
+
     @Column(name = "staff_name", nullable = false)
     private String staffName;
+
+    // TODO 1) staff_last_name toevoegen?
+    //  2)  Wat bedoelen we met staff details?
 
     @Column(name = "staff_details", nullable = false)
     private String staffDetails;

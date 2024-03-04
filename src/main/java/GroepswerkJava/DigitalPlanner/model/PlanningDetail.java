@@ -12,6 +12,9 @@ public class PlanningDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningDetailId;
 
+    //TODO PlanningId moet denk ik niet uniek zijn. (planningDetailId 1 geeft werktijd van één staffLid,
+    // planningDetailId 2 is dan werktijd van staffLid 2, dit kan op dezelfde dag zijn en dus dezelfde planningId hebben?
+
     @ManyToOne
     @JoinColumn(name = "planningId", nullable = false, unique = true)
     private Planning planning;

@@ -10,6 +10,10 @@ public class FixedDayOff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long fixedDayOffId;
 
+    //TODO wat als een staffMember 2 dagen per week niet kan werken? StaffId moet nu uniek zijn dus we
+    // kunnen geen tweede dag toevoegen (denk ik, ook daysOfWeek moet volgens mij niet uniek zijn)
+    // -> dit moet waarschijnlijk een samengestelde sleutel zijn zodat de combinatie uniek is
+
     @ManyToOne
     @JoinColumn(name = "staff_id", unique = true, nullable = false)
     private Staff staff;
