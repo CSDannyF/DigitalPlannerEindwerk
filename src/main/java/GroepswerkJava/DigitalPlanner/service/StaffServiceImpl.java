@@ -9,23 +9,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StaffServiceImpl implements StaffService{
+public class StaffServiceImpl implements IService<Staff>{
 
     @Autowired
     private StaffRepository staffRepository;
 
     @Override
-    public List<Staff> getAllStaff() {
+    public List<Staff> getAll() {
         return staffRepository.findAll();
     }
 
     @Override
-    public void saveStaff(Staff staff) {
+    public void save(Staff staff) {
         staffRepository.save(staff);
     }
 
     @Override
-    public Staff getStaffById(Long id) {
+    public Staff getById(long id) {
         Optional<Staff> optional = staffRepository.findById(id);
         Staff staff = null;
         if(optional.isPresent()){
@@ -33,6 +33,8 @@ public class StaffServiceImpl implements StaffService{
         } else {
             throw new RuntimeException("Staff not found.");
         }
-        return null;
+        return staff;
     }
+
+
 }

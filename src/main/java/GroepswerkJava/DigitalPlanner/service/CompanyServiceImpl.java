@@ -7,23 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-public class CompanyServiceImpl implements CompanyService{
+public class CompanyServiceImpl implements IService<Company>{
 
     @Autowired
     private CompanyRepository companyRepository;
 
     @Override
-    public List<Company> getAllCompanies() {
+    public List<Company> getAll() {
         return companyRepository.findAll();
     }
 
     @Override
-    public void saveCompany(Company company) {
+    public void save(Company company) {
         this.companyRepository.save(company);
     }
 
     @Override
-    public Company getCompanyById(long id) {
+    public Company getById(long id) {
         Optional<Company> optional = companyRepository.findById(id);
         Company company = null;
         if(optional.isPresent()){
@@ -33,4 +33,7 @@ public class CompanyServiceImpl implements CompanyService{
         }
         return company;
     }
+
+
+
 }
