@@ -19,7 +19,27 @@ _______________*/
 
 /* IMPORTED FONTS
 _______________*/
-@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+@font-face {
+  font-family: 'Abril Fatface';
+  src: url('../fonts/AbrilFatface-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../Roboto/fonts/Roboto-Black.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-BlackItalic.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Bold.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-BoldItalic.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Italic.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Light.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-LightItalic.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Medium.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-MediumItalic.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Regular.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-Thin.ttf') format('truetype'),
+    src: url('../Roboto/fonts/Roboto-ThinItalic.ttf') format('truetype');
+}
 /*_______________*/
 
 /* HTML GENERAL
@@ -424,7 +444,7 @@ h1 {
     margin-top: 50px;
     font-size: 75px;
     color: rgba(0, 0, 0, 0.72);
-    font-family: 'Abril Fatface', sans-serif;
+    font-family: 'Abril Fatface';
 }
 
 .card {
