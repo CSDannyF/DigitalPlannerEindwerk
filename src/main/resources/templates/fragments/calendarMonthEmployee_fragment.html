@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Calendar</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</head>
+<body class="dark" id="calendarMonth" th:fragment="calendarMonthContent">
+<div class="calendar">
+    <!-- CALENDAR HEADER START -->
+    <div class="calendar-header">
+            <span class="month-picker" id="month-picker">
+                February
+            </span>
+        <div class="year-picker">
+                <span class="year-change mt-3" id="prev-year">
+                    <pre> < </pre>
+                </span>
+            <span id="year">2023</span>
+            <span class="year-change mt-3" id="next-year">
+                    <pre> > </pre>
+                </span>
+        </div>
+    </div>
+
+    <!-- CALENDAR BODY START -->
+    <div class="calendar-body">
+        <div class="calendar-week-day">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div class="calendar-day">
+            <div>
+                1
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+            <div>7</div>
+        </div>
+    </div>
+
+    <!-- CALENDAR FOOTER START
+    <div class="month-list"></div>
+    -->
+</div>
+</body>
+</html>
+

@@ -11,9 +11,9 @@
 
 </head>
 <body>
-<div id="sidebarContent" class="d-flex flex-column flex-shrink-0 p-3">
+<div id="sidebarContent" th:fragment="sidebarContent" class="d-flex flex-column flex-shrink-0 p-3">
   <div class="sidebar-header">
-    <a href="/" class="d-flex align-items-center text-white text-decoration-none">
+    <a class="d-flex align-items-center text-white text-decoration-none">
       <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
       <span class="fs-4">Menu</span>
     </a>
@@ -21,7 +21,7 @@
   <hr>
   <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item">
-      <a href="#" class="nav-link active" aria-current="page">
+      <a th:href="@{/dashboardEmployee}" class="nav-link active" aria-current="page">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#home"/></svg>
         Home
       </a>
@@ -33,50 +33,58 @@
         My workplace
       </a>
       <ul class="dropdown-menu" aria-labelledby="myWorkplaceDropdown">
-        <li><a class="dropdown-item" href="#">Mijn beschikbaarheden</a></li>
-        <li><a class="dropdown-item" href="#">Mijn afwezigheden</a></li>
+        <li><a th:href="@{/placeholder}" class="dropdown-item">Mijn beschikbaarheden</a></li>
       </ul>
     </li>
     <li class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" id="testDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"/></svg>
-        TESTTT
+        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
+        Mijn gegevens
       </a>
-      <ul class="dropdown-menu" aria-labelledby="testDropdown">
-        <li><a class="dropdown-item" href="#">TEST1</a></li>
-        <li><a class="dropdown-item" href="#">TEST2</a></li>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link dropdown-toggle" id="testDropdown2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
+        Test menu 2
+      </a>
+      <ul class="dropdown-menu" aria-labelledby="testDropdown2">
+        <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+        <li><a class="dropdown-item" href="#">Submenu 2</a></li>
       </ul>
     </li>
     <li class="nav-item">
-      <a href="#" class="nav-link">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#grid"/></svg>
-        Products
+      <a href="#" class="nav-link dropdown-toggle" id="testDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
+        Test menu 3
       </a>
-    </li>
-    <li class="nav-item">
-      <a href="#" class="nav-link">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
-        Customers
-      </a>
+      <ul class="dropdown-menu" aria-labelledby="testDropdown3">
+        <li><a class="dropdown-item" href="#">Submenu 1</a></li>
+        <li><a class="dropdown-item" href="#">Submenu 2</a></li>
+        <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+      </ul>
     </li>
   </ul>
   <hr>
   <div class="dropdown">
     <a href="#" class="dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="/static/images/dashboardEmployee/Wutang.png" alt="Wu-Tang Clan" width="32" height="32" class="rounded-circle me-2">
+      <img th:src="@{/images/dashboardEmployee/Wutang.png}" alt="Wu-Tang Clan" width="32" height="32" class="rounded-circle me-2">
       <strong>Soner</strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
       <li><a class="dropdown-item" href="#">Mijn profiel</a></li>
       <li><a class="dropdown-item" href="#">Instellingen</a></li>
       <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="#">Uitloggen</a></li>
+      <li><a class="dropdown-item" th:href="@{/}">Uitloggen</a></li>
     </ul>
   </div>
+  <div class="calendar-footer">
+    <div class="toggle">
+      <span>Dark Mode</span>
+      <div class="dark-mode-switch">
+        <div class="dark-mode-switch-ident"></div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- Javascript -->
-<script th:src="@{/js/dashboard_employee_script.js}"></script>
-
 </body>
 </html>
