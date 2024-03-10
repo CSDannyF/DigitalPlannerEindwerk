@@ -33,11 +33,22 @@ body {
     overflow-x: hidden; /* Voorkomt horizontaal scrollen */
 }
 
-html, body {
-    height: 100vh;
+#calenderMonth {
+    height: 100vh
     display: grid;
     place-items: center;
 }
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 20rem;
+  background-size: cover;
+  color: #ffb78c;
+}
+
 /*_______________*/
 
 /* SIDEBAR
@@ -395,4 +406,29 @@ _______________*/
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* Login screen */
+
+#loginBanner {
+    height: 500px;
+    background: rgb(90,149,193);
+    background: linear-gradient(24deg, rgba(90,149,193,1) 28%, rgba(45,46,253,1) 87%);
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+h1 {
+    margin-top: 50px;
+    font-size: 75px;
+    color: rgba(0, 0, 0, 0.72);
+    font-family: 'Abril Fatface', sans-serif;
+}
+
+.card {
+    margin-top: -200px;
+    background: hsla(0, 0%, 100%, 0.8);
+    backdrop-filter: blur(30px);
 }
