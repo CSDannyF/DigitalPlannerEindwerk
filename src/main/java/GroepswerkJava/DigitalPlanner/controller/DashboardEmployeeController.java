@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DashboardEmployeeController {
 
     // Homepage voor dashboard employee
-    @GetMapping("/dashboard_employee")
-    public String dashboardEmployee() {
-        return "dashboard_employee";
+    @GetMapping("/dashboardEmployee")
+    public String getDashboardEmployee() {
+        return "dashboardEmployee";
     }
 }
