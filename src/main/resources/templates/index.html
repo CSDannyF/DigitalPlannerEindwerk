@@ -23,24 +23,24 @@
                             <h2 class="mb-5">Sign in</h2>
                             <form th:action="@{/loginAdmin}" th:object="${userlogin}" method="post">
                                 <div class="mb-3">
-                                    <label class="form-label">E-mail adres
+                                    <label class="form-label">Email address
                                         <input th:value="${username}" placeholder="Email" class="form-control">
                                     </label>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Wachtwoord
+                                    <label class="form-label">Password
                                         <input type="password" th:value="${password}" placeholder="Password" class="form-control">
                                     </label>
                                 </div>
                             </form>
                             <div class="row">
                                 <div class="col align-self-center">
-                                    <a href="/dashboard_employee" class="btn btn-primary">Inloggen</a>
+                                    <a href="/dashboard_employee" class="btn btn-primary">Log in</a>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col align-self-center">
-                                    <button class="btn btn-link">Wachtwoord vergeten?</button>
+                                    <button class="btn btn-link">Forgot your password?</button>
                                 </div>
                             </div>
                         </div>
