@@ -9,5 +9,82 @@
 </head>
 <body>
 
+<div class="container-flex">
+
+  <div class="row justify-content-center">
+    <div class="col-6">
+
+      <div class="card" id="popupCard">
+        <div class="card-header">
+          <h3>New employee</h3>
+        </div>
+        <div class="card-body">
+
+          <form>
+            <div class="mb-5">
+              <label class="form-label">First name
+                <input th:value="${firstName}" type="text" placeholder="first name" class="form-control">
+              </label>
+              <label class="form-label float-right">Last name
+                <input th:value="${lastName}" type="text" placeholder="last name" class="form-control">
+              </label>
+              <label class="form-label">Birth date
+                <input th:value="${startdate}" type="date" class="form-control">
+              </label>
+
+              <label class="form-label">Address line 1
+                <input th:value="${addressline1}" type="text" placeholder="addressline1" class="form-control">
+              </label>
+              <label class="form-label">Address line 2
+                <input th:value="${addressline1}" type="text" placeholder="addressline2" class="form-control">
+              </label>
+
+              <label class="form-label">Zipcode
+                <input th:value="${zipcode}" type="text" placeholder="zipcode" class="form-control">
+              </label>
+              <label class="form-label">City
+                <input th:value="${city}" type="text" placeholder="city" class="form-control">
+              </label>
+
+              <label class="form-label">Phone number
+                <input th:value="${phone}" type="text" placeholder="phonenumber" class="form-control">
+              </label>
+
+              <label class="form-label">Email
+                <input th:value="${email}" type="email" placeholder="email" class="form-control">
+              </label>
+
+              <label class="form-label">Department
+                <select class="form-select" aria-label="Default select example">
+                  <option value="1">one</option>
+                  <option value="2">two</option>
+                </select>
+              </label>
+
+              <label class="form-label">Superior/Team leader
+                <select class="form-select" aria-label="Default select example">
+                  <option value="1">one</option>
+                  <option value="2">two</option>
+                </select>
+              </label>
+
+              <label class="form-label">Start date
+                <input th:value="${startdate}" type="date" class="form-control">
+              </label>
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+
 </body>
 </html>
