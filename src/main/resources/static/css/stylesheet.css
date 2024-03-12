@@ -454,7 +454,28 @@ h1 {
 }
 
 .card {
-    margin-top: -200px;
     background: hsla(0, 0%, 100%, 0.8);
     backdrop-filter: blur(30px);
 }
+
+#loginCard {
+    margin-top: -200px;
+
+}
+
+#loginCard .form-label {
+    text-align: left;
+}
+
+/* Add employee */
+
+.container {
+    background-color: black;
+    text-color: red;
+}
+
+#popupCard label {
+    font-family: 'Roboto';
+    margin-left: 20px;
+}
+
