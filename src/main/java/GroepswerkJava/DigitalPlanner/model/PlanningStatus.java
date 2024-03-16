@@ -1,7 +1,13 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name ="planningStatus")
 public class PlanningStatus {
@@ -10,19 +16,9 @@ public class PlanningStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningStatusId;
 
-    @Column(nullable = false, unique = true, name = "planning_status_name")
+    @Column(nullable = false, unique = true, name = "planningStatusName")
     private String planningStatusName;
 
-    public long getPlanningStatusId() {
-        return planningStatusId;
-    }
-
-
-    public String getPlanningStatusName() {
-        return planningStatusName;
-    }
-
-    public void setPlanningStatusName(String planningStatusName) {
-        this.planningStatusName = planningStatusName;
-    }
+    @OneToOne(mappedBy = "planningStatus", cascade = CascadeType.ALL)
+    private Planning planning;
 }

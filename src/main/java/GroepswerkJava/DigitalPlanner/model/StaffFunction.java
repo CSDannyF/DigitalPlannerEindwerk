@@ -1,38 +1,28 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "staff_function")
+@Table(name = "staffFunction")
 public class StaffFunction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long staffFunctionId;
 
-    @Column(name = "staff_function_name", unique = true)
+    @Column(name = "staffFunctionName", unique = true)
     private String staffFunctionName;
 
-    @Column(name = "staff_function_description", unique = true)
+    @Column(name = "staffFunctionDescription")
     private String staffFunctionDescription;
 
-    public long getStaffFunctionId() {
-        return staffFunctionId;
-    }
-
-    public String getStaffFunctionName() {
-        return staffFunctionName;
-    }
-
-    public void setStaffFunctionName(String staffFunctionName) {
-        this.staffFunctionName = staffFunctionName;
-    }
-
-    public String getStaffFunctionDescription() {
-        return staffFunctionDescription;
-    }
-
-    public void setStaffFunctionDescription(String staffFunctionDescription) {
-        this.staffFunctionDescription = staffFunctionDescription;
-    }
+    @OneToMany(mappedBy = "staffFunction",cascade = CascadeType.ALL)
+    private List<Staff> staff;
 }

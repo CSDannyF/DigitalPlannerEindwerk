@@ -29,10 +29,10 @@ public class UserLoginService implements IService<UserLogin> {
         return null;
     }
 
-    public UserLogin getByUserName(String username)
+    public UserLogin getByEmail(String email)
     {
         //System.out.println(userLoginRepository.findByUsername(username));
-        return userLoginRepository.findByUsername(username);
+        return userLoginRepository.findByEmail(email);
     }
 
 }

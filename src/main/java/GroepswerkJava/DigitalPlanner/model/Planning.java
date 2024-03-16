@@ -1,9 +1,16 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name ="planning")
 public class Planning {
@@ -12,36 +19,14 @@ public class Planning {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningId;
 
-    //TODO waarom set van workingDays? moet dit planningDetails zijn?
+    @OneToOne
+    @JoinColumn(name = "workingDayId", referencedColumnName = "workingDayId")
+    private WorkingDay workingDay;
 
-    @OneToMany(mappedBy = "planning")
-    private Set<WorkingDay> workingDays;
+    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL)
+    private List<PlanningDetail> planningDetails;
 
-
-    //TODO moet dit uniek zijn? Planning met id 1 kan status "volledig ingevuld" hebben,
-    // maar ook planningen met andere id's kunnen dezelfde status hebben
-
-    @ManyToOne
-    @JoinColumn(name = "planningStatusId", nullable=false,unique = true)
+    @JoinColumn(name = "planningStatusId", nullable=false)
+    @OneToOne
     private PlanningStatus planningStatus;
-
-    public long getPlanningId() {
-        return planningId;
-    }
-
-    public Set<WorkingDay> getWorkingDays() {
-        return workingDays;
-    }
-
-    public void setWorkingDays(Set<WorkingDay> workingDays) {
-        this.workingDays = workingDays;
-    }
-
-    public PlanningStatus getPlanningStatus() {
-        return planningStatus;
-    }
-
-    public void setPlanningStatus(PlanningStatus planningStatus) {
-        this.planningStatus = planningStatus;
-    }
 }

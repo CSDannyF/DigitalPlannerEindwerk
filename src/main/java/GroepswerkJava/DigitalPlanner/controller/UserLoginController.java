@@ -4,8 +4,6 @@ import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -19,7 +17,7 @@ public class UserLoginController {
     @PostMapping("/loginAdmin")
     public String dashboardAdmin(@ModelAttribute("userlogin") UserLogin userlogin)
     {
-        this.userLoginService.getByUserName(userlogin.getUsername());
+        this.userLoginService.getByEmail(userlogin.getEmail());
         return "dashboard_employee";
     }
 }

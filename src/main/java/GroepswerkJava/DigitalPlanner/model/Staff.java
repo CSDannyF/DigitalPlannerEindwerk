@@ -1,6 +1,10 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "staff")
@@ -10,11 +14,38 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long staffId;
 
-    @ManyToOne
-    @JoinColumn(name = "staffFunctionId", nullable = false)
-    private StaffFunction staffFunction;
+    @Column(name = "staffFirstName", nullable = false)
+    private String staffFirstName;
+
+    @Column(name = "staffLastName", nullable = false)
+    private String staffLastName;
+
+    @Column(name = "birthDate")
+    private Date birthDate;
+
+    @Column(name = "addressLine1")
+    private String adressLine1;
+
+    @Column(name = "addressLine2")
+    private String adressLine2;
+
+    @Column(name = "zipCode")
+    private String zipCode;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "phoneNumber")
+    private String phoneNumber;
+
+    @Column(name = "startDate")
+    private Date startDate;
 
     @ManyToOne
+    @JoinColumn(name = "staffFunctionId")
+    private StaffFunction staffFunction;
+
+    @OneToOne
     @JoinColumn(name = "departmentId", nullable = false)
     private Department department;
 
@@ -22,18 +53,8 @@ public class Staff {
     @JoinColumn(name = "companyId", nullable = false)
     private Company company;
 
-
-    @Column(name = "staff_name", nullable = false)
-    private String staffName;
-
-    // TODO 1) staff_last_name toevoegen?
-    //  2)  Wat bedoelen we met staff details?
-
-    @Column(name = "staff_details", nullable = false)
-    private String staffDetails;
-
     @ManyToOne
-    @JoinColumn(name = "contract_type", nullable = false)
+    @JoinColumn(name = "contractTypeId", nullable = false)
     private ContractType contractType;
 
     @ManyToOne
@@ -44,81 +65,20 @@ public class Staff {
     @JoinColumn(name = "personResonsibleId", nullable = false)
     private Staff personResonsible;
 
-    @OneToOne(mappedBy = "staff")
+    @OneToOne(mappedBy = "staff", cascade = CascadeType.ALL)
     private UserLogin userLogin;
 
-    public long getStaffId() {
-        return staffId;
-    }
-    public StaffFunction getStaffFunction() {
-        return staffFunction;
-    }
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(
+            name = "fixedDaysOff",
+            joinColumns = {@JoinColumn(name = "staffId")},
+            inverseJoinColumns = {@JoinColumn(name = "daysOfWeekId")}
+    )
+    private Set<DaysOfWeek> daysOfWeek;
 
-    public void setStaffFunction(StaffFunction staffFunction) {
-        this.staffFunction = staffFunction;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public String getStaffName() {
-        return staffName;
-    }
-
-    public void setStaffName(String staffName) {
-        this.staffName = staffName;
-    }
-
-    public String getStaffDetails() {
-        return staffDetails;
-    }
-
-    public void setStaffDetails(String staffDetails) {
-        this.staffDetails = staffDetails;
-    }
-
-    public ContractType getContractType() {
-        return contractType;
-    }
-
-    public void setContractType(ContractType contractType) {
-        this.contractType = contractType;
-    }
-
-    public Statute getStatute() {
-        return statute;
-    }
-
-    public void setStatute(Statute statute) {
-        this.statute = statute;
-    }
-
-    public Staff getPersonResonsible() {
-        return personResonsible;
-    }
-
-    public void setPersonResonsible(Staff personResonsible) {
-        this.personResonsible = personResonsible;
-    }
-
-    public UserLogin getUserLogin() {
-        return userLogin;
-    }
-
-    public void setUserLogin(UserLogin userLogin) {
-        this.userLogin = userLogin;
-    }
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
+    private List<PlanningDetail> planningDetails;
 }

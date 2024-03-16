@@ -1,7 +1,13 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "department")
 public class Department {
@@ -10,18 +16,9 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long departmentId;
 
-    @Column(name = "department_name", unique = true, nullable = false)
+    @Column(name = "departmentName", unique = true, nullable = false)
     private String departmentName;
 
-    public long getDepartmentId() {
-        return departmentId;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
+    @OneToOne(mappedBy = "department", cascade = CascadeType.ALL)
+    private Staff staff;
 }

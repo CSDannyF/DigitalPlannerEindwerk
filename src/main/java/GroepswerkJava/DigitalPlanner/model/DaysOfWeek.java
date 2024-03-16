@@ -1,27 +1,25 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "days_of_week")
+@Table(name = "daysOfWeek")
 public class DaysOfWeek {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long daysOfWeekId;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "dayName")
+    private String dayName;
 
-    public long getDaysOfWeekId() {
-        return daysOfWeekId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @ManyToMany(mappedBy = "daysOfWeek")
+    private Set<Staff> staff;
 }

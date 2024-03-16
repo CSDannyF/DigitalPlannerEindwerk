@@ -1,79 +1,38 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Time;
+import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "planning_detail")
+@Table(name = "planningDetail")
 public class PlanningDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningDetailId;
 
-    //TODO PlanningId moet denk ik niet uniek zijn. (planningDetailId 1 geeft werktijd van één staffLid,
-    // planningDetailId 2 is dan werktijd van staffLid 2, dit kan op dezelfde dag zijn en dus dezelfde planningId hebben?
-
     @ManyToOne
-    @JoinColumn(name = "planningId", nullable = false, unique = true)
+    @JoinColumn(name = "planningId", nullable = false)
     private Planning planning;
 
     @ManyToOne
-    @JoinColumn(name = "staffId", nullable = false, unique = true)
+    @JoinColumn(name = "staffId")
     private Staff staff;
 
-    @ManyToOne
-    @JoinColumn(name = "availabilityId", nullable = false)
-    private Availability availability;
+    @OneToMany(mappedBy = "planningDetail", cascade = CascadeType.ALL)
+    private List<Availability> availabilities;
 
-    @Column(name = "start_time")
+    @Column(name = "startTime")
     private Time startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "endTime")
     private Time endTime;
-
-    public long getPlanningDetailId() {
-        return planningDetailId;
-    }
-
-    public Planning getPlanning() {
-        return planning;
-    }
-
-    public void setPlanning(Planning planning) {
-        this.planning = planning;
-    }
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-
-    public Availability getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(Availability availability) {
-        this.availability = availability;
-    }
-
-    public Time getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Time startTime) {
-        this.startTime = startTime;
-    }
-
-    public Time getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
-    }
 }

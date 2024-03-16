@@ -1,42 +1,28 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table(name = "contract_type")
+@Table(name = "contractType")
 public class ContractType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long contractTypeId;
 
-
-    //TODO  moet contractTypeName uniek zijn? vb 2 werknemers hebben zelfde contractTypeName
-    // maar een verschillend aantal uren per week, ik denk dat we dit nu niet kunnen opslaan in de DB
-
-    @Column(name = "contract_type_name", unique = true, nullable = false)
+    @Column(name = "contractTypeName", nullable = false)
     private String contractTypeName;
 
-    @Column(name = "hours_per_week", nullable = false)
+    @Column(name = "hoursPerWeek", nullable = false)
     private int hoursPerWeek;
 
-    public long getContractTypeId() {
-        return contractTypeId;
-    }
-
-    public String getContractTypeName() {
-        return contractTypeName;
-    }
-
-    public void setContractTypeName(String contractTypeName) {
-        this.contractTypeName = contractTypeName;
-    }
-
-    public int getHoursPerWeek() {
-        return hoursPerWeek;
-    }
-
-    public void setHoursPerWeek(int hoursPerWeek) {
-        this.hoursPerWeek = hoursPerWeek;
-    }
+    @OneToMany(mappedBy = "contractType",cascade = CascadeType.ALL)
+    private List<Staff> staffs;
 }

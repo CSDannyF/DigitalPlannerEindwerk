@@ -1,7 +1,13 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name="availability")
 public class Availability {
@@ -10,18 +16,10 @@ public class Availability {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long availabilityId;
 
-    @Enumerated(EnumType.STRING)
-    private AvailabilityType availabilityType;
+    @Column(name = "availabilityType")
+    private String availabilityType;
 
-    public long getAvailabilityId() {
-        return availabilityId;
-    }
-
-    public AvailabilityType getAvailabilityType() {
-        return availabilityType;
-    }
-
-    public void setAvailabilityType(AvailabilityType availabilityType) {
-        this.availabilityType = availabilityType;
-    }
+    @ManyToOne
+    @JoinColumn(name = "planningDetailId")
+    private PlanningDetail planningDetail;
 }

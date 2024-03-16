@@ -1,7 +1,15 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.Set;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "role")
 public class Role {
@@ -10,18 +18,6 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
 
-    @Column(name = "role_name", nullable = false, unique = true)
-    private String roleName;
-
-    public long getRoleId() {
-        return roleId;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-}
+    @ManyToMany(mappedBy = "roles")
+    private Set<UserLogin> userLogins;
+   }
