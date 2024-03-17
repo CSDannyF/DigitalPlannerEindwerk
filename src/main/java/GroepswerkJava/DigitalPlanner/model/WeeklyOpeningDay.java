@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 
 @Entity
-@Table(name="weekly_opening_days")
+@Table(name="weeklyOpeningDays")
 public class WeeklyOpeningDay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +23,19 @@ public class WeeklyOpeningDay {
     private String day;
 
     @Column(name = "open")
-    private boolean open;
+    private boolean isOpen;
 
     @Column(name = "start_time")
     private LocalTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "endTime")
     private LocalTime endTime;
 
-    @Column(name = "minimal_occupation")
+    @Column(name = "minimalOccupation")
     private int minOccupation;
+
+    @OneToMany(mappedBy = "weeklyOpeningDay",cascade = CascadeType.ALL)
+    private List<WorkingDay> workingDays;
 
     public WeeklyOpeningDay(String day){
         this.day=day;
@@ -42,7 +46,7 @@ public class WeeklyOpeningDay {
         return "WeeklyOpeningDays{" +
                 "DayId=" + DayId +
                 ", day='" + day + '\'' +
-                ", open=" + open +
+                ", open=" + isOpen +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", minOccupation=" + minOccupation +

@@ -26,7 +26,7 @@ public class Planning {
     @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL)
     private List<PlanningDetail> planningDetails;
 
-
-    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL)
-    private List<PlanningStatus> planningStatus;
+    @ManyToOne
+    @JoinColumn(name = "planningStatusId")
+    private PlanningStatus planningStatus;
 }

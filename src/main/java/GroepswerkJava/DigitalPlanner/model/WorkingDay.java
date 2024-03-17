@@ -27,8 +27,8 @@ public class WorkingDay {
     private DailyException dailyException;
 
     @ManyToOne
-    @JoinColumn(name = "normalWeekId")
-    private NormalWeek normalWeek;
+    @JoinColumn(name = "weeklyOpeningDay")
+    private WeeklyOpeningDay weeklyOpeningDay;
 
     @Column(name = "date",nullable = false, unique = true)
     private Date date;
