@@ -442,6 +442,12 @@ _______________*/
     background: linear-gradient(24deg, rgba(90,149,193,1) 28%, rgba(45,46,253,1) 87%);
 }
 
+#CompanyBanner {
+    height: 500px;
+    background: rgb(90,149,193);
+    background: linear-gradient(24deg, rgba(90,149,193,1) 28%, rgba(45,46,253,1) 87%);
+}
+
 h1, h2 {
     font-weight: bold;
 }
