@@ -19,6 +19,7 @@ public class PlanningStatus {
     @Column(nullable = false, unique = true, name = "planningStatusName")
     private String planningStatusName;
 
-    @OneToOne(mappedBy = "planningStatus", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "planningStatusId", nullable=false)
     private Planning planning;
 }
