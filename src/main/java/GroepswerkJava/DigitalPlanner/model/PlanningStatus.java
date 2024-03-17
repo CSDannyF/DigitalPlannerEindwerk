@@ -20,6 +20,6 @@ public class PlanningStatus {
     private String planningStatusName;
 
     @ManyToOne
-    @JoinColumn(name = "planningStatusId", nullable=false)
+    @JoinColumn(name = "planningStatus", nullable=false)
     private Planning planning;
 }

@@ -45,8 +45,9 @@ public class Staff {
     @JoinColumn(name = "staffFunctionId")
     private StaffFunction staffFunction;
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
-    private List<Department> departments;
+    @ManyToOne
+    @JoinColumn(name = "departmentId")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "companyId", nullable = false)

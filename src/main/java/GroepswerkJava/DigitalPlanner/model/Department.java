@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +21,6 @@ public class Department {
     @Column(name = "departmentName", unique = true, nullable = false)
     private String departmentName;
 
-    @ManyToOne
-    @JoinColumn(name = "departmentId", nullable=false)
-    private Staff staff;
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    private List<Staff> staff;
 }
