@@ -19,6 +19,7 @@ public class Department {
     @Column(name = "departmentName", unique = true, nullable = false)
     private String departmentName;
 
-    @OneToOne(mappedBy = "department", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "departmentId", nullable=false)
     private Staff staff;
 }
