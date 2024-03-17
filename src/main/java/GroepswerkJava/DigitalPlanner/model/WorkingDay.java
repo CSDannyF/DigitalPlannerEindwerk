@@ -39,6 +39,9 @@ public class WorkingDay {
     @Column(name = "startTime")
     private Time startTime;
 
+    @Column(name = "minimalOccupation")
+    private int minimalOccupation;
+
     @Column(name = "endTime")
     private Time endTime;
 }
