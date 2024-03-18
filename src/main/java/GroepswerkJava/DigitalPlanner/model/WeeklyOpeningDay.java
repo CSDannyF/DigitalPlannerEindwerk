@@ -34,9 +34,6 @@ public class WeeklyOpeningDay {
     @Column(name = "minimalOccupation")
     private int minOccupation;
 
-    @OneToMany(mappedBy = "weeklyOpeningDay",cascade = CascadeType.ALL)
-    private List<WorkingDay> workingDays;
-
     public WeeklyOpeningDay(String day){
         this.day=day;
     }

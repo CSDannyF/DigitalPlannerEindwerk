@@ -22,14 +22,6 @@ public class WorkingDay {
     @OneToOne(mappedBy = "workingDay", cascade = CascadeType.ALL)
     private Planning planning;
 
-    @OneToOne
-    @JoinColumn(name = "dailyExceptionId")
-    private DailyException dailyException;
-
-    @ManyToOne
-    @JoinColumn(name = "weeklyOpeningDay")
-    private WeeklyOpeningDay weeklyOpeningDay;
-
     @Column(name = "date",nullable = false, unique = true)
     private Date date;
 
