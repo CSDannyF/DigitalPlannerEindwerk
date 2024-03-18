@@ -1,10 +1,8 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 @Entity
 @Table(name = "staff")
@@ -57,9 +55,12 @@ public class Staff {
     @JoinColumn(name = "contractTypeId", nullable = false)
     private ContractType contractType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "personResponsibleId")
     private Staff personResponsible;
+
+    @OneToMany(mappedBy = "personResponsible", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Staff> staffMembers = new HashSet<Staff>();
 
     @OneToOne(mappedBy = "staff", cascade = CascadeType.ALL)
     private UserLogin userLogin;
