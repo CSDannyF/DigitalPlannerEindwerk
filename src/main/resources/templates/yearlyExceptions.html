@@ -25,14 +25,14 @@
 
                 <h2>Company opening days</h2>
 
-                <form action="#" th:action="@{/saveOpeningDays}" th:object="${form}" method="POST">
+                <form action="#" th:action="@{/saveException}" th:object="${exceptionDay}" method="POST">
                     <fieldset>
                         <table style="width:100%" class="table">
-                            <h4>Specify the fixed weekly opening days</h4>
+                            <h4>Specify the yearly exceptions (for example, holidays, shopping Sunday,...) </h4>
 
                             <thead>
                             <tr>
-                                <th>Day</th>
+                                <th>Date</th>
                                 <th title="Check the box for open days">Open &#9432</th>
                                 <th>Opening Time</th>
                                 <th>Closing Time</th>
@@ -42,21 +42,28 @@
                             </thead>
 
                             <tbody>
-                            <tr th:each="openingDays, itemStat: *{openingDaysList}">
+                            <!--
                                 <input type="hidden" th:field="*{openingDaysList[__${itemStat.index}__].DayId}"/>
                                 <td th:text="${openingDays.day}"></td>
+
                                 <input type="hidden" th:field="*{openingDaysList[__${itemStat.index}__].day}">
-                                <td><input type="checkbox" id="box" value="false"
-                                           th:field="*{openingDaysList[__${itemStat.index}__].open}"/></td>
-                                <td><input type="time" th:field="*{openingDaysList[__${itemStat.index}__].startTime}"/>
-                                </td>
-                                <td><input type="time" th:field="*{openingDaysList[__${itemStat.index}__].endTime}"/>
-                                </td>
-                                <td><input type="number" min="0" style="width: 3em"></td>
+                                -->
+                            <td><input type="date" th:field="*{date}" class="form-control"/>
+                            <td><input type="checkbox" id="box" value="false"
+                                       th:field="*{open}"/></td>
+                            <td><input type="time" th:field="*{startTime}"/>
+                            </td>
+                            <td><input type="time" th:field="*{endTime}"/>
+                            </td>
+                            <td><input type="number" min="0" style="width: 3em"
+                                       th:field="*{minimalOccupation}"></td>
                             </tr>
                             </tbody>
                         </table>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        <br>
+                        <br>
+                        <a th:href="@{/}">Click here when finished to return to dashboard</a>
                     </fieldset>
                 </form>
             </div>
