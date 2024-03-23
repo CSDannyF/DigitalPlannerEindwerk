@@ -4,9 +4,7 @@ import GroepswerkJava.DigitalPlanner.dto.OpeningDaysDto;
 import GroepswerkJava.DigitalPlanner.model.Company;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
-import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.WorkingDayServiceImpl;
+import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,22 +17,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class CompanyController {
 
     @Autowired
-    private CompanyServiceImpl companyService;
+    private IService<Company> companyService;
 
     @Autowired
-    private WeeklyOpeningDaysServiceImpl weeklyOpeningDaysService;
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
     @Autowired
-    private WorkingDayServiceImpl workingDayService;
+    private WorkingDayService workingDayService;
 
-    @GetMapping("/new/company")
+    @GetMapping("/company")
     public String showNewCompanyForm(Model model) {
         Company company = new Company();
         model.addAttribute("company", company);
         return "newCompany";
     }
 
-    @PostMapping("/openingDays")
+    @PostMapping("/company")
     public String saveCompany(@ModelAttribute("company") Company company, Model model) {
         this.companyService.save(company);
         OpeningDaysDto openingDaysDto = new OpeningDaysDto();
@@ -49,17 +47,16 @@ public class CompanyController {
         return "companyOpeningDays";
     }
 
-    @PostMapping("saveOpeningDays")
+    @PostMapping("company/openingdays")
     public String saveOpeningDays(@ModelAttribute OpeningDaysDto form, Model model) {
-        weeklyOpeningDaysService.truncateAll();
-        weeklyOpeningDaysService.saveAll(form.getOpeningDaysList());
+        weeklyOpeningDaysService.overWriteAll(form.getOpeningDaysList());
         model.addAttribute("openingDays", weeklyOpeningDaysService.getAll());
         workingDayService.fillRestOfYear(weeklyOpeningDaysService.getAll());
         model.addAttribute("exceptionDay", new WorkingDay());
         return "yearlyExceptions";
     }
 
-    @PostMapping("saveException")
+    @PostMapping("company/exception")
     public String saveException(@ModelAttribute WorkingDay exceptionDay, Model model){
         workingDayService.updateWorkingDay(exceptionDay);
         WorkingDay workingDay= new WorkingDay();

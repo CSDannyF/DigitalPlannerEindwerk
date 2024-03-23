@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 @Service
-public class WeeklyOpeningDaysServiceImpl implements IService<WeeklyOpeningDay> {
+public class WeeklyOpeningDaysServiceImpl implements WeeklyOpeningDaysService {
 
     private final WeeklyOpeningDaysRepository weeklyOpeningDaysRepository;
 
@@ -28,19 +28,29 @@ public class WeeklyOpeningDaysServiceImpl implements IService<WeeklyOpeningDay> 
 
     }
 
+    @Override
+    public WeeklyOpeningDay getById(long id) {
+        return weeklyOpeningDaysRepository.getReferenceById(id);
+    }
+
+    @Override
     public void saveAll(List<WeeklyOpeningDay> weeklyOpeningDayList){
         weeklyOpeningDaysRepository.saveAll(weeklyOpeningDayList);
     }
 
-    //deletes all records in the table and resets id's back to start at 1
+    /**
+     * deletes all records in the table and resets id's back to start at 1
+     */
     public void truncateAll(){
         weeklyOpeningDaysRepository.truncateTable();
 
     }
 
     @Override
-    public WeeklyOpeningDay getById(long id) {
-        return null;
+    public void overWriteAll(List<WeeklyOpeningDay> weeklyOpeningDaysList){
+        truncateAll();
+        saveAll(weeklyOpeningDaysList);
     }
+
 
 }

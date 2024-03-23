@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Service
-public class WorkingDayServiceImpl implements IService<WorkingDay> {
+public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
 
@@ -30,15 +31,20 @@ public class WorkingDayServiceImpl implements IService<WorkingDay> {
 
     @Override
     public void save(WorkingDay workingDay) {
-
+        throw new UnsupportedOperationException("methode nog niet geimplementeerd");
     }
 
     @Override
     public WorkingDay getById(long id) {
-        return null;
+        throw new UnsupportedOperationException("methode nog niet geimplementeerd");
     }
 
-    // searh for workingday by date and updates it
+    /**
+     * search for working day by date and updates it
+     *
+     * @param exceptionDay day to update
+     */
+    @Override
     @Transactional
     public void updateWorkingDay(WorkingDay exceptionDay) {
         WorkingDay workingDay = workingDayRepository.findByDate(exceptionDay.getDate());
@@ -49,15 +55,24 @@ public class WorkingDayServiceImpl implements IService<WorkingDay> {
             workingDay.setMinimalOccupation(exceptionDay.getMinimalOccupation());
             workingDayRepository.save(workingDay);
         } else {
-            System.out.println("error: no working date found by this date");
+            // TODO gebruik logger
+            System.out.println("error: no working day found by this date");
         }
     }
 
-    //use WeeklyOpeningDay to fill workingday until end of year
+
+    /**
+     * Fill workingday until end of year
+     *
+     * @param weeklyOpeningDays weekly schedule that is used to fill workingDays
+     */
+    @Override
     public void fillRestOfYear(List<WeeklyOpeningDay> weeklyOpeningDays) {
         LocalDate startDate = LocalDate.now();
         LocalDate nextYearDate = LocalDate.of(startDate.getYear() + 1, 1, 1);
         long daysBetween = startDate.until(nextYearDate, ChronoUnit.DAYS);
+
+        List<WorkingDay> workingDays = new ArrayList<>();
 
         for (int i = 0; i < daysBetween; i++) {
             for (WeeklyOpeningDay weeklyOpeningDay : weeklyOpeningDays) {
@@ -68,13 +83,19 @@ public class WorkingDayServiceImpl implements IService<WorkingDay> {
                         workingDay.setStartTime(weeklyOpeningDay.getStartTime());
                         workingDay.setEndTime(weeklyOpeningDay.getEndTime());
                         workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
-                        workingDayRepository.save(workingDay);
+                        workingDays.add(workingDay);
                         break;
                     }
                 }
             }
             startDate = startDate.plusDays(1);
         }
+        workingDayRepository.saveAll(workingDays);
+    }
+
+    @Override
+    public void saveAll(List<WorkingDay> workingDays){
+        workingDayRepository.saveAll(workingDays);
     }
 
 
