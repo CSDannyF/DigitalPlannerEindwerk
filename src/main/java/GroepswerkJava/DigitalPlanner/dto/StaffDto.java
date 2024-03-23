@@ -30,5 +30,5 @@ public class StaffDto
    //private ContractType contractType;
    private int hoursPerWeek;
    private String fixedDayOff;
-
 }
+ */
