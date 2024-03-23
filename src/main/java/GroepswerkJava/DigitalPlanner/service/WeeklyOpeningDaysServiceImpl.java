@@ -42,4 +42,5 @@ public class WeeklyOpeningDaysServiceImpl implements IService<WeeklyOpeningDay> 
     public WeeklyOpeningDay getById(long id) {
         return null;
     }
+
 }

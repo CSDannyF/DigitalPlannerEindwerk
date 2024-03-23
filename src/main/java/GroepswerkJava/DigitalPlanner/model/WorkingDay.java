@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -23,17 +24,43 @@ public class WorkingDay {
     private Planning planning;
 
     @Column(name = "date",nullable = false, unique = true)
-    private Date date;
+    private LocalDate date;
 
     @Column(name = "isOpen", nullable = false)
     private boolean isOpen;
 
     @Column(name = "startTime")
-    private Time startTime;
+    private LocalTime startTime;
 
     @Column(name = "minimalOccupation")
     private int minimalOccupation;
 
     @Column(name = "endTime")
-    private Time endTime;
+    private LocalTime endTime;
+
+    public WorkingDay(LocalDate date){
+        this.date = date;
+    }
+
+    public WorkingDay(LocalDate startDate, boolean open, LocalTime startTime, LocalTime endTime, int minOccupation) {
+        this.date = startDate;
+        this.isOpen = open;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.minimalOccupation = minOccupation;
+
+    }
+
+    @Override
+    public String toString() {
+        return "WorkingDay{" +
+                "workingDayId=" + workingDayId +
+                ", planning=" + planning +
+                ", date=" + date +
+                ", isOpen=" + isOpen +
+                ", startTime=" + startTime +
+                ", minimalOccupation=" + minimalOccupation +
+                ", endTime=" + endTime +
+                '}';
+    }
 }
