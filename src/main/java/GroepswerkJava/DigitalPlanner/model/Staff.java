@@ -1,9 +1,16 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "staff")
 public class Staff {
@@ -12,20 +19,20 @@ public class Staff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long staffId;
 
-    @Column(name = "staffFirstName", nullable = false)
+    @Column(name = "staffFirstName")
     private String staffFirstName;
 
-    @Column(name = "staffLastName", nullable = false)
+    @Column(name = "staffLastName")
     private String staffLastName;
 
     @Column(name = "birthDate")
     private Date birthDate;
 
     @Column(name = "addressLine1")
-    private String adressLine1;
+    private String addressLine1;
 
     @Column(name = "addressLine2")
-    private String adressLine2;
+    private String addressLine2;
 
     @Column(name = "zipCode")
     private String zipCode;
@@ -37,7 +44,7 @@ public class Staff {
     private String phoneNumber;
 
     @Column(name = "startDate")
-    private Date startDate;
+    private LocalDate startDate;
 
     @ManyToOne
     @JoinColumn(name = "staffFunctionId")
@@ -48,11 +55,11 @@ public class Staff {
     private Department department;
 
     @ManyToOne
-    @JoinColumn(name = "companyId", nullable = false)
+    @JoinColumn(name = "companyId")
     private Company company;
 
     @ManyToOne
-    @JoinColumn(name = "contractTypeId", nullable = false)
+    @JoinColumn(name = "contractTypeId")
     private ContractType contractType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
