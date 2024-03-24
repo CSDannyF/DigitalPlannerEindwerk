@@ -42,7 +42,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     /**
      * search for working day by date and updates it
      *
-     * @param exceptionDay day to update
+     * @param exceptionDay takes a WorkingDay as parameter to update it
      */
     @Override
     @Transactional
