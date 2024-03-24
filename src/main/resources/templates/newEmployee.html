@@ -20,57 +20,77 @@
         </div>
         <div class="card-body">
 
-          <form>
+          <form action="#" th:action="@{/saveStaff}" th:object="${staff}" method="post">
             <div class="mb-5">
+
               <label class="form-label">First name
-                <input th:value="${firstName}" type="text" placeholder="first name" class="form-control">
+                <input th:field="*{staffFirstName}" type="text" placeholder="first name" class="form-control">
               </label>
               <label class="form-label float-right">Last name
-                <input th:value="${lastName}" type="text" placeholder="last name" class="form-control">
-              </label>
-              <label class="form-label">Birth date
-                <input th:value="${startdate}" type="date" class="form-control">
+                <input th:field="*{StaffLastName}" type="text" placeholder="last name" class="form-control">
               </label>
 
               <label class="form-label">Address line 1
-                <input th:value="${addressline1}" type="text" placeholder="addressline1" class="form-control">
+                <input th:field="*{addressLine1}" type="text" placeholder="addressline1" class="form-control">
               </label>
               <label class="form-label">Address line 2
-                <input th:value="${addressline1}" type="text" placeholder="addressline2" class="form-control">
+                <input th:field="*{addressLine2}" type="text" placeholder="addressline2" class="form-control">
               </label>
 
               <label class="form-label">Zipcode
-                <input th:value="${zipcode}" type="text" placeholder="zipcode" class="form-control">
+                <input th:field="*{zipCode}" type="text" placeholder="zipcode" class="form-control">
               </label>
               <label class="form-label">City
-                <input th:value="${city}" type="text" placeholder="city" class="form-control">
+                <input th:field="*{city}" type="text" placeholder="city" class="form-control">
               </label>
 
               <label class="form-label">Phone number
-                <input th:value="${phone}" type="text" placeholder="phonenumber" class="form-control">
+                <input th:field="*{phoneNumber}" type="text" placeholder="phonenumber" class="form-control">
               </label>
 
-              <label class="form-label">Email
-                <input th:value="${email}" type="email" placeholder="email" class="form-control">
+              <!--
+              <label class="form-label" th:object="${userLogin}">Email
+                <input th:field="*{email}" type="email" placeholder="email" class="form-control">
               </label>
+              -->
 
-              <label class="form-label">Department
-                <select class="form-select" aria-label="Default select example">
-                  <option value="1">one</option>
-                  <option value="2">two</option>
+              <label class="form-label" th:object="${department}">Department
+                <select  class="form-select" aria-label="Default select example" th:field="*{departmentId}">
+                  <option th:each="department: ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"></option>
                 </select>
               </label>
 
-              <label class="form-label">Superior/Team leader
-                <select class="form-select" aria-label="Default select example">
-                  <option value="1">one</option>
-                  <option value="2">two</option>
+              <label class="form-label" th:object="${staffFunction}">Staff Function
+                <select class="form-select" aria-label="Default select example" th:field="*{staffFunctionId}">
+                  <option th:each="staffFunction: ${staffFunctions}" th:value="${staffFunction.staffFunctionId}" th:text="${staffFunction.staffFunctionName}"></option>
+                </select>
+              </label>
+
+
+              <label class="form-label" th:object="${staff}">Person in charge
+                <select class="form-select" aria-label="Default select example" th:field="*{staffId}">
+                  <option th:each="staff: ${staffMembers}" th:value="${staff.staffId}" th:text="${staff.staffFirstName}"></option>
                 </select>
               </label>
 
               <label class="form-label">Start date
-                <input th:value="${startdate}" type="date" class="form-control">
+                <input th:field="*{startDate}" type="date" class="form-control">
               </label>
+
+              <label class="form-label" th:object="${contractType}">Contract type
+                <select  class="form-select" aria-label="Default select example" th:field="*{contractTypeId}">
+                  <option th:each="contractType: ${contractTypes}" th:value="${contractType.contractTypeId}" th:text="${contractType.contractTypeName}"></option>
+                </select>
+              </label>
+
+              <label class="form-label" th:object="${dayOfWeek}">Fixed day off
+                <select class="form-select" aria-label="Default select example" th:field="*{daysOfWeekId}">
+                  <option th:each="dayOfWeek: ${daysOfWeek}" th:value="${dayOfWeek.daysOfWeekId}" th:text="${dayOfWeek.dayName}"></option>
+                </select>
+              </label>
+
+              <br>
+              <button class="btn btn-primary" type="submit">Create</button>
             </div>
           </form>
 
@@ -80,10 +100,6 @@
     </div>
   </div>
 </div>
-
-</div>
-
-
 
 
 </body>

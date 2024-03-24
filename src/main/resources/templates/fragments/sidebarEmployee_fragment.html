@@ -55,12 +55,13 @@
     <li class="nav-item">
       <a href="#" class="nav-link dropdown-toggle" id="testDropdown3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2"/></svg>
-        Test menu 3
+        Configure Workplace
       </a>
       <ul class="dropdown-menu" aria-labelledby="testDropdown3">
-        <li><a class="dropdown-item" th:href="@{/newEmployee}">Submenu 1</a></li>
-        <li><a class="dropdown-item" href="#">Submenu 2</a></li>
-        <li><a class="dropdown-item" href="#">Submenu 3</a></li>
+        <li><a class="dropdown-item" th:href="@{/newEmployee}">Add employee</a></li>
+        <li><a class="dropdown-item" th:href="@{/contractType}">Contract type</a></li>
+        <li><a class="dropdown-item" th:href="@{/department}">Departments</a></li>
+        <li><a class="dropdown-item" th:href="@{/staffFunction}">Staff functions</a></li>
       </ul>
     </li>
   </ul>
