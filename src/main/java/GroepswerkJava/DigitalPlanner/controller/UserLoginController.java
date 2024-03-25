@@ -18,6 +18,6 @@ public class UserLoginController {
     public String dashboardAdmin(@ModelAttribute("userlogin") UserLogin userlogin)
     {
         this.userLoginService.getByEmail(userlogin.getEmail());
-        return "dashboard_employee";
+        return "dashboard";
     }
 }

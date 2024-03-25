@@ -54,7 +54,7 @@ _______________*/
 body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
-    background-image: url('/images/dashboardEmployee/Space.jpg');
+    background-image: url('/images/dashboard/Space.jpg');
     background-size: cover;
     background-position: right;
     overflow-x: hidden; /* Voorkomt horizontaal scrollen */
@@ -75,7 +75,7 @@ body {
 /* SIDEBAR
 _______________*/
 #sidebarContent {
-  width: 190px;
+  width: 250px;
   height: 100vh;
   position: fixed;
   background-color: var(--bg-main);
