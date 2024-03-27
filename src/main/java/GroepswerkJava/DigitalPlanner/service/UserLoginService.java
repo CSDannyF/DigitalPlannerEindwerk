@@ -1,40 +1,14 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.UserDto;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
-import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-@Component
-@Service
-public class UserLoginService implements IService<UserLogin> {
+public interface UserLoginService {
+    void saveUser(UserDto userDto);
 
-    @Autowired
-    public UserLoginRepository userLoginRepository;
+    UserLogin findByEmail(String email);
 
-    @Override
-    public List<UserLogin> getAll() {
-        return null;
-    }
-
-    @Override
-    public void save(UserLogin userLogin) {
-
-    }
-
-    @Override
-    public UserLogin getById(long id) {
-        return null;
-    }
-
-    public UserLogin getByEmail(String email)
-    {
-        //System.out.println(userLoginRepository.findByUsername(username));
-        return userLoginRepository.findByEmail(email);
-    }
-
+    List<UserDto> findAllUsers();
 }
