@@ -1,19 +1,21 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
-import GroepswerkJava.DigitalPlanner.model.*;
+import GroepswerkJava.DigitalPlanner.dto.*;
+import GroepswerkJava.DigitalPlanner.model.ContractType;
+import GroepswerkJava.DigitalPlanner.model.StaffFunction;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Controller
+@Validated
 public class NewEmployeeController {
 
     @Autowired
@@ -37,54 +39,110 @@ public class NewEmployeeController {
     @GetMapping("/newEmployee")
     public String newEmployee(Model model)
     {
-        Staff staff = new Staff();
-        model.addAttribute("staff", staff);
+        StaffDto staffDto = new StaffDto();
+        model.addAttribute("staffDto", staffDto);
         model.addAttribute("staffMembers", staffService.getAll()); //moet ik via dto doen
 /*
         UserLogin userLogin = new UserLogin();
         model.addAttribute("userLogin", userLogin);
 */
-        model.addAttribute("department", new Department());
+        model.addAttribute("departmentDto", new DepartmentDto());
         model.addAttribute("departments", departmentService.getAll());
 
-        model.addAttribute("staffFunction", new StaffFunction());
+        model.addAttribute("staffFunctionDto", new StaffFunctionDto());
         model.addAttribute("staffFunctions", staffFunctionService.getAll());
 
-        model.addAttribute("contractType", new ContractType());
+        model.addAttribute("contractTypeDto", new ContractTypeDto());
         model.addAttribute("contractTypes", contractTypeService.getAll());
 
-        model.addAttribute("dayOfWeek", new DaysOfWeek());
+        model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
         return "newEmployee";
     }
 
     @PostMapping("/saveStaff")
-    public String saveStaff(@ModelAttribute("staff") Staff staff,
-                            @RequestParam("departmentId") long departmentId,
-                            @RequestParam("staffFunctionId") long staffFunctionId,
-                            @RequestParam("staffId")long staffId,
+    public String saveStaff(@ModelAttribute("staffDto") StaffDto staffDto,
+                            @RequestParam(value = "departmentId", required = false) long departmentId,
+                            @RequestParam("functionId") long functionId,
+                            @RequestParam(value = "staffId", required = false)long staffId,
                             @RequestParam("contractTypeId") long contractTypeId,
-                            @RequestParam("daysOfWeekId") long daysOfWeekId,
+                            @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
+                            BindingResult result,
                             Model model)
     {
-        Department department = departmentService.getById(departmentId);
-        StaffFunction staffFunction = staffFunctionService.getById(staffFunctionId);
-        Staff staffResponsible = staffService.getById(staffId);
-        ContractType contractType = contractTypeService.getById(contractTypeId);
 
-        //deze moet met checkboxes gedaan worden en nog andere reutemeteut
-        DaysOfWeek day = daysOfWeekService.getById(daysOfWeekId);
-        Set<DaysOfWeek> days = new HashSet<>();
-        days.add(day);
-        staff.setDaysOfWeek(days);
+        //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
+        model.addAttribute("departmentDto", new DepartmentDto());
+        model.addAttribute("staffFunctionDto", new StaffFunction());
+        model.addAttribute("contractTypeDto", new ContractType());
+        model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
 
+        //in deze blok wordt nagekeken als een bepaald veld al dan niet in ingevuld + geef ik een error boodschap mee
+        if(staffDto.getFirstName() == null || staffDto.getFirstName().isEmpty())
+        {
+            result.rejectValue("firstName", "NotEmpty", "First name cannot be empty");
+        }
+        if(staffDto.getLastName() == null || staffDto.getLastName().isEmpty())
+        {
+            result.rejectValue("lastName", "NotEmpty", "Last name cannot be empty");
+        }
+        if(staffDto.getAddressLine1() == null || staffDto.getAddressLine1().isEmpty())
+        {
+            result.rejectValue("addressLine1", "NotEmpty", "Address line 1 name cannot be empty");
+        }
+        if(staffDto.getZipcode() == null || staffDto.getZipcode().isEmpty())
+        {
+            result.rejectValue("zipcode", "NotEmpty", "Zipcode name cannot be empty");
+        }
+        if(staffDto.getCity() == null || staffDto.getCity().isEmpty())
+        {
+            result.rejectValue("city", "NotEmpty", "City name cannot be empty");
+        }
+        if(staffDto.getPhoneNumber() == null || staffDto.getPhoneNumber().isEmpty())
+        {
+            result.rejectValue("phoneNumber", "NotEmpty", "Phone number name cannot be empty");
+        }
 
-        staff.setDepartment(department);
-        staff.setStaffFunction(staffFunction);
-        staff.setPersonResponsible(staffResponsible);
-        staff.setContractType(contractType);
+        //indien er een foutmelding is ga ik gewoon returnen naar dezelfde html
+        if (result.hasErrors())
+        {
+            return "newEmployee";
+        }
 
-        this.staffService.save(staff);
+        //hier check ik als een model al dan niet null is, als die null is wordt deze niet toegevoegd aan de gebruiker
+        if (departmentId != 0)
+        {
+            DepartmentDto department = departmentService.getById(departmentId);
+            staffDto.setDepartment(department);
+        }
+        if (contractTypeId != 0)
+        {
+            ContractTypeDto contractType = contractTypeService.getById(contractTypeId);
+            staffDto.setContractType(contractType);
+        }
+        if (staffId != 0)
+        {
+            StaffDto staffResponsible = staffService.getById(staffId);
+            staffDto.setPersonResponsible(staffResponsible);
+        }
+        if (functionId != 0)
+        {
+            StaffFunctionDto staffFunction = staffFunctionService.getById(functionId);
+            staffDto.setFunction(staffFunction);
+        }
+        if (daysOffWeekId != null) {
+            Set<DaysOffWeekDto> daysOff = new HashSet<>();
+            String days[] = daysOffWeekId.split(",");
+
+            for(String day: days)
+            {
+                DaysOffWeekDto day2 = daysOfWeekService.getById(Long.parseLong(day));
+                daysOff.add(day2);
+            }
+            staffDto.setFixedDaysOff(daysOff);
+        }
+
+        this.staffService.saveStaff(staffDto);
         return "dashboardEmployee";
     }
 }

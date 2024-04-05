@@ -1,34 +1,39 @@
-/*
 package GroepswerkJava.DigitalPlanner.dto;
 
-import GroepswerkJava.DigitalPlanner.model.ContractType;
-import GroepswerkJava.DigitalPlanner.model.Department;
-import GroepswerkJava.DigitalPlanner.model.StaffFunction;
-import lombok.AllArgsConstructor;
+import GroepswerkJava.DigitalPlanner.model.UserLogin;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class StaffDto
 {
-      private long id;
+   private long staffId;
+   @NotEmpty
    private String firstName;
+   @NotEmpty
    private String lastName;
-   private String email;
+   @NotEmpty
    private String addressLine1;
    private String addressLine2;
+   @NotEmpty
    private String zipcode;
+   @NotEmpty
    private String city;
+   @NotEmpty
    private String phoneNumber;
-   //private DepartmentDto department;
-   //private StaffFunction function;
-   private String personInCharge;
+
+   private StaffDto personResponsible;
+   private DepartmentDto department;
+   private StaffFunctionDto function;
    private LocalDate startDate;
-   //private ContractType contractType;
-   private int hoursPerWeek;
-   private String fixedDayOff;
+   private ContractTypeDto contractType;
+   private UserLogin userLogin;
+   private Set<DaysOffWeekDto> fixedDaysOff;
 }
- */

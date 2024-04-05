@@ -1,8 +1,8 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
+import GroepswerkJava.DigitalPlanner.dto.DepartmentDto;
 import GroepswerkJava.DigitalPlanner.model.Department;
 import GroepswerkJava.DigitalPlanner.service.DepartmentServiceImpl;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +27,7 @@ public class DepartmentController {
     }
 
     @PostMapping("/saveDepartment")
-    public String saveDepartment(@ModelAttribute("department") Department department, Model model)
+    public String saveDepartment(@ModelAttribute("department") DepartmentDto department, Model model)
     {
         this.departmentService.save(department);
         //moet veranderd worden naar admindashboard indien klaar

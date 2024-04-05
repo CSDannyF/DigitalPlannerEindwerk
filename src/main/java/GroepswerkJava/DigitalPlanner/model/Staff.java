@@ -47,7 +47,7 @@ public class Staff {
     private LocalDate startDate;
 
     @ManyToOne
-    @JoinColumn(name = "staffFunctionId")
+    @JoinColumn(name = "functionId")
     private StaffFunction staffFunction;
 
     @ManyToOne
@@ -73,7 +73,7 @@ public class Staff {
     private UserLogin userLogin;
 
     @ManyToMany(cascade = {
-            CascadeType.PERSIST,
+            //CascadeType.PERSIST,
             CascadeType.MERGE
     })
     @JoinTable(
@@ -81,7 +81,7 @@ public class Staff {
             joinColumns = {@JoinColumn(name = "staffId")},
             inverseJoinColumns = {@JoinColumn(name = "daysOfWeekId")}
     )
-    private Set<DaysOfWeek> daysOfWeek;
+    private Set<DaysOffWeek> daysOffWeek;
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     private List<PlanningDetail> planningDetails;
