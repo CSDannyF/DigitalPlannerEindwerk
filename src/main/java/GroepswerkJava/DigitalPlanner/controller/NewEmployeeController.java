@@ -36,7 +36,7 @@ public class NewEmployeeController {
     @Autowired
     private DaysOfWeekServiceImpl daysOfWeekService;
 
-    @GetMapping("/newEmployee")
+    @GetMapping("/newStaff")
     public String newEmployee(Model model)
     {
         StaffDto staffDto = new StaffDto();
@@ -57,7 +57,7 @@ public class NewEmployeeController {
 
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
-        return "newEmployee";
+        return "newStaff";
     }
 
     @PostMapping("/saveStaff")
@@ -110,10 +110,12 @@ public class NewEmployeeController {
         //indien er een foutmelding is ga ik gewoon returnen naar dezelfde html
         if (result.hasErrors())
         {
-            return "newEmployee";
+            return "newStaff";
         }
 
-        //hier check ik als een model al dan niet null is, als die null is wordt deze niet toegevoegd aan de gebruiker
+        //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
+        //Als er een niks is aangeduid gaat de id 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
+        //Indien er wel iets aangeduidt is gaat dit 1 of meer zijn en wordt di gebonden aan het Staff object
         if (departmentId != 0)
         {
             DepartmentDto department = departmentService.getById(departmentId);
