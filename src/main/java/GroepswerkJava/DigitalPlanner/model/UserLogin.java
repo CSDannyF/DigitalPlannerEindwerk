@@ -1,15 +1,18 @@
 package GroepswerkJava.DigitalPlanner.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "userLogin")
 public class UserLogin {
@@ -28,7 +31,8 @@ public class UserLogin {
     @JoinColumn(name = "staffId")
     private Staff staff;
 
-    @ManyToMany(cascade = {
+
+/*    @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
@@ -36,6 +40,27 @@ public class UserLogin {
             name = "userRoles",
             joinColumns = {@JoinColumn(name = "userLoginId")},
             inverseJoinColumns = {@JoinColumn(name = "roleId")}
-    )
-    private Set<Role> roles;
+    )*/
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "userRoles",
+            joinColumns = {@JoinColumn(name = "userLoginId")},
+            inverseJoinColumns = {@JoinColumn(name = "roleId")})
+    private List<Role> roles = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        String hasRoles = "";
+        for (Role role : this.getRoles()) {
+            hasRoles += role.getRoleName() + ", ";
+        }
+        return "UserLogin{" +
+                "userLoginId=" + userLoginId +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", staff=" + staff +
+                ", roles=" + hasRoles +
+                '}';
+    }
 }

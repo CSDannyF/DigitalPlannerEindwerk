@@ -1,0 +1,79 @@
+package GroepswerkJava.DigitalPlanner.controller;
+
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.model.UserLogin;
+import GroepswerkJava.DigitalPlanner.service.UserLoginService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+
+@Controller
+public class AuthController {
+
+    @Autowired
+    private UserLoginService userLoginService;
+
+    public AuthController(UserLoginService userLoginService) {
+        this.userLoginService = userLoginService;
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "index";
+    }
+
+    @GetMapping("/login")
+    public String loginForm() {
+        return "index";
+    }
+
+    @PostMapping("/login")
+    public String dashboard() {
+        return "dashboard";
+    }
+
+    // handler method to handle user registration request
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        UserLoginDto userLoginDto = new UserLoginDto();
+        model.addAttribute("user", userLoginDto);
+        return "register";
+    }
+
+    // handler method to handle register user form submit request
+    @PostMapping("/register")
+    public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
+                               BindingResult result,
+                               Model model) {
+        UserLogin existing = userLoginService.findByEmail(userLoginDto.getEmail());
+
+        if (existing != null) {
+            result.rejectValue("email", null, "There is already an account registered with that email");
+        }
+        if (result.hasErrors()) {
+            model.addAttribute("user", userLoginDto);
+            return "register";
+        }
+        userLoginService.saveUser(userLoginDto);
+        return "redirect:/login";
+    }
+
+
+    //TODO <--> Nice to have? Show list of staff with button to update staff role to admin
+//    @GetMapping("/users")
+//    public String listRegisteredUsers(Model model){
+//        model.addAttribute("users", userLoginService.findAllUsers());
+//        return "users";
+//    }
+//
+//    @GetMapping("/users/edit/{id}")
+//    public String editUserRole(@PathVariable Long id, Model model){
+//        model.addAttribute("user", userLoginService.findById(id));
+//        return "editUser";
+//    }
+}

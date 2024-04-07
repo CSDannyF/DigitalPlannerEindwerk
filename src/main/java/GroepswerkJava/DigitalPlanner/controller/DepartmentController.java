@@ -26,11 +26,11 @@ public class DepartmentController {
         return "department";
     }
 
-    @PostMapping("/saveDepartment")
+    @PostMapping("/department")
     public String saveDepartment(@ModelAttribute("department") DepartmentDto department, Model model)
     {
         this.departmentService.save(department);
         //moet veranderd worden naar admindashboard indien klaar
-        return "dashboardEmployee";
+        return "dashboard";
     }
 }

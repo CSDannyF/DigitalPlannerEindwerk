@@ -40,7 +40,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     /**
-     * search for working day by date and updates it
+     * search for working day by date and updates opening times
      *
      * @param exceptionDay takes a WorkingDay as parameter to update it
      */
@@ -78,14 +78,16 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             for (WeeklyOpeningDay weeklyOpeningDay : weeklyOpeningDays) {
                 if (startDate.getDayOfWeek().toString().equalsIgnoreCase(weeklyOpeningDay.getDay())) {
                     WorkingDay workingDay = workingDayRepository.findByDate(startDate);
-                    if (workingDay != null) {
-                        workingDay.setOpen(weeklyOpeningDay.isOpen());
-                        workingDay.setStartTime(weeklyOpeningDay.getStartTime());
-                        workingDay.setEndTime(weeklyOpeningDay.getEndTime());
-                        workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
-                        workingDays.add(workingDay);
-                        break;
+                    if (workingDay == null) {
+                        workingDay = new WorkingDay();
+                        workingDay.setDate(startDate);
                     }
+                    workingDay.setOpen(weeklyOpeningDay.isOpen());
+                    workingDay.setStartTime(weeklyOpeningDay.getStartTime());
+                    workingDay.setEndTime(weeklyOpeningDay.getEndTime());
+                    workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+                    workingDays.add(workingDay);
+                    break;
                 }
             }
             startDate = startDate.plusDays(1);

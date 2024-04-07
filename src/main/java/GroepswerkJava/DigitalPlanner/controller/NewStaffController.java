@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Controller
 @Validated
-public class NewEmployeeController {
+public class NewStaffController {
 
     @Autowired
     private StaffServiceImpl staffService;
@@ -36,8 +36,8 @@ public class NewEmployeeController {
     @Autowired
     private DaysOfWeekServiceImpl daysOfWeekService;
 
-    @GetMapping("/newStaff")
-    public String newEmployee(Model model)
+    @GetMapping("/staff")
+    public String newStaff(Model model)
     {
         StaffDto staffDto = new StaffDto();
         model.addAttribute("staffDto", staffDto);
@@ -57,10 +57,10 @@ public class NewEmployeeController {
 
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
-        return "newStaff";
+        return "staff";
     }
 
-    @PostMapping("/saveStaff")
+    @PostMapping("/Staff")
     public String saveStaff(@ModelAttribute("staffDto") StaffDto staffDto,
                             @RequestParam(value = "departmentId", required = false) long departmentId,
                             @RequestParam("functionId") long functionId,
@@ -110,7 +110,7 @@ public class NewEmployeeController {
         //indien er een foutmelding is ga ik gewoon returnen naar dezelfde html
         if (result.hasErrors())
         {
-            return "newStaff";
+            return "staff";
         }
 
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
