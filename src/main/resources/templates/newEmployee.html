@@ -54,6 +54,11 @@
                 <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
               </label>
 
+              <label class="form-label">Birth date
+                <input th:field="*{birthDate}" type="date" class="form-control">
+                <p class="text-danger" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></p>
+              </label>
+
               <!--
               <label class="form-label" th:object="${userLogin}">Email
                 <input th:field="*{email}" type="email" placeholder="email" class="form-control">
@@ -77,7 +82,7 @@
 
               <label class="form-label" th:object="${staffDto}">Person in charge
                 <select class="form-select" aria-label="Default select example" th:field="*{staffId}">
-                  <option th:each="staff: ${staffMembers}" th:value="${staff.staffId}" th:text="${staff.firstName} + ' ' + ${staff.lastName}"></option>
+                  <option th:each="staffDto: ${staffMembers}" th:value="${staffDto.staffId}" th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"></option>
                   <option value="0" th:selected="selected"></option>
                 </select>
               </label>

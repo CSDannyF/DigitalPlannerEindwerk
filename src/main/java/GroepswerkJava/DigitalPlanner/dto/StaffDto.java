@@ -28,6 +28,8 @@ public class StaffDto
    private String city;
    @NotEmpty
    private String phoneNumber;
+   @NotEmpty
+   private LocalDate birthDate;
 
    private StaffDto personResponsible;
    private DepartmentDto department;

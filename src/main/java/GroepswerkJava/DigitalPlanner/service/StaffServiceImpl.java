@@ -46,6 +46,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setCity(staffDto.getCity());
         staff.setPhoneNumber(staffDto.getPhoneNumber());
         staff.setStartDate(staffDto.getStartDate());
+        staff.setBirthDate(staffDto.getBirthDate());
 
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
         if (staffDto.getDepartment() != null)
@@ -63,7 +64,7 @@ public class StaffServiceImpl implements StaffService{
             StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
             staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
         }
-        if (staff.getStaffId() != 0)
+        if (staffDto.getStaffId() != 0)
         {
             staff.setPersonResponsible(mapToStaffModel(getById(staffDto.getStaffId())));
         }
@@ -108,6 +109,7 @@ public class StaffServiceImpl implements StaffService{
         staffDto.setZipcode(staff.getZipCode());
         staffDto.setCity(staff.getCity());
         staffDto.setPhoneNumber(staff.getPhoneNumber());
+        staffDto.setBirthDate(staff.getBirthDate());
 
         DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
         ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();

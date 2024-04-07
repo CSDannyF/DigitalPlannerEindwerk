@@ -26,7 +26,7 @@ public class Staff {
     private String staffLastName;
 
     @Column(name = "birthDate")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "addressLine1")
     private String addressLine1;

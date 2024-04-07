@@ -102,6 +102,10 @@ public class NewEmployeeController {
         {
             result.rejectValue("phoneNumber", "NotEmpty", "Phone number name cannot be empty");
         }
+        if(staffDto.getBirthDate() == null)
+        {
+            result.rejectValue("birthDate", "NotEmpty", "Birth date cannot be empty");
+        }
 
         //indien er een foutmelding is ga ik gewoon returnen naar dezelfde html
         if (result.hasErrors())
@@ -143,6 +147,6 @@ public class NewEmployeeController {
         }
 
         this.staffService.saveStaff(staffDto);
-        return "dashboardEmployee";
+        return "dashboard";
     }
 }
