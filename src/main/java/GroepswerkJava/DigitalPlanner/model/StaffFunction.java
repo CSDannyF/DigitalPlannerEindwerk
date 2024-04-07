@@ -15,13 +15,13 @@ public class StaffFunction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long staffFunctionId;
+    private long functionId;
 
-    @Column(name = "staffFunctionName", unique = true)
-    private String staffFunctionName;
+    @Column(name = "functionName", unique = true)
+    private String functionName;
 
-    @Column(name = "staffFunctionDescription")
-    private String staffFunctionDescription;
+    @Column(name = "functionDescription")
+    private String functionDescription;
 
     @OneToMany(mappedBy = "staffFunction",cascade = CascadeType.ALL)
     private List<Staff> staff;

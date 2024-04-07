@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
+import GroepswerkJava.DigitalPlanner.dto.ContractTypeDto;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.service.ContractTypeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class ContractTypeController {
     }
 
     @PostMapping("/contractType")
-    public String saveContractType(@ModelAttribute("contractType") ContractType contractType, Model model)
+    public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractType, Model model)
     {
         this.contractTypeService.save(contractType);
         //moet veranderd worden naar admindashboard indien klaar

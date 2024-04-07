@@ -11,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "daysOfWeek")
-public class DaysOfWeek {
+public class DaysOffWeek {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,6 @@ public class DaysOfWeek {
     @Column(name = "dayName")
     private String dayName;
 
-    @ManyToMany(mappedBy = "daysOfWeek")
+    @ManyToMany(mappedBy = "daysOffWeek")
     private Set<Staff> staff;
 }
