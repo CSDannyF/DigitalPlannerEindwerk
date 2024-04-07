@@ -42,12 +42,6 @@
                             </thead>
 
                             <tbody>
-                            <!--
-                                <input type="hidden" th:field="*{openingDaysList[__${itemStat.index}__].DayId}"/>
-                                <td th:text="${openingDays.day}"></td>
-
-                                <input type="hidden" th:field="*{openingDaysList[__${itemStat.index}__].day}">
-                                -->
                             <td><input type="date" th:field="*{date}" class="form-control"/>
                             <td><input type="checkbox" id="box" value="false"
                                        th:field="*{open}"/></td>
@@ -63,7 +57,7 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <br>
                         <br>
-                        <a th:href="@{/}">Click here when finished to return to dashboard</a>
+                        <a th:href="@{/dashboard}">Click here when finished to return to dashboard</a>
                     </fieldset>
                 </form>
             </div>

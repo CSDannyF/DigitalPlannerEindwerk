@@ -20,47 +20,30 @@ public class SecurityConfiguration {
     private UserDetailsService userDetailsService;
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/register/**").permitAll()
-                                .requestMatchers("/login/**").permitAll()
-
-                                .requestMatchers("/index").permitAll()
-                                .requestMatchers("/").permitAll()
-                                .requestMatchers("/css/**").permitAll()
-                                .requestMatchers("/fonts/**").permitAll()
-                                .requestMatchers("/images/**").permitAll()
-                                .requestMatchers("/js/**").permitAll()
-//
-//                                .requestMatchers("/newEmployee").hasAuthority("ADMIN")
-//                                .requestMatchers("company").hasAuthority("ADMIN")
-                                .requestMatchers("/newEmployee").hasRole("ADMIN")
-                                .requestMatchers("/company").  hasRole("ADMIN")
-
-
-                                .requestMatchers("/saveStaff").hasRole("ADMIN")
-
-
-                                .requestMatchers("/dashboard").hasRole("ADMIN")
-
-                                .requestMatchers("/test").hasRole("ADMIN")
-                                .requestMatchers("/users").hasRole("ADMIN")
-                ).formLogin(
-                        form -> form
-                                .loginPage("/login")
-                                .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/dasboard")
-                                .permitAll()
-                ).logout(
-                        logout -> logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .permitAll()
+                .authorizeRequests(authorize -> authorize
+                        // access for everyone
+                        .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**").permitAll()
+                        // access only for ADMIN role
+                        .requestMatchers("/staff/**", "/company/**", "/contractType", "/department", "/users").hasRole("ADMIN")
+                        // access only if user has USER or ADMIN role (user has to be logged in)
+                        .requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
+                )
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/dashboard")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                        .permitAll()
                 );
         return http.build();
     }

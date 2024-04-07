@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.repository;
 
+import GroepswerkJava.DigitalPlanner.dto.CompanyDto;
 import GroepswerkJava.DigitalPlanner.model.Company;
 import org.springframework.data.jpa.repository.JpaRepository;
 

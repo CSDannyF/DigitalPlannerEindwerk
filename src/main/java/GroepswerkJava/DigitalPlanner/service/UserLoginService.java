@@ -1,14 +1,17 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.dto.UserDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserLoginService {
-    void saveUser(UserDto userDto);
+    void saveUser(UserLoginDto userLoginDto);
 
     UserLogin findByEmail(String email);
 
-    List<UserDto> findAllUsers();
+    UserLogin findById(Long id);
+
+    List<UserLoginDto> findAllUsers();
 }

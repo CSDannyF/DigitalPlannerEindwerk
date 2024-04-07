@@ -25,4 +25,9 @@ public class Role {
 
     @Column(name = "roleName")
     private String roleName;
-   }
+
+    @Override
+    public String toString() {
+        return roleName;
+    }
+}

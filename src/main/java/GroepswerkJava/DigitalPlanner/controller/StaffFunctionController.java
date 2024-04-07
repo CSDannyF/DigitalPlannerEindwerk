@@ -17,7 +17,7 @@ public class StaffFunctionController {
     @Autowired
     private StaffFunctionServiceImpl staffFunctionService;
 
-    @GetMapping("/staffFunction")
+    @GetMapping("/staff/function")
     public String staffFunction(Model model)
     {
         StaffFunction staffFunction = new StaffFunction();
@@ -25,10 +25,10 @@ public class StaffFunctionController {
         return "staffFunction";
     }
 
-    @PostMapping("saveStaffFunction")
+    @PostMapping("/staff/function")
     public String saveStaffFunction(@ModelAttribute("staffFunction") StaffFunction staffFunction, Model model)
     {
         this.staffFunctionService.save(staffFunction);
-        return "dashboardEmployee";
+        return "dashboard";
     }
 }

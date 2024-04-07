@@ -34,7 +34,7 @@ public class NewEmployeeController {
     @Autowired
     private DaysOfWeekServiceImpl daysOfWeekService;
 
-    @GetMapping("/newEmployee")
+    @GetMapping("/staff")
     public String newEmployee(Model model)
     {
         Staff staff = new Staff();
@@ -58,7 +58,7 @@ public class NewEmployeeController {
         return "newEmployee";
     }
 
-    @PostMapping("/saveStaff")
+    @PostMapping("/Staff")
     public String saveStaff(@ModelAttribute("staff") Staff staff,
                             @RequestParam("departmentId") long departmentId,
                             @RequestParam("staffFunctionId") long staffFunctionId,
@@ -85,6 +85,6 @@ public class NewEmployeeController {
         staff.setContractType(contractType);
 
         this.staffService.save(staff);
-        return "dashboardEmployee";
+        return "dashboard";
     }
 }

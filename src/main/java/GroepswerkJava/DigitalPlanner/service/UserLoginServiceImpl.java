@@ -1,17 +1,17 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.dto.UserDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.Role;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,16 +31,23 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public void saveUser(UserDto userDto) {
+    public void saveUser(UserLoginDto userLoginDto) {
         UserLogin user = new UserLogin();
-        user.setEmail(userDto.getEmail());
+        user.setEmail(userLoginDto.getEmail());
 
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Role role = roleRepository.findByRoleName("ROLE_ADMIN");
-        if(role == null){
-            role = checkRoleExist();
+        user.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
+        Role role;
+        if(userLoginRepository.findAll().isEmpty()){
+            initiateRoles();
+            role = roleRepository.findByRoleName("ROLE_ADMIN");
+
+        } else {
+            role = roleRepository.findByRoleName("ROLE_USER");
+
         }
-        user.setRoles(Arrays.asList(role));
+
+        user.getRoles().add(role);
+        //TODO delete? user.setRoles(Arrays.asList(role));
         userLoginRepository.save(user);
     }
 
@@ -50,21 +57,37 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public List<UserDto> findAllUsers() {
+    public UserLogin findById(Long id) {
+        return userLoginRepository.findById(id).get();
+    }
+
+    @Override
+    public List<UserLoginDto> findAllUsers() {
         List<UserLogin> users = userLoginRepository.findAll();
-        return users.stream().map((userLogin) -> convertEntityToDto(userLogin))
+        return users.stream().map((userLogin) -> convertEntityToDtoWithId(userLogin))
                 .collect(Collectors.toList());
     }
 
-    private UserDto convertEntityToDto(UserLogin user){
-        UserDto userDto = new UserDto();
-        userDto.setEmail(user.getEmail());
-        return userDto;
+    private UserLoginDto convertEntityToDto(UserLogin user){
+        UserLoginDto userLoginDto = new UserLoginDto();
+        userLoginDto.setEmail(user.getEmail());
+        return userLoginDto;
     }
 
-    private Role checkRoleExist() {
-        Role role = new Role();
-        role.setRoleName("ROLE_ADMIN");
-        return roleRepository.save(role);
+    private UserLoginDto convertEntityToDtoWithId(UserLogin user){
+        UserLoginDto userLoginDto = new UserLoginDto();
+        userLoginDto.setId(user.getUserLoginId());
+        userLoginDto.setEmail(user.getEmail());
+        userLoginDto.setRoles(user.getRoles());
+        return userLoginDto;
+    }
+
+    private void initiateRoles() {
+        Role admin = new Role();
+        admin.setRoleName("ROLE_ADMIN");
+        Role user = new Role();
+        user.setRoleName("ROLE_USER");
+        roleRepository.save(admin);
+        roleRepository.save(user);
     }
 }

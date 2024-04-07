@@ -24,11 +24,11 @@ public class ContractTypeController {
         return "contractType";
     }
 
-    @PostMapping("/saveContractType")
+    @PostMapping("/contractType")
     public String saveContractType(@ModelAttribute("contractType") ContractType contractType, Model model)
     {
         this.contractTypeService.save(contractType);
         //moet veranderd worden naar admindashboard indien klaar
-        return "dashboardEmployee";
+        return "dashboard";
     }
 }
