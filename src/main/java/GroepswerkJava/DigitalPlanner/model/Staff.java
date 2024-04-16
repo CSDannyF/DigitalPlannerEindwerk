@@ -46,6 +46,9 @@ public class Staff {
     @Column(name = "startDate")
     private LocalDate startDate;
 
+    @Column(name = "endDate")
+    private LocalDate endDate;
+
     @ManyToOne
     @JoinColumn(name = "functionId")
     private StaffFunction staffFunction;
@@ -85,4 +88,8 @@ public class Staff {
 
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     private List<PlanningDetail> planningDetails;
+
+    @Lob
+    @Column(name = "userImageData")
+    private byte[] userImageData;
 }

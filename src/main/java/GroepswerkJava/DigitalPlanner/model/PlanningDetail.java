@@ -27,12 +27,16 @@ public class PlanningDetail {
     @JoinColumn(name = "staffId")
     private Staff staff;
 
-    @OneToMany(mappedBy = "planningDetail", cascade = CascadeType.ALL)
-    private List<Availability> availabilities;
+    @ManyToOne
+    @JoinColumn(name = "availabilityId")
+    private Availability availability;
 
     @Column(name = "startTime")
     private Time startTime;
 
     @Column(name = "endTime")
     private Time endTime;
+
+    @Column(name = "workMinutesPerDay")
+    private int workMinutesPerDay;
 }

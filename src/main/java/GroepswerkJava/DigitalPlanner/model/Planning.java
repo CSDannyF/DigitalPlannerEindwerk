@@ -29,4 +29,7 @@ public class Planning {
     @ManyToOne
     @JoinColumn(name = "planningStatusId")
     private PlanningStatus planningStatus;
+
+    @Column(name = "plannedByStaffDate")
+    private String plannedByStaffDate;
 }
