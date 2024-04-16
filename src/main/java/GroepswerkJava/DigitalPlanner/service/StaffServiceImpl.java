@@ -68,6 +68,10 @@ public class StaffServiceImpl implements StaffService{
         {
             staff.setPersonResponsible(mapToStaffModel(getById(staffDto.getStaffId())));
         }
+        if (staffDto.getEndDate() != null)
+        {
+            staff.setEndDate(staffDto.getEndDate());
+        }
 
         if (staffDto.getFixedDaysOff() != null)
         {
@@ -127,6 +131,10 @@ public class StaffServiceImpl implements StaffService{
         if (staff.getStaffFunction() != null)
         {
             staffDto.setFunction(staffFunctionService.mapToStaffFunctionDto(staff.getStaffFunction()));
+        }
+        if (staff.getEndDate() != null)
+        {
+            staffDto.setEndDate(staff.getEndDate());
         }
 
         Set<DaysOffWeekDto> daysOffWeekDto = new HashSet<>();

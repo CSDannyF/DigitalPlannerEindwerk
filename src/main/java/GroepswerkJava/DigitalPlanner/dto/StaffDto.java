@@ -35,6 +35,7 @@ public class StaffDto
    private DepartmentDto department;
    private StaffFunctionDto function;
    private LocalDate startDate;
+   private LocalDate endDate;
    private ContractTypeDto contractType;
    private UserLogin userLogin;
    private Set<DaysOffWeekDto> fixedDaysOff;

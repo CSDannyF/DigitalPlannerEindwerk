@@ -66,11 +66,11 @@ public class NewStaffController {
                             @RequestParam("functionId") long functionId,
                             @RequestParam(value = "staffId", required = false)long staffId,
                             @RequestParam("contractTypeId") long contractTypeId,
-                            @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
-                            BindingResult result,
-                            Model model)
+                            @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId
+                            /*BindingResult result, Model model*/)
     {
 
+/*
         //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
         model.addAttribute("departmentDto", new DepartmentDto());
         model.addAttribute("staffFunctionDto", new StaffFunction());
@@ -112,6 +112,7 @@ public class NewStaffController {
         {
             return "staff";
         }
+        */
 
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
         //Als er een niks is aangeduid gaat de id 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
