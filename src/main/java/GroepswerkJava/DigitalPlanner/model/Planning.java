@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +31,9 @@ public class Planning {
     @JoinColumn(name = "planningStatusId")
     private PlanningStatus planningStatus;
 
-    @Column(name = "plannedByStaffDate")
-    private String plannedByStaffDate;
+    @Column(name = "plannedByStaff")
+    private String plannedByStaff;
+
+    @Column(name = "plannedDate")
+    private LocalDate plannedDate;
 }
