@@ -26,7 +26,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     @Override
     public List<WorkingDay> getAll() {
-        return null;
+        return workingDayRepository.findAll();
     }
 
     @Override
@@ -100,6 +100,11 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         workingDayRepository.saveAll(workingDays);
     }
 
+    @Override
+    public WorkingDay getByDate(LocalDate date) {
+        WorkingDay workingDay = workingDayRepository.findByDate(date);
+        return workingDay;
+    }
 
 
     public void deleteAll() {

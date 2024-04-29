@@ -24,7 +24,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String home() {
-        return "index";
+        return "dashboard";
     }
 
     @GetMapping("/login")
@@ -64,7 +64,7 @@ public class AuthController {
     }
 
 
-    //TODO <--> Nice to have? Show list of staff with button to update staff role to admin
+//    TODO <--> Nice to have? Show list of staff with button to update staff role to admin
 //    @GetMapping("/users")
 //    public String listRegisteredUsers(Model model){
 //        model.addAttribute("users", userLoginService.findAllUsers());

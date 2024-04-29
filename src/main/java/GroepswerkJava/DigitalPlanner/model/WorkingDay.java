@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,10 +19,11 @@ public class WorkingDay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long workingDayId;
 
-    @OneToOne(mappedBy = "workingDay", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "workingDay", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Planning planning;
 
     @Column(name = "date",nullable = false, unique = true)
+    @Temporal(TemporalType.DATE)
     private LocalDate date;
 
     @Column(name = "isOpen", nullable = false)
@@ -48,7 +48,6 @@ public class WorkingDay {
         this.startTime = startTime;
         this.endTime = endTime;
         this.minimalOccupation = minOccupation;
-
     }
 
     @Override
