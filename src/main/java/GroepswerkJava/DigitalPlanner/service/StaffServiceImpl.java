@@ -102,7 +102,8 @@ public class StaffServiceImpl implements StaffService{
         return mapToStaffDto(staff);
     }
 
-    private StaffDto mapToStaffDto(Staff staff)
+    // Veranderd van private naar protected voor PlanningDetailServiceImpl
+    protected StaffDto mapToStaffDto(Staff staff)
     {
         StaffDto staffDto = new StaffDto();
         staffDto.setStaffId(staff.getStaffId());
