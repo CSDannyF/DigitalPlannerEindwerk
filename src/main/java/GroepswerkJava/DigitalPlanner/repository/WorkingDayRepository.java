@@ -17,4 +17,6 @@ public interface WorkingDayRepository extends JpaRepository<WorkingDay, Long> {
 
     WorkingDay findByDate(LocalDate date);
 
+    WorkingDay findByWorkingDayId(int id);
+
 }

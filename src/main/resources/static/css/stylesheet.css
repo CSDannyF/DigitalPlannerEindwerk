@@ -178,9 +178,10 @@ _______________*/
 /* VOLLEDIGE KALENDER */
 #calendarMonth {
     display: flex;
+    flex-direction: column; /* Ensure calendar content stacks vertically */
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     width: 110%;
 }
 
@@ -483,5 +484,39 @@ h1 {
 #popupCard label {
     font-family: 'Roboto';
     margin-left: 20px;
+}
+
+
+/*  show day shifts */
+
+#shiftsContainer {
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 2;
+}
+
+.shiftDetail {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background color */
+    padding: 10px; /* Padding around each detail block */
+    margin-bottom: 10px; /* Margin between each detail block */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for a subtle lift effect */
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    line-height: 1.5;
+}
+
+.shiftTitle {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background color */
+    padding:15px; /* Padding around each detail block */
+    margin-bottom: 15px; /* Margin between each detail block */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for a subtle lift effect */
+    font-family: Arial, sans-serif;
+    font-size: 26px;
+    line-height: 1.5;
+    text-align: center;
+      font-weight: 900;
 }
 
