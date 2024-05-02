@@ -4,7 +4,7 @@ document.querySelector('.dark-mode-switch').onclick = () => {
     document.querySelector('body').classList.toggle('light');
 };
 
-//Check Year
+//Check leap Year
 isCheckYear = (year) => {
     return (year % 4 === 0 && year % 100 !== 0 && year % 400 !== 0)
         || (year % 100 === 0 && year % 400 === 0)
@@ -22,7 +22,9 @@ monthPicker.onclick = () => {
     monthList.classList.add('show')
 };
 
-//Generate Calendar
+
+
+
 generateCalendar = (month, year) => {
     let calendarDay = document.querySelector('.calendar-day');
     calendarDay.innerHTML = '';
@@ -36,23 +38,57 @@ generateCalendar = (month, year) => {
 
     let firstDay = new Date(year, month, 1);
 
-    for (let i = 0; i <= daysOfMonth[month] + firstDay.getDay() - 1; i++) {
-        let day = document.createElement('div')
+    for (let i = 0; i < daysOfMonth[month] + firstDay.getDay(); i++) {
+        let day = document.createElement('div');
         if (i >= firstDay.getDay()) {
+
+            let dayNumber = i - firstDay.getDay() + 1;
+            day.textContent = dayNumber;
+
             day.classList.add('calendarDayHover')
             day.innerHTML = i - firstDay.getDay() + 1
             day.innerHTML += `<span></span>
                              <span></span>
                              <span></span>
                              <span></span>`
-            if (i - firstDay.getDay() + 1 === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
-                day.classList.add('currDate')
+
+            // Add a click event listener to each day element
+            day.addEventListener('click', () => {
+
+                handleDayClick(dayNumber, month, year);
+            });
+
+
+
+
+//
+//
+//            let date = `${year}-${month + 1}-${dayNumber}`;
+//            console.log(date);
+//            const response = fetch(`/workingDay?date=${date}`);
+//            console.log(response);
+//
+//
+
+
+
+
+
+
+
+
+
+            if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
+                day.classList.add('currDate');
             }
         }
-        calendarDay.appendChild(day)
-    };
+
+        calendarDay.appendChild(day);
+    }
 };
 
+
+// show months when clicked
 let monthList = calendar.querySelector('.month-list');
 monthNames.forEach((e, index) => {
     let month = document.createElement('div')
@@ -75,8 +111,66 @@ document.querySelector('#next-year').onclick = () => {
     generateCalendar(currMonth.value, currYear.value)
 };
 
+
+
 let currDate = new Date();
 let currMonth = { value: currDate.getMonth() };
 let currYear = { value: currDate.getFullYear() };
 
 generateCalendar(currMonth.value, currYear.value);
+
+
+// click on a day to show it's planning
+handleDayClick = (day, month, year) => {
+    //month + 1 because javascript starts counting months at 0 (januari = 0)
+    const javaMonth = month + 1;
+    fetch(`/planning?day=${day}&month=${javaMonth}&year=${year}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            updateDayTitle(day, month, year);
+            updateUIWithData(data);
+        })
+        .catch(error => {
+            console.error('Error fetching JSON data:', error);
+        });
+};
+
+// shows the date of which the planning is shown in a title
+updateDayTitle = (year, month, day) => {
+    const shiftsContainer = document.getElementById('shiftsContainer');
+    shiftsContainer.innerHTML = '';
+    const detailDiv = document.createElement('div');
+    detailDiv.classList.add('shiftTitle');
+
+    const dayString = `${year} /  ${month + 1} / ${day}`;
+    detailDiv.textContent = dayString;
+    shiftsContainer.appendChild(detailDiv);
+}
+
+// shows the planningDetails of a certain date in planningDetails
+updateUIWithData = (data) => {
+    const shiftsContainer = document.getElementById('shiftsContainer');
+
+    if(data.planningDetails != null){
+        data.planningDetails.forEach(detail => {
+            const detailDiv = document.createElement('div');
+            detailDiv.classList.add('shiftDetail');
+
+            //\xa0 = spacing, probably better way?
+            const shiftString = `${detail.startTime || 'N/A'} - ${detail.endTime}
+            \xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0
+            ${detail.staff}`;
+            detailDiv.textContent = shiftString;
+
+            shiftsContainer.appendChild(detailDiv);
+        });
+    }
+};
+
+
+

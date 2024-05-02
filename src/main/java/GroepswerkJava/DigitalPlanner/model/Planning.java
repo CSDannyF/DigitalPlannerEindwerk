@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +24,7 @@ public class Planning {
     @JoinColumn(name = "workingDayId", referencedColumnName = "workingDayId")
     private WorkingDay workingDay;
 
-    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "planning", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlanningDetail> planningDetails;
 
     @ManyToOne
@@ -36,4 +36,14 @@ public class Planning {
 
     @Column(name = "plannedDate")
     private LocalDate plannedDate;
+
+    @Override
+    public String toString() {
+        return "Planning{" +
+                "planningId=" + planningId +
+                ", planningStatus=" + planningStatus +
+                ", plannedByStaff='" + plannedByStaff + '\'' +
+                ", plannedDate=" + plannedDate +
+                '}';
+    }
 }

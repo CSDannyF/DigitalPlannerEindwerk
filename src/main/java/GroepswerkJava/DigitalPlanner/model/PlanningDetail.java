@@ -1,12 +1,12 @@
 package GroepswerkJava.DigitalPlanner.model;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Time;
-import java.util.List;
 
 @Getter
 @Setter
@@ -39,4 +39,14 @@ public class PlanningDetail {
 
     @Column(name = "workMinutesPerDay")
     private int workMinutesPerDay;
+
+    @Override
+    public String toString() {
+        return "PlanningDetail{" +
+                "planningDetailId=" + planningDetailId +
+                ", staff=" + staff.getStaffFirstName() +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                '}';
+    }
 }

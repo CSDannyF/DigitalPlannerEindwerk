@@ -1,3 +1,46 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Home</title>-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">-->
+<!--    &lt;!&ndash; Bootstrap JavaScript &ndash;&gt;-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>-->
+<!--    &lt;!&ndash; CSS stylesheet &ndash;&gt;-->
+<!--    <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">-->
+<!--</head>-->
+
+<!--<body>-->
+<!--&lt;!&ndash; Insert sidebar ADMIN / USER fragment &ndash;&gt;-->
+<!--&lt;!&ndash; todo future sprint - Load view based on role &ndash;&gt;-->
+
+<!--&lt;!&ndash;-->
+<!--<div th:replace="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>-->
+<!--&ndash;&gt;-->
+
+<!--<div th:replace="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>-->
+
+<!--&lt;!&ndash; Insert calendar fragment &ndash;&gt;-->
+<!--<div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>-->
+
+<!--<div id="shiftsContainer"></div>-->
+
+
+
+<!--&lt;!&ndash; Background container &ndash;&gt;-->
+<!--<div class="background-image"></div>-->
+
+<!--&lt;!&ndash; JS calendar &ndash;&gt;-->
+<!--<script th:src="@{/js/scriptCalendar.js}" ></script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
@@ -24,6 +67,11 @@
 
 <!-- Insert calendar fragment -->
 <div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>
+
+<div class="clearfix"></div>
+
+<!-- Place shiftsContainer below calendarMonthContent -->
+<div id="shiftsContainer"></div>
 
 <!-- Background container -->
 <div class="background-image"></div>
