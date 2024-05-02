@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface UserLoginService {
     void saveUser(UserLoginDto userLoginDto);
 
-    UserLogin findByEmail(String email);
+    UserLoginDto findByEmail(String email);
 
-    UserLogin findById(Long id);
+    UserLoginDto findById(Long id);
 
     List<UserLoginDto> findAllUsers();
 }
