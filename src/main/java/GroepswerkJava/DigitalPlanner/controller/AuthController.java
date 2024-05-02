@@ -24,7 +24,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String home() {
-        return "dashboard";
+        return "index";
     }
 
     @GetMapping("/login")
@@ -52,7 +52,7 @@ public class AuthController {
                                Model model) {
         UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
 
-        if (existing != null) {
+        if (existing.getEmail() != null) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
         if (result.hasErrors()) {
