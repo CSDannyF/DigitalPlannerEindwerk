@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,8 @@ public interface WorkingDayService  {
     @Transactional
     void updateWorkingDay(WorkingDay exceptionDay);
 
+    List<WorkingDayDto> getAllDto();
+
     public void save(WorkingDay workingDay);
     public WorkingDay getById(long id);
 
@@ -20,7 +23,7 @@ public interface WorkingDayService  {
 
     void saveAll(List<WorkingDay> workingDays);
 
-    WorkingDay getByDate(LocalDate date);
+    WorkingDayDto getByDate(LocalDate date);
 
     List<WorkingDay> getAll();
 }

@@ -12,7 +12,10 @@ _______________*/
     --light-hover: #EDF0F5;
     --light-text: #151426;
     --green: #03C988;
+    --grey: #34495E;
     --white: #fff;
+    --red: #FA0A07;
+
     --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     --font-family: cursive;
 }
@@ -188,6 +191,7 @@ _______________*/
 .calendar {
     height: max-content;
     width: 37%;
+    max-width: 600px;
     background-color: var(--bg-main);
     border-radius: 25px;
     padding: 10px;
@@ -372,15 +376,7 @@ _______________*/
     transition-delay: 0.6s;
 }
 
-.calendar-day div.currDate {
-    background-color: var(--green);
-    color: var(--white);
-    border-radius: 50%;
-}
 
-.calendar-day div.currDate span {
-    display: none;
-}
 
 .month-list {
     position: absolute;
@@ -487,8 +483,7 @@ h1 {
 }
 
 
-/*  show day shifts */
-
+/*  show day shifts when clicked on a day in the calendar */
 #shiftsContainer {
     display: block;
     font-family: Arial, sans-serif;
@@ -496,27 +491,64 @@ h1 {
     line-height: 2;
 }
 
+/* shows each shift in a block */
 .shiftDetail {
-    background-color: rgba(255, 255, 255, 0.8); /* Light background color */
-    padding: 10px; /* Padding around each detail block */
-    margin-bottom: 10px; /* Margin between each detail block */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for a subtle lift effect */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
     font-size: 22px;
     line-height: 1.5;
 }
 
+/* prints out the date of the day as a title*/
 .shiftTitle {
-    background-color: rgba(255, 255, 255, 0.8); /* Light background color */
-    padding:15px; /* Padding around each detail block */
-    margin-bottom: 15px; /* Margin between each detail block */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for a subtle lift effect */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding:15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
     font-size: 26px;
     line-height: 1.5;
     text-align: center;
       font-weight: 900;
 }
+
+
+/* Calendar styles*/
+
+/* styling for closed day*/
+.calendar-day div.closedDay {
+        background-color: var(--grey);
+        color: var(--red);
+        border-radius: 50%;
+}
+
+/*styling for open day */
+.calendar-day div.openDay {
+        color: var(--green);
+        border-radius: 50%;
+}
+
+/* styling for current day when open*/
+.calendar-day div.currOpenDay {
+    opacity: 0.2;
+    background-color: var(--green);
+    color: var(--white);
+    border-radius: 50%;
+}
+
+/* styling for current day when closed*/
+.calendar-day div.currClosedDay {
+    opacity: 0.2;
+    background-color: var(--green);
+    color: var(--red);
+    border-radius: 50%;
+}
+
+
+
 

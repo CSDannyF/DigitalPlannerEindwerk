@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
@@ -27,6 +28,11 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     @Override
     public List<WorkingDay> getAll() {
         return workingDayRepository.findAll();
+    }
+
+    @Override
+    public List<WorkingDayDto> getAllDto(){
+        return mapToDtoList(workingDayRepository.findAll());
     }
 
     @Override
@@ -101,13 +107,35 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public WorkingDay getByDate(LocalDate date) {
+    public WorkingDayDto getByDate(LocalDate date) {
         WorkingDay workingDay = workingDayRepository.findByDate(date);
-        return workingDay;
+        return mapToDto(workingDay);
     }
 
 
     public void deleteAll() {
         workingDayRepository.deleteAll();
+    }
+
+    public WorkingDayDto mapToDto(WorkingDay workingDay){
+        WorkingDayDto workingDayDto = new WorkingDayDto();
+        if(workingDay != null){
+            workingDayDto.setWorkingDayId(workingDay.getWorkingDayId());
+            workingDayDto.setDate(workingDay.getDate());
+            workingDayDto.setStartTime(workingDay.getStartTime());
+            workingDayDto.setEndTime(workingDay.getEndTime());
+            workingDayDto.setMinimalOccupation(workingDay.getMinimalOccupation());
+            workingDayDto.setOpen(workingDay.isOpen());
+        }
+        return workingDayDto;
+    }
+
+    public List <WorkingDayDto> mapToDtoList(List<WorkingDay> workingDays){
+        List<WorkingDayDto> workingDayDtos = new ArrayList<>();
+        for(WorkingDay workingDay: workingDays){
+            WorkingDayDto workingDayDto = mapToDto(workingDay);
+            workingDayDtos.add(workingDayDto);
+        }
+        return workingDayDtos;
     }
 }
