@@ -1,11 +1,10 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
-import GroepswerkJava.DigitalPlanner.model.Planning;
-import GroepswerkJava.DigitalPlanner.model.WorkingDay;
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 
 
 public interface PlanningService {
-    void save(Planning planning);
-    PlanningDto getByWorkingDay(WorkingDay workingDay);
+    void save(PlanningDto planningDto);
+    PlanningDto getByWorkingDay(WorkingDayDto workingDayDto);
 }
