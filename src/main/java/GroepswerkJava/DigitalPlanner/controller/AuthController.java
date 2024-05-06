@@ -46,6 +46,8 @@ public class AuthController {
     }
 
     // handler method to handle register user form submit request
+    //nu is er een userlogin die niet gelinkt is aan een staff member:
+    //deze later linken aan een leeg staff object die achteraf kan worden aangevuld
     @PostMapping("/register")
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
