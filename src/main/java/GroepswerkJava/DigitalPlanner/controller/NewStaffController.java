@@ -3,6 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
+import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,8 @@ public class NewStaffController {
         model.addAttribute("staffDto", staffDto);
         model.addAttribute("staffMembers", staffService.getAll()); //moet ik via dto doen
 
-        UserLoginDto userLogin = new UserLoginDto();
-        model.addAttribute("userLogin", userLogin);
+        UserLoginDto userLoginDto = new UserLoginDto();
+        model.addAttribute("userLogin", userLoginDto);
 
         model.addAttribute("departmentDto", new DepartmentDto());
         model.addAttribute("departments", departmentService.getAll());
@@ -81,6 +82,11 @@ public class NewStaffController {
         model.addAttribute("contractTypeDto", new ContractType());
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("useLogin", new UserLoginDto());
+        model.addAttribute("staffMembers", staffService.getAll());
+        model.addAttribute("departments", departmentService.getAll());
+        model.addAttribute("staffFunctions", staffFunctionService.getAll());
+        model.addAttribute("contractTypes", contractTypeService.getAll());
+        model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
 
         /*hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
         uniek is of niet en reject doen ingeval van niet uniek
@@ -90,13 +96,10 @@ public class NewStaffController {
         if(existing.getEmail() != null) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
-
         if (result.hasErrors())
         {
             return "staff";
         }
-
-
 
 /*
         //in deze blok wordt nagekeken als een bepaald veld al dan niet in ingevuld + geef ik een error boodschap mee

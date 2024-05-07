@@ -26,7 +26,7 @@ public class ContractTypeController {
     }
 
     @PostMapping("/contractType")
-    public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractType, Model model)
+    public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractType, Model model)  //model mag weg
     {
         this.contractTypeService.save(contractType);
         //moet veranderd worden naar admindashboard indien klaar

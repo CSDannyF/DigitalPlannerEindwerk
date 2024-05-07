@@ -22,6 +22,11 @@ public class StaffServiceImpl implements StaffService{
     @Autowired
     private StaffRepository staffRepository;
 
+    public StaffServiceImpl(StaffRepository staffRepository) {
+        this.staffRepository = staffRepository;
+    }
+
+
     @Override
     public List<StaffDto> getAll()
     {
@@ -135,7 +140,9 @@ public class StaffServiceImpl implements StaffService{
         }
         if (staffDto.getStaffId() != 0)
         {
-            staff.setPersonResponsible(mapToStaffModel(getById(staffDto.getStaffId())));
+            Staff staff1 = new Staff();
+            staff1.setStaffId(getById(staffDto.getStaffId()).getStaffId());
+            staff.setPersonResponsible(staff1);
         }
         if (staffDto.getEndDate() != null)
         {

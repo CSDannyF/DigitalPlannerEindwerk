@@ -4,6 +4,7 @@ import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.Role;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
+import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,14 +19,17 @@ public class UserLoginServiceImpl implements UserLoginService {
     public UserLoginRepository userLoginRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private StaffRepository staffRepository;
 
     @Autowired
     public UserLoginServiceImpl(UserLoginRepository userLoginRepository,
                                 RoleRepository roleRepository,
-                                PasswordEncoder passwordEncoder) {
+                                PasswordEncoder passwordEncoder,
+                                StaffRepository staffRepository) {
         this.userLoginRepository = userLoginRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.staffRepository = staffRepository;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         if(userLoginDto.getStaffDto() != null)
         {
-            StaffServiceImpl staffService = new StaffServiceImpl();
+            StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
             user.setStaff(staffService.mapToStaffModel(userLoginDto.getStaffDto()));
         }
 

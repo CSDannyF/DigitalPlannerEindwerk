@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
