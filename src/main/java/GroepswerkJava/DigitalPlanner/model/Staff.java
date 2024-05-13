@@ -72,7 +72,7 @@ public class Staff {
     @OneToMany(mappedBy = "personResponsible", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Staff> staffMembers = new HashSet<Staff>();
 
-    @OneToOne(mappedBy = "staff", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "staff")
     private UserLogin userLogin;
 
     @ManyToMany(cascade = {

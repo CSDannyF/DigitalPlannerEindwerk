@@ -4,14 +4,13 @@ import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.Role;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
+import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,20 +19,30 @@ public class UserLoginServiceImpl implements UserLoginService {
     public UserLoginRepository userLoginRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private StaffRepository staffRepository;
 
     @Autowired
     public UserLoginServiceImpl(UserLoginRepository userLoginRepository,
-                           RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder) {
+                                RoleRepository roleRepository,
+                                PasswordEncoder passwordEncoder,
+                                StaffRepository staffRepository) {
         this.userLoginRepository = userLoginRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.staffRepository = staffRepository;
     }
 
     @Override
     public void saveUser(UserLoginDto userLoginDto) {
         UserLogin user = new UserLogin();
         user.setEmail(userLoginDto.getEmail());
+        user.setChangePassword(true);
+
+        if(userLoginDto.getStaffDto() != null)
+        {
+            StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
+            user.setStaff(staffService.mapToStaffModel(userLoginDto.getStaffDto()));
+        }
 
         user.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
         Role role;
@@ -52,33 +61,39 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public UserLogin findByEmail(String email) {
-        return userLoginRepository.findByEmail(email);
+    public UserLoginDto findByEmail(String email) {
+        UserLoginDto userLoginDto = new UserLoginDto();
+        if(userLoginRepository.findByEmail(email) != null) {
+            userLoginDto = mapToUserLoginDto(userLoginRepository.findByEmail(email));
+        }
+        return userLoginDto;
     }
 
     @Override
-    public UserLogin findById(Long id) {
-        return userLoginRepository.findById(id).get();
+    public UserLoginDto findById(Long id) {
+        return mapToUserLoginDto(userLoginRepository.findById(id).get());
     }
 
     @Override
     public List<UserLoginDto> findAllUsers() {
         List<UserLogin> users = userLoginRepository.findAll();
-        return users.stream().map((userLogin) -> convertEntityToDtoWithId(userLogin))
+        return users.stream().map((userLogin) -> mapToDtoWithId(userLogin))
                 .collect(Collectors.toList());
     }
 
-    private UserLoginDto convertEntityToDto(UserLogin user){
+    private UserLoginDto mapToUserLoginDto(UserLogin user){
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setEmail(user.getEmail());
+        userLoginDto.setChangePassword(user.getChangePassword());
         return userLoginDto;
     }
 
-    private UserLoginDto convertEntityToDtoWithId(UserLogin user){
+    private UserLoginDto mapToDtoWithId(UserLogin user){
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setId(user.getUserLoginId());
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setRoles(user.getRoles());
+        userLoginDto.setChangePassword(user.getChangePassword());
         return userLoginDto;
     }
 

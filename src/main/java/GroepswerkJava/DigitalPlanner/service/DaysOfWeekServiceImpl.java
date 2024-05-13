@@ -87,15 +87,12 @@ public class DaysOfWeekServiceImpl implements DaysOffWeekService, CommandLineRun
     */
     private void initializeWeekdays()
     {
-        if(daysOfWeekRepository.count() == 0)
-        {
             for(String day : WEEKS_DAYS)
             {
                 DaysOffWeek daysOffWeek = new DaysOffWeek();
                 daysOffWeek.setDayName(day);
                 daysOfWeekRepository.save(daysOffWeek);
             }
-        }
     }
 
     /*
@@ -105,6 +102,8 @@ public class DaysOfWeekServiceImpl implements DaysOffWeekService, CommandLineRun
     @Override
     public void run(String... args) throws Exception
     {
-        initializeWeekdays();
+        if(daysOfWeekRepository.count() == 0) {
+            initializeWeekdays();
+        }
     }
 }

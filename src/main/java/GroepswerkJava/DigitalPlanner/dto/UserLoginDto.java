@@ -22,6 +22,8 @@ public class UserLoginDto {
     private String email;
     @NotEmpty(message = "Password should not be empty")
     private String password;
+    private StaffDto staffDto;
+    private Boolean changePassword;
     private List<Role> roles = new ArrayList<>();
 
 

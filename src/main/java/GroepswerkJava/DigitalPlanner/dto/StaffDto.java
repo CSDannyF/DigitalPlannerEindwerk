@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ public class StaffDto
    private String city;
    @NotEmpty
    private String phoneNumber;
-   @NotEmpty
    private LocalDate birthDate;
 
    private StaffDto personResponsible;
@@ -37,6 +35,6 @@ public class StaffDto
    private LocalDate startDate;
    private LocalDate endDate;
    private ContractTypeDto contractType;
-   private UserLogin userLogin;
+   //private UserLoginDto userLoginDto;
    private Set<DaysOffWeekDto> fixedDaysOff;
 }

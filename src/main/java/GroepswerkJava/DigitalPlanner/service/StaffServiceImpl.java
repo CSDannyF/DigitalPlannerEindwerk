@@ -22,6 +22,11 @@ public class StaffServiceImpl implements StaffService{
     @Autowired
     private StaffRepository staffRepository;
 
+    public StaffServiceImpl(StaffRepository staffRepository) {
+        this.staffRepository = staffRepository;
+    }
+
+
     @Override
     public List<StaffDto> getAll()
     {
@@ -38,54 +43,7 @@ public class StaffServiceImpl implements StaffService{
     public void saveStaff(StaffDto staffDto)
     {
         Staff staff = new Staff();
-        staff.setStaffFirstName(staffDto.getFirstName());
-        staff.setStaffLastName(staffDto.getLastName());
-        staff.setAddressLine1(staffDto.getAddressLine1());
-        staff.setAddressLine2(staffDto.getAddressLine2());
-        staff.setZipCode(staffDto.getZipcode());
-        staff.setCity(staffDto.getCity());
-        staff.setPhoneNumber(staffDto.getPhoneNumber());
-        staff.setStartDate(staffDto.getStartDate());
-        staff.setBirthDate(staffDto.getBirthDate());
-
-        //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
-        if (staffDto.getDepartment() != null)
-        {
-            DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
-            staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
-        }
-        if (staffDto.getContractType() != null)
-        {
-            ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
-            staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
-        }
-        if (staffDto.getFunction() != null)
-        {
-            StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
-            staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
-        }
-        if (staffDto.getStaffId() != 0)
-        {
-            staff.setPersonResponsible(mapToStaffModel(getById(staffDto.getStaffId())));
-        }
-        if (staffDto.getEndDate() != null)
-        {
-            staff.setEndDate(staffDto.getEndDate());
-        }
-
-        if (staffDto.getFixedDaysOff() != null)
-        {
-            Set<DaysOffWeek> daysOffWeeks = new HashSet<>();
-            DaysOfWeekServiceImpl daysOfWeekService = new DaysOfWeekServiceImpl();
-
-            for (DaysOffWeekDto days: staffDto.getFixedDaysOff())
-            {
-                DaysOffWeek daysOffWeek = daysOfWeekService.mapToDaysOffWeekModel(days);
-                daysOffWeeks.add(daysOffWeek);
-            }
-            staff.setDaysOffWeek(daysOffWeeks);
-        }
-
+        staff = mapToStaffModel(staffDto);
         staffRepository.save(staff);
     }
 
@@ -138,20 +96,73 @@ public class StaffServiceImpl implements StaffService{
             staffDto.setEndDate(staff.getEndDate());
         }
 
-        Set<DaysOffWeekDto> daysOffWeekDto = new HashSet<>();
-        for(DaysOffWeek day : staff.getDaysOffWeek())
+        if(staff.getDaysOffWeek() != null)
         {
-            daysOffWeekDto.add(daysOfWeekService.mapToDaysOffWeekDto(day));
+            Set<DaysOffWeekDto> daysOffWeekDto = new HashSet<>();
+            for(DaysOffWeek day : staff.getDaysOffWeek())
+            {
+                daysOffWeekDto.add(daysOfWeekService.mapToDaysOffWeekDto(day));
+            }
+            staffDto.setFixedDaysOff(daysOffWeekDto);
         }
-        staffDto.setFixedDaysOff(daysOffWeekDto);
+
 
         return staffDto;
     }
 
-    private Staff mapToStaffModel(StaffDto staffDto)
+    protected Staff mapToStaffModel(StaffDto staffDto)
     {
         Staff staff = new Staff();
-        staff.setStaffId(staffDto.getStaffId());
+        staff.setStaffFirstName(staffDto.getFirstName());
+        staff.setStaffLastName(staffDto.getLastName());
+        staff.setAddressLine1(staffDto.getAddressLine1());
+        staff.setAddressLine2(staffDto.getAddressLine2());
+        staff.setZipCode(staffDto.getZipcode());
+        staff.setCity(staffDto.getCity());
+        staff.setPhoneNumber(staffDto.getPhoneNumber());
+        staff.setStartDate(staffDto.getStartDate());
+        staff.setBirthDate(staffDto.getBirthDate());
+
+        //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
+        if (staffDto.getDepartment() != null)
+        {
+            DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
+            staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
+        }
+        if (staffDto.getContractType() != null)
+        {
+            ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
+            staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
+        }
+        if (staffDto.getFunction() != null)
+        {
+            StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
+            staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
+        }
+        if (staffDto.getStaffId() != 0)
+        {
+            Staff staff1 = new Staff();
+            staff1.setStaffId(getById(staffDto.getStaffId()).getStaffId());
+            staff.setPersonResponsible(staff1);
+        }
+        if (staffDto.getEndDate() != null)
+        {
+            staff.setEndDate(staffDto.getEndDate());
+        }
+
+        if (staffDto.getFixedDaysOff() != null)
+        {
+            Set<DaysOffWeek> daysOffWeeks = new HashSet<>();
+            DaysOfWeekServiceImpl daysOfWeekService = new DaysOfWeekServiceImpl();
+
+            for (DaysOffWeekDto days: staffDto.getFixedDaysOff())
+            {
+                DaysOffWeek daysOffWeek = daysOfWeekService.mapToDaysOffWeekModel(days);
+                daysOffWeeks.add(daysOffWeek);
+            }
+            staff.setDaysOffWeek(daysOffWeeks);
+        }
+
         return staff;
     }
 

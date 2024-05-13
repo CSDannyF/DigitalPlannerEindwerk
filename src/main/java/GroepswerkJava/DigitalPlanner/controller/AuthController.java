@@ -24,7 +24,7 @@ public class AuthController {
 
     @GetMapping("/")
     public String home() {
-        return "dashboard";
+        return "index";
     }
 
     @GetMapping("/login")
@@ -46,13 +46,15 @@ public class AuthController {
     }
 
     // handler method to handle register user form submit request
+    //nu is er een userlogin die niet gelinkt is aan een staff member:
+    //deze later linken aan een leeg staff object die achteraf kan worden aangevuld
     @PostMapping("/register")
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
                                Model model) {
-        UserLogin existing = userLoginService.findByEmail(userLoginDto.getEmail());
+        UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
 
-        if (existing != null) {
+        if (existing.getEmail() != null) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
         if (result.hasErrors()) {

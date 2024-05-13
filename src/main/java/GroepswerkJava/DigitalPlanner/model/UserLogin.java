@@ -27,7 +27,10 @@ public class UserLogin {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne
+    @Column(name = "changePassword", nullable = false)
+    private Boolean changePassword;
+
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "staffId")
     private Staff staff;
 

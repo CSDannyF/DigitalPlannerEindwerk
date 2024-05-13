@@ -2,6 +2,7 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
@@ -21,20 +22,38 @@ public class PlanningServiceImpl implements PlanningService{
     private PlanningRepository planningRepository;
 
     @Override
-    public void save(Planning planning) {
-        this.planningRepository.save(planning);
+    public void save(PlanningDto planningDto) {
+        //TODO implementeer methode
+        //this.planningRepository.save(planningDto);
     }
 
     @Override
-    public PlanningDto getByWorkingDay(WorkingDay workingDay) {
-        return mapToPlanningDto(planningRepository.findByWorkingDay(workingDay));
+    public PlanningDto getByWorkingDay(WorkingDayDto workingDayDto) {
+        return mapToPlanningDto(planningRepository.findByWorkingDay(mapFromWorkingDayDto(workingDayDto)));
+    }
+
+
+
+    //Dto mappers
+
+    private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){
+        WorkingDay workingDay = new WorkingDay();
+        workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
+        workingDay.setDate(workingDayDto.getDate());
+        workingDay.setOpen(workingDayDto.isOpen());
+        workingDay.setMinimalOccupation(workingDayDto.getMinimalOccupation());
+        workingDay.setStartTime(workingDayDto.getStartTime());
+        workingDay.setEndTime(workingDayDto.getEndTime());
+        return workingDay;
     }
 
     private PlanningDto mapToPlanningDto(Planning planning){
         PlanningDto planningDto = new PlanningDto();
         if(planning != null){
             planningDto.setPlanningId(planning.getPlanningId());
-            planningDto.setPlanningStatus(planning.getPlanningStatus().getPlanningStatusName());
+            if(planning.getPlanningStatus() != null){
+                planningDto.setPlanningStatus(planning.getPlanningStatus().getPlanningStatusName());
+            }
             planningDto.setPlannedByStaff(planning.getPlannedByStaff());
             planningDto.setPlannedDate(planning.getPlannedDate());
             List<PlanningDetailDto> planningDetailDtoList = new ArrayList<>();
@@ -55,7 +74,9 @@ public class PlanningServiceImpl implements PlanningService{
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
         planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
-        planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
+        if(planningDetail.getAvailability() != null){
+            planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
+        }
         return planningDetailDto;
     }
 }

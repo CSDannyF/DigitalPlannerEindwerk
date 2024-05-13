@@ -69,11 +69,11 @@
                 <div class="invalid-feedback">Birth date is required</div>
               </label>
 
-              <!--
-              <label class="form-label" th:object="${userLogin}">Email
-                <input th:field="*{email}" type="email" placeholder="email" class="form-control">
+              <label class="form-label" th:object="${userLogin}" for="email">Email
+                <input th:field="*{email}" type="email" placeholder="email" class="form-control" id="email" required>
+                <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                <div class="invalid-feedback">Email address is required</div>
               </label>
-              -->
 
               <label class="form-label" th:object="${departmentDto}">Department
                 <select  class="form-select" aria-label="Default select example" th:field="*{departmentId}">
