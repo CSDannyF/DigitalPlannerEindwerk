@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserLoginServiceImpl implements UserLoginService {
 
-    public UserLoginRepository userLoginRepository;
+    private UserLoginRepository userLoginRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private StaffRepository staffRepository;
