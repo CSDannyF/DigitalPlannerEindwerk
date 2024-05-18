@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -32,10 +32,10 @@ public class PlanningDetail {
     private Availability availability;
 
     @Column(name = "startTime")
-    private Time startTime;
+    private LocalTime startTime;
 
     @Column(name = "endTime")
-    private Time endTime;
+    private LocalTime endTime;
 
     @Column(name = "workMinutesPerDay")
     private int workMinutesPerDay;

@@ -36,7 +36,7 @@ public class PlanningServiceImpl implements PlanningService{
 
     //Dto mappers
 
-    private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){
+    public WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){    //effe op public, stond op private
         WorkingDay workingDay = new WorkingDay();
         workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
         workingDay.setDate(workingDayDto.getDate());
