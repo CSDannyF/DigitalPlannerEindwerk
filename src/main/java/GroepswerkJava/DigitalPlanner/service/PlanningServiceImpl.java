@@ -71,8 +71,8 @@ public class PlanningServiceImpl implements PlanningService{
     public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
-        planningDetailDto.setStartTime(planningDetail.getStartTime());
-        planningDetailDto.setEndTime(planningDetail.getEndTime());
+        planningDetailDto.setStartTime(planningDetail.getStartTime().toLocalTime());
+        planningDetailDto.setEndTime(planningDetail.getEndTime().toLocalTime());
         planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
         if(planningDetail.getAvailability() != null){
             planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());

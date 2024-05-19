@@ -15,6 +15,10 @@ import java.util.List;
 public class PlanningDto {
     private long planningId;
     private List<PlanningDetailDto> planningDetails;
+
+    //todo check of dit iets laat crashen
+    private WorkingDayDto workingDayDto;
+
     private String planningStatus;
     private String plannedByStaff;
     private LocalDate plannedDate;

@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -19,6 +21,15 @@ public class WorkingDayDto {
     private LocalTime startTime;
     private int minimalOccupation;
     private LocalTime endTime;
+
+    private DayOfWeek dayOfWeek;
+
+    public WorkingDayDto(LocalDate date){
+        this.date = date;
+        dayOfWeek = date.getDayOfWeek();
+    }
+
+
 
     @Override
     public String toString() {
