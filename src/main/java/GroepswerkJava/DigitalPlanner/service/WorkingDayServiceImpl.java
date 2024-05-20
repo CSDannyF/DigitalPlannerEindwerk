@@ -1,11 +1,14 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
+import GroepswerkJava.DigitalPlanner.repository.PlanningRepository;
 import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +23,12 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
 
+    private final PlanningRepository planningRepository;
+
     @Autowired
-    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository) {
+    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository, PlanningRepository planningRepository) {
         this.workingDayRepository = workingDayRepository;
+        this.planningRepository = planningRepository;
     }
 
     @Override
@@ -79,6 +85,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         long daysBetween = startDate.until(nextYearDate, ChronoUnit.DAYS);
 
         List<WorkingDay> workingDays = new ArrayList<>();
+        List<Planning> plannings = new ArrayList<>();
 
         for (int i = 0; i < daysBetween; i++) {
             for (WeeklyOpeningDay weeklyOpeningDay : weeklyOpeningDays) {
@@ -88,17 +95,24 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
+
                     workingDay.setOpen(weeklyOpeningDay.isOpen());
                     workingDay.setStartTime(weeklyOpeningDay.getStartTime());
                     workingDay.setEndTime(weeklyOpeningDay.getEndTime());
                     workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+
+                    Planning planning = new Planning();
+                    planning.setWorkingDay(workingDay);
+
                     workingDays.add(workingDay);
+                    plannings.add(planning);
                     break;
                 }
             }
             startDate = startDate.plusDays(1);
         }
         workingDayRepository.saveAll(workingDays);
+        planningRepository.saveAll(plannings);
     }
 
     @Override
