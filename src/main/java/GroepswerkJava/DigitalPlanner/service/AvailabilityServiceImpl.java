@@ -4,19 +4,23 @@ import GroepswerkJava.DigitalPlanner.dto.AvailabilityDto;
 import GroepswerkJava.DigitalPlanner.model.Availability;
 import GroepswerkJava.DigitalPlanner.repository.AvailabilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 @Service
-public class AvailabilityServiceImpl implements AvailabilityService {
+public class AvailabilityServiceImpl implements AvailabilityService, CommandLineRunner {
 
     @Autowired
     private AvailabilityRepository availabilityRepository;
+
+    private static final List<String> AVAILABILITIES = Arrays.asList("Available", "Sick", "Absence");
 
     @Override
     public List<AvailabilityDto> getAll() {
@@ -66,5 +70,23 @@ public class AvailabilityServiceImpl implements AvailabilityService {
         availability.setAvailabilityId(availabilityDto.getAvailabilityId());
         availability.setAvailabilityType(availabilityDto.getAvailabilityType());
         return availability;
+    }
+
+    private void initializeAvailabilities()
+    {
+        for (String availability: AVAILABILITIES)
+        {
+            Availability availability1 = new Availability();
+            availability1.setAvailabilityType(availability);
+            availabilityRepository.save(availability1);
+        }
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (availabilityRepository.count() == 0)
+        {
+            initializeAvailabilities();
+        }
     }
 }
