@@ -60,7 +60,7 @@ public class StaffServiceImpl implements StaffService{
         return mapToStaffDto(staff);
     }
 
-    private StaffDto mapToStaffDto(Staff staff)
+    public static StaffDto mapToStaffDto(Staff staff)
     {
         StaffDto staffDto = new StaffDto();
         staffDto.setStaffId(staff.getStaffId());

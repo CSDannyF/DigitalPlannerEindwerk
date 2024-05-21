@@ -8,6 +8,7 @@ import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.PlanningDetailRepository;
 import GroepswerkJava.DigitalPlanner.repository.PlanningRepository;
+import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,6 +29,9 @@ public class PlanningServiceImpl implements PlanningService {
     @Autowired
     private PlanningDetailRepository planningDetailRepository;
 
+    @Autowired
+    private PlanningStatusRepository planningStatusRepository;
+
     @Override
     public void save(PlanningDto planningDto) {
         //TODO implementeer methode
@@ -36,9 +41,15 @@ public class PlanningServiceImpl implements PlanningService {
     @Override
     public void saveAll(@NonNull List<PlanningDto> planningDtoList) {
         for (PlanningDto planningDto : planningDtoList) {
-            System.out.println("workingday; " + planningDto.getWorkingDayDto());
+            Optional<Planning> existingPlanning = planningRepository.findById(planningDto.getPlanningId());
+            Planning planning;
+            if(existingPlanning.isPresent()){
+                planning = existingPlanning.get();
+                updatePlanningFromDto(planning, planningDto);
+            } else {
+                planning = mapToPlanning(planningDto);
+            }
 
-            Planning planning = mapToPlanning(planningDto);
             planningRepository.save(planning);
 
             for (PlanningDetail detail : planning.getPlanningDetails()) {
@@ -46,6 +57,23 @@ public class PlanningServiceImpl implements PlanningService {
             }
         }
     }
+
+    private void updatePlanningFromDto(Planning planning, PlanningDto planningDto) {
+        planning.setPlannedByStaff(planningDto.getPlannedByStaff());
+        planning.setPlannedDate(planningDto.getPlannedDate());
+        planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName(planningDto.getPlanningStatus()));
+        List<PlanningDetail> planningDetails = planningDto.getPlanningDetails().stream()
+                .map(detailDto -> {
+                    PlanningDetail detail = new PlanningDetail();
+                    detail.setStartTime(detailDto.getStartTime());
+                    detail.setEndTime(detailDto.getEndTime());
+                    detail.setPlanning(planning);
+                    return detail;
+                }).collect(Collectors.toList());
+
+        planning.setPlanningDetails(planningDetails);
+    }
+
 
     @Override
     public PlanningDto getByWorkingDay(WorkingDayDto workingDayDto) {
@@ -55,24 +83,20 @@ public class PlanningServiceImpl implements PlanningService {
 
 
     //Dto mappers
-
     private Planning mapToPlanning(PlanningDto planningDto) {
         Planning planning = new Planning();
-        // set properties from planningDto to planning
-        // you might need to convert DTO properties to entity properties
+
         planning.setPlannedByStaff(planningDto.getPlannedByStaff());
         planning.setPlannedDate(planningDto.getPlannedDate());
-        planning.setWorkingDay(mapFromWorkingDayDto(planningDto.getWorkingDayDto())); // convert WorkingDayDto to WorkingDay if necessary
+        planning.setWorkingDay(mapFromWorkingDayDto(planningDto.getWorkingDayDto()));
 
         // Convert and set PlanningDetail list
         List<PlanningDetail> planningDetails = planningDto.getPlanningDetails().stream()
                 .map(detailDto -> {
                     PlanningDetail detail = new PlanningDetail();
-                    // set properties from detailDto to detail
                     detail.setStartTime(detailDto.getStartTime());
                     detail.setEndTime(detailDto.getEndTime());
                     detail.setPlanning(planning);
-                    // set other properties if necessary
                     return detail;
                 }).collect(Collectors.toList());
 
@@ -117,7 +141,14 @@ public class PlanningServiceImpl implements PlanningService {
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
-        planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
+
+
+
+
+        //TODO
+        planningDetailDto.setStaff((planningDetail.getStaff().getStaffFirstName()));
+
+//        planningDetailDto.setStaff(StaffServiceImpl.mapToStaffDto(planningDetail.getStaff().getStaffFirstName()));
         if (planningDetail.getAvailability() != null) {
             planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
         }

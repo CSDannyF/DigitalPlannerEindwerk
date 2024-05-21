@@ -39,7 +39,10 @@ public class PlanningDetailMapper {
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
+
         planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
+
+//        planningDetailDto.setStaff(StaffServiceImpl.mapToStaffDto(planningDetail.getStaff()));
         if (planningDetail.getAvailability() != null) {
             planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
         }

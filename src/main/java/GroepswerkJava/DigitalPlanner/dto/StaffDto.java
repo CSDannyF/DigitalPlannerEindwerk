@@ -37,4 +37,12 @@ public class StaffDto
    private ContractTypeDto contractType;
    //private UserLoginDto userLoginDto;
    private Set<DaysOffWeekDto> fixedDaysOff;
+
+   @Override
+   public String toString() {
+      return "StaffDto{" +
+              "firstName='" + firstName + '\'' +
+              ", lastName='" + lastName + '\'' +
+              '}';
+   }
 }

@@ -19,7 +19,8 @@ public class Planning {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningId;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+//    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne
     @JoinColumn(name = "workingDayId", referencedColumnName = "workingDayId")
     private WorkingDay workingDay;
 
