@@ -1,5 +1,7 @@
 package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 
+import GroepswerkJava.DigitalPlanner.dto.StaffDto;
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
@@ -7,5 +9,5 @@ import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import java.util.List;
 
 public interface PlanningGenerator {
-    Response generatePlanning(List<Staff> staff, List<WorkingDay> workingDays);
+    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays);
 }

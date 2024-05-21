@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PlanningStatusDto {
+    private long planningStatusId;
     private String planningStatusName;
 }

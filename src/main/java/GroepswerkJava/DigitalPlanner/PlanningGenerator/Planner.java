@@ -1,12 +1,8 @@
 package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 
-import GroepswerkJava.DigitalPlanner.dto.StaffDto;
-import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.*;
-import GroepswerkJava.DigitalPlanner.service.PlanningServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.PlanningStatusServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.StaffServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
+import GroepswerkJava.DigitalPlanner.service.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +13,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Getter
 @Setter
 @Component
 public class Planner implements PlanningGenerator {
 
     @Autowired
-    private PlanningStatusServiceImpl planningStatusService;
+    private AvailabilityServiceImpl availabilityService;  //geeft aan dat repo null is bij aanroepen, doet dit bij alle repos in deze klasse damn son
 
     @Autowired
     private WorkingDayService workingDayService;
@@ -35,17 +30,13 @@ public class Planner implements PlanningGenerator {
     @Autowired
     private StaffServiceImpl staffService;
 
-
-
-    private List<Staff> staff = new ArrayList<>();
-    private List<WorkingDay> workingDays = new ArrayList<>();
-    private List<Planning> plannings = new ArrayList<>();
+    private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
     @Override
-    public Response generatePlanning(List<Staff> staff, List<WorkingDay> workingDays/*, List<Planning> plannings*/)
+    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays)
     {
         List<String> logging = new ArrayList<>();
-        List<Planning> planningList = new ArrayList<>();
+        List<PlanningDto> planningList = new ArrayList<>();
         Response response = new Response();
 
         logging.add("check if workingdays has 7 days");
@@ -61,45 +52,49 @@ public class Planner implements PlanningGenerator {
             logging.add("Checking if every workingDay has a corresponding Planning");
             //planningStatusService.getAll();
 
-            planningList = FakeSetWorkingDayToPlanning(workingDays);        // als dit werkt moet de planning niet worden meegegeven in de methode want deze zit in de workingDays
-            logging.add("Checked on corresponding workingDay done");
+            //planningList = setWorkingDayToPlanning(workingDays);        // als dit werkt moet de planning niet worden meegegeven in de methode want deze zit in de workingDays
+            //logging.add("Checked on corresponding workingDay done");
 
-            for (Planning planning: planningList)
+            for (WorkingDayDto day: workingDays)
             {
-                List<PlanningDetail> planningDetails = new ArrayList<>();
+                List<PlanningDetailDto> planningDetails = new ArrayList<>();
+                PlanningDto planning = day.getPlanningDto();
+                planning.setWorkingDayDto(day);
+
                 planning.setPlannedDate(LocalDate.now());
                 planning.setPlanningDetails(planningDetails);
 
-                if(isDayPlanned(planning)){
+                if(isDayPlannedAndOpen(planning)){
                     logging.add("PlanningDay is not complete \n" + "Start planning");
 
-                    LocalTime startTime = planning.getWorkingDay().getStartTime();
-                    LocalTime endTime = planning.getWorkingDay().getEndTime();
+                    LocalTime startTime = planning.getWorkingDayDto().getStartTime();
+                    LocalTime endTime = planning.getWorkingDayDto().getEndTime();
 
                     //Set the total work hours for the day
                     logging.add("Setting the parameters for the planning day");
-                    int minOccupation = planning.getWorkingDay().getMinimalOccupation();
+                    int minOccupation = planning.getWorkingDayDto().getMinimalOccupation();
                     int openingsHours = endTime.getHour() - startTime.getHour();
                     int totalWorkHours = minOccupation * openingsHours;
 
                     //loop trough staffmembers to set de planningDetail
                     logging.add("looping trough the staffmembers");
-                    for(Staff staff1 : staff)
+                    for(StaffDto staff1 : staff)
                     {
                         //set staff to planningdetail and add to planning
-                        PlanningDetail detail = new PlanningDetail();
+                        PlanningDetailDto detail = new PlanningDetailDto();
 
-                        //detail.setAvailability();
 
                         //check if schedule for the day is full, if not  set work
-                        logging.add("check if plannning day" + planning.getWorkingDay().getDate() + "needs more staff members");
+                        logging.add("check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members");
                         if(minOccupation > 0)
                         {
-                            logging.add("There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member " + staff1.getStaffFirstName());
+                            logging.add("There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member " + staff1.getFirstName());
                             detail.setStartTime(startTime);
                             detail.setEndTime(endTime);
                             detail.setStaff(staff1);
                             detail.setWorkMinutesPerDay(openingsHours*60); //todo moet worden veranderd naar uur?
+                            //detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+
                             totalWorkHours -= openingsHours;               //subtract openingshours/workinghours of totalWorkHours
                             minOccupation -= 1;                            //subtract employee of minOccupation
                         } else
@@ -107,6 +102,7 @@ public class Planner implements PlanningGenerator {
                             logging.add("The day is fully planned, no more staff needed");
                             detail.setWorkMinutesPerDay(0);
                             detail.setStaff(staff1);
+                            //detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
                         }
 
                         //add planningDetail to planning
@@ -114,6 +110,7 @@ public class Planner implements PlanningGenerator {
                         planningDetails.add(detail);
                     }
                 }
+                planningList.add(planning);
             }
         }
         response.setPlannings(planningList);
@@ -125,38 +122,40 @@ public class Planner implements PlanningGenerator {
     //new planning object corresponding to the workingDay object
 
     //de datum van het planning object en workingday object moeten hier nog hetzelfde gemaakt worden
-    public List<Planning> setWorkingDayToPlanning(List<WorkingDay> workingDays)
+    /*
+    public List<PlanningDto> setWorkingDayToPlanning(List<WorkingDayDto> workingDays)
     {
-        PlanningStatus planningStatus = planningStatusService.findByPlanningStatusName("Not planned");
+        planningStatusServiceImpl.getAll();
+        PlanningStatusDto planningStatus = planningStatusServiceImpl.findByPlanningStatusName("Not planned");
 
-        for(WorkingDay workingDay: workingDays)
+        for(WorkingDayDto workingDay: workingDays)
         {
-            if(workingDay.getPlanning() == null)
+            if(workingDay.getPlanningDto() == null)
             {
-                Planning planning = new Planning();
-                planning.setWorkingDay(workingDay);
-                planning.setPlanningStatus(planningStatus);
+                PlanningDto planning = new PlanningDto();
+                planning.setWorkingDayDto(workingDay);
+                planning.setPlanningStatusDto(planningStatus);
                 plannings.add(planning);
             } else {
-                plannings.add(workingDay.getPlanning());
+                plannings.add(workingDay.getPlanningDto());
             }
         }
         return plannings;
     }
 
+     */
 
     //check if day is planned
-    private boolean isDayPlanned(Planning planning)
+    private boolean isDayPlannedAndOpen(PlanningDto planning)
     {
-        if(planning.getPlanningStatus().getPlanningStatusId() <= 2)
+        if(planning.getPlanningStatusDto().getPlanningStatusId() <= 2)
         {
-            return planning.getWorkingDay().isOpen();
+            return planning.getWorkingDayDto().isOpen();
         }
         else {
             return false;
         }
     }
-
 
     //dummy data staff
     public List<Staff> createStaff()
@@ -236,62 +235,5 @@ public class Planner implements PlanningGenerator {
         workingDays.add(workingDay6);
         workingDays.add(workingDay7);
         return workingDays;
-    }
-
-    //deze wordt voorlopig gebruikt in de generate() omdat mijn services null zijn
-    public List<Planning> FakeSetWorkingDayToPlanning(List<WorkingDay> workingDays)
-    {
-        PlanningStatus planningStatus = new PlanningStatus();
-        planningStatus.setPlanningStatusName("Not planned");
-
-        for(WorkingDay workingDay: workingDays)
-        {
-            if(workingDay.getPlanning() == null)
-            {
-                Planning planning = new Planning();
-                planning.setWorkingDay(workingDay);
-                planning.setPlanningStatus(planningStatus);
-                plannings.add(planning);
-            } else {
-                plannings.add(workingDay.getPlanning());
-            }
-        }
-        return plannings;
-    }
-
-
-    //plannen met services maar krijg hier nullpointerfout op
-    public void plan() {
-
-        Planner planner = new Planner();
-
-        List<StaffDto> staffDtos = new ArrayList<>();
-        List<Staff> staffList = new ArrayList<>();
-        for (StaffDto staffDto : staffDtos) {
-            Staff staff = staffService.mapToStaffModel(staffDto);
-            staffList.add(staff);
-        }
-
-
-        List<WorkingDay> workingDay = new ArrayList<>();
-        LocalDate date = LocalDate.of(2024,7,1);
-        for(int i = 0; i < 7; i++) {
-            WorkingDayDto workingDayDto = workingDayService.getByDate(date);
-
-            workingDay.add(planningService.mapFromWorkingDayDto(workingDayDto));
-            date = date.plusDays(1);
-        }
-
-        List<Planning> plannings= new ArrayList<>();
-/*
-        for(WorkingDay workingDay1 : workingDay) {
-            workingDayService.getAllDto()
-
-            planningService.getByWorkingDay()
-            plannings.add()
-        }
-
- */
-        Response response = planner.generatePlanning(staffList,workingDay);
     }
 }

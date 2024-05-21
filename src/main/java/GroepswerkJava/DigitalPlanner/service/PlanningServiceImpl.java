@@ -1,12 +1,11 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
-import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
-import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.PlanningRepository;
+import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,15 @@ public class PlanningServiceImpl implements PlanningService{
 
     @Autowired
     private PlanningRepository planningRepository;
+
+    @Autowired
+    private StaffServiceImpl staffService;
+
+    @Autowired
+    private AvailabilityServiceImpl availabilityService;
+
+    @Autowired
+    private PlanningStatusRepository planningStatusRepository;
 
     @Override
     public void save(PlanningDto planningDto) {
@@ -47,12 +55,18 @@ public class PlanningServiceImpl implements PlanningService{
         return workingDay;
     }
 
-    private PlanningDto mapToPlanningDto(Planning planning){
+    protected PlanningDto mapToPlanningDto(Planning planning){
         PlanningDto planningDto = new PlanningDto();
+        PlanningStatusServiceImpl planningStatusService = new PlanningStatusServiceImpl(planningStatusRepository);
+
         if(planning != null){
+
             planningDto.setPlanningId(planning.getPlanningId());
             if(planning.getPlanningStatus() != null){
-                planningDto.setPlanningStatus(planning.getPlanningStatus().getPlanningStatusName());
+
+                //map to planningStatusDto
+                PlanningStatusDto planningStatusDto = planningStatusService.mapToPlanningStatusDto(planning.getPlanningStatus());
+                planningDto.setPlanningStatusDto(planningStatusDto);
             }
             planningDto.setPlannedByStaff(planning.getPlannedByStaff());
             planningDto.setPlannedDate(planning.getPlannedDate());
@@ -63,7 +77,7 @@ public class PlanningServiceImpl implements PlanningService{
             }
             planningDto.setPlanningDetails(planningDetailDtoList);
         } else {
-            planningDto.setPlanningStatus("np");
+            planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Not planned"));
         }
         return planningDto;
     }
@@ -73,9 +87,14 @@ public class PlanningServiceImpl implements PlanningService{
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
-        planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
+        planningDetailDto.setWorkMinutesPerDay(planningDetail.getWorkMinutesPerDay());
+
+        StaffDto staffDto = staffService.mapToStaffDto(planningDetail.getStaff());
+        planningDetailDto.setStaff(staffDto);
+
         if(planningDetail.getAvailability() != null){
-            planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
+            AvailabilityDto availabilityDto = availabilityService.mapToAvailabilityDto(planningDetail.getAvailability());
+            planningDetailDto.setAvailability(availabilityDto);
         }
         return planningDetailDto;
     }

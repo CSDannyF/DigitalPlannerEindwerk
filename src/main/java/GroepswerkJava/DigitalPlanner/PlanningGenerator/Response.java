@@ -1,6 +1,6 @@
 package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 
-import GroepswerkJava.DigitalPlanner.model.Planning;
+import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Response {
-    private List<Planning> plannings;
-    private List<String> logging;  // Todo misschien nog wegschrijven in csv file
+    private List<PlanningDto> plannings;
+    private List<String> logging;
 }

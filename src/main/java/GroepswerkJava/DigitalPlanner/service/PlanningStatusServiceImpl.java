@@ -5,19 +5,22 @@ import GroepswerkJava.DigitalPlanner.model.PlanningStatus;
 import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 @Service
 public class PlanningStatusServiceImpl implements PlanningStatusService, CommandLineRunner {
 
     @Autowired
     private PlanningStatusRepository planningStatusRepository;
+
+    public PlanningStatusServiceImpl(PlanningStatusRepository planningStatusRepository)
+    {
+        this.planningStatusRepository = planningStatusRepository;
+    }
 
     private static final List<String> PLANNING_STATUSES = Arrays.asList("Planned manually", "Planned OK", "Planned NOK", "Not planned", "Closed");
 
@@ -45,11 +48,11 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
-    public PlanningStatus findByPlanningStatusName(String planningStatusName) {
-        PlanningStatus planningStatus = new PlanningStatus();
+    public PlanningStatusDto findByPlanningStatusName(String planningStatusName) {
+        PlanningStatusDto planningStatus = new PlanningStatusDto();
         if(planningStatusRepository.findByPlanningStatusName(planningStatusName) != null)
         {
-            planningStatus = planningStatusRepository.findByPlanningStatusName(planningStatusName);
+            planningStatus = mapToPlanningStatusDto(planningStatusRepository.findByPlanningStatusName(planningStatusName));
         }
         return planningStatus;
     }
