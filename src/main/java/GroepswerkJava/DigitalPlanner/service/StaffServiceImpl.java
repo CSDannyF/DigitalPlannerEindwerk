@@ -109,7 +109,7 @@ public class StaffServiceImpl implements StaffService{
         return staffDto;
     }
 
-    protected Staff mapToStaffModel(StaffDto staffDto)
+    public Staff mapToStaffModel(StaffDto staffDto)
     {
         Staff staff = new Staff();
         staff.setStaffFirstName(staffDto.getFirstName());

@@ -41,6 +41,7 @@ public class StaffDto
    @Override
    public String toString() {
       return "StaffDto{" +
+              "id='" + staffId + '\'' +
               "firstName='" + firstName + '\'' +
               ", lastName='" + lastName + '\'' +
               '}';

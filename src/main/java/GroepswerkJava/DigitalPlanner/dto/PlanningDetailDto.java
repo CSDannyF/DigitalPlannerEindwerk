@@ -15,7 +15,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class PlanningDetailDto {
     private long planningDetailId;
+//    private StaffDto staff;
     private String staff;
+    private long staffId;
+
     private String availability;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -25,6 +28,8 @@ public class PlanningDetailDto {
         return "PlanningDetailDto{" +
                 "Id=" + planningDetailId +
                 ", staff=" + staff +
+                ", staffId=" + staffId +
+
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", availability=" + availability +

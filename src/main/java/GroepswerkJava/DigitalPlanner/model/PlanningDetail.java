@@ -19,11 +19,11 @@ public class PlanningDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningDetailId;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "planningId", nullable = false)
     private Planning planning;
 
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "staffId")
     private Staff staff;
 
@@ -44,7 +44,7 @@ public class PlanningDetail {
     public String toString() {
         return "PlanningDetail{" +
                 "planningDetailId=" + planningDetailId +
-                ", staff=" + staff.getStaffFirstName() +
+                ", staff=" + staff +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 '}';

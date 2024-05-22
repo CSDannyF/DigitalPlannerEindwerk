@@ -92,4 +92,13 @@ public class Staff {
     @Lob
     @Column(name = "userImageData")
     private byte[] userImageData;
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "staffId=" + staffId +
+                ", staffFirstName='" + staffFirstName + '\'' +
+                ", staffLastName='" + staffLastName + '\'' +
+                '}';
+    }
 }

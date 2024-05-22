@@ -17,8 +17,7 @@
     <div class="row">
 
         <!--        TODO fix deze regel zodat plannings horizontaal worden getoond-->
-        <form th:action="@{/weekPlanning/approve}" method="post">
-
+<!--        <form th:action="@{/weekPlanning/approve}" method="post">-->
 
             <div class="col" th:each="planning, iStat : ${weekWrapper.weekPlanning}">
                 <div class="card bg-dark text-white mb-3">
@@ -37,29 +36,30 @@
                         </thead>
                         <tbody>
                         <tr th:each="detail, jStat : ${planning.planningDetails}">
-<!--                            <td th:text="${detail.staff.firstName} + ', ' +  ${detail.staff.lastName}"></td>-->
-<!--                            TODO-->
                             <td th:text="${detail.staff} + ', ' +  ${detail.staff}"></td>
-
                             <td th:text="${detail.startTime} + ' - ' + ${detail.endTime}"></td>
-                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].planningDetailId" th:value="${detail.planningDetailId}" />
-                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].staff" th:value="${detail.staff}" />
-                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].availability" th:value="${detail.availability}" />
-                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].startTime" th:value="${detail.startTime}" />
-                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].endTime" th:value="${detail.endTime}" />
-                        </tr>
+
+<!--                            TODO ALS WE DIT NIET GEBRUIKEN  NOG TE VERWIJDEREN-->
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].planningDetailId" th:value="${detail.planningDetailId}" />-->
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].staff" th:value="${detail.staff}" />-->
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].staffId" th:value="${detail.staffId}" />-->
+
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].availability" th:value="${detail.availability}" />-->
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].startTime" th:value="${detail.startTime}" />-->
+<!--                            <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningDetails[__${jStat.index}__].endTime" th:value="${detail.endTime}" />-->
+<!--                        </tr>-->
                         </tbody>
                     </table>
-                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningId" th:value="${planning.planningId}" />
-                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningStatus" th:value="${planning.planningStatus}" />
-                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].plannedByStaff" th:value="${planning.plannedByStaff}" />
-                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].plannedDate" th:value="${planning.plannedDate}" />
-                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].workingDayDto.workingDayId" th:value="${planning.workingDayDto.workingDayId}" />
+<!--                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningId" th:value="${planning.planningId}" />-->
+<!--                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].planningStatus" th:value="${planning.planningStatus}" />-->
+<!--                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].plannedByStaff" th:value="${planning.plannedByStaff}" />-->
+<!--                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].plannedDate" th:value="${planning.plannedDate}" />-->
+<!--                    <input type="hidden" th:name="weekPlanning[__${iStat.index}__].workingDayDto.workingDayId" th:value="${planning.workingDayDto.workingDayId}" />-->
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="col text-center">
-                    <button class="btn btn-danger mx-2" type="submit" formaction="@{/weekPlanning/disapprove}">Disapprove / Regenerate</button>
+<!--                    <button class="btn btn-danger mx-2" type="submit" formaction="@{/weekPlanning/disapprove}">Disapprove / Regenerate</button>-->
                     <button class="btn btn-success mx-2" type="submit">Approve / Finalize</button>
                 </div>
             </div>

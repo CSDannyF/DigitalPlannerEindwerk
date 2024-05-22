@@ -9,4 +9,5 @@ public interface StaffService {
     void saveStaff(StaffDto staffDto);
     StaffDto getById(long id);
     List<StaffDto> getAll();
+    Staff mapToStaffModel(StaffDto staffDto);
 }

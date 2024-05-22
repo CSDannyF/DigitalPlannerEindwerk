@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,6 +31,9 @@ public class PlanningServiceImpl implements PlanningService {
     @Autowired
     private PlanningStatusRepository planningStatusRepository;
 
+    @Autowired
+    StaffService staffService;
+
     @Override
     public void save(PlanningDto planningDto) {
         //TODO implementeer methode
@@ -40,38 +42,7 @@ public class PlanningServiceImpl implements PlanningService {
 
     @Override
     public void saveAll(@NonNull List<PlanningDto> planningDtoList) {
-        for (PlanningDto planningDto : planningDtoList) {
-            Optional<Planning> existingPlanning = planningRepository.findById(planningDto.getPlanningId());
-            Planning planning;
-            if(existingPlanning.isPresent()){
-                planning = existingPlanning.get();
-                updatePlanningFromDto(planning, planningDto);
-            } else {
-                planning = mapToPlanning(planningDto);
-            }
 
-            planningRepository.save(planning);
-
-            for (PlanningDetail detail : planning.getPlanningDetails()) {
-                planningDetailRepository.save(detail);
-            }
-        }
-    }
-
-    private void updatePlanningFromDto(Planning planning, PlanningDto planningDto) {
-        planning.setPlannedByStaff(planningDto.getPlannedByStaff());
-        planning.setPlannedDate(planningDto.getPlannedDate());
-        planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName(planningDto.getPlanningStatus()));
-        List<PlanningDetail> planningDetails = planningDto.getPlanningDetails().stream()
-                .map(detailDto -> {
-                    PlanningDetail detail = new PlanningDetail();
-                    detail.setStartTime(detailDto.getStartTime());
-                    detail.setEndTime(detailDto.getEndTime());
-                    detail.setPlanning(planning);
-                    return detail;
-                }).collect(Collectors.toList());
-
-        planning.setPlanningDetails(planningDetails);
     }
 
 
@@ -81,11 +52,11 @@ public class PlanningServiceImpl implements PlanningService {
     }
 
 
-
     //Dto mappers
     private Planning mapToPlanning(PlanningDto planningDto) {
         Planning planning = new Planning();
 
+        planning.setPlanningId(planningDto.getPlanningId());
         planning.setPlannedByStaff(planningDto.getPlannedByStaff());
         planning.setPlannedDate(planningDto.getPlannedDate());
         planning.setWorkingDay(mapFromWorkingDayDto(planningDto.getWorkingDayDto()));
@@ -94,12 +65,14 @@ public class PlanningServiceImpl implements PlanningService {
         List<PlanningDetail> planningDetails = planningDto.getPlanningDetails().stream()
                 .map(detailDto -> {
                     PlanningDetail detail = new PlanningDetail();
+                    detail.setPlanningDetailId(detailDto.getPlanningDetailId());
                     detail.setStartTime(detailDto.getStartTime());
                     detail.setEndTime(detailDto.getEndTime());
                     detail.setPlanning(planning);
                     return detail;
                 }).collect(Collectors.toList());
 
+//        List<PlanningDetail> planningDetails = new ArrayList<>();
         planning.setPlanningDetails(planningDetails);
         return planning;
     }
@@ -141,14 +114,13 @@ public class PlanningServiceImpl implements PlanningService {
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
+        if(planningDetail.getStaff() != null){
+            planningDetailDto.setStaffId(planningDetail.getStaff().getStaffId());
+        }
 
-
-
-
-        //TODO
-        planningDetailDto.setStaff((planningDetail.getStaff().getStaffFirstName()));
-
-//        planningDetailDto.setStaff(StaffServiceImpl.mapToStaffDto(planningDetail.getStaff().getStaffFirstName()));
+        if(planningDetail.getStaff() != null){
+            planningDetailDto.setStaff(planningDetail.getStaff().getStaffFirstName());
+        }
         if (planningDetail.getAvailability() != null) {
             planningDetailDto.setAvailability(planningDetail.getAvailability().getAvailabilityType());
         }
