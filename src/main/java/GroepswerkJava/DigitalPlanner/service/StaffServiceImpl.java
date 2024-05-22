@@ -26,7 +26,6 @@ public class StaffServiceImpl implements StaffService{
         this.staffRepository = staffRepository;
     }
 
-
     @Override
     public List<StaffDto> getAll()
     {
@@ -60,7 +59,7 @@ public class StaffServiceImpl implements StaffService{
         return mapToStaffDto(staff);
     }
 
-    public static StaffDto mapToStaffDto(Staff staff)
+    protected StaffDto mapToStaffDto(Staff staff)
     {
         StaffDto staffDto = new StaffDto();
         staffDto.setStaffId(staff.getStaffId());
@@ -109,7 +108,7 @@ public class StaffServiceImpl implements StaffService{
         return staffDto;
     }
 
-    public Staff mapToStaffModel(StaffDto staffDto)
+    public Staff mapToStaffModel(StaffDto staffDto)  //tijdelijk op public gezet, moet protected zijn ofwel extra methode de lijst van staff trg geeft
     {
         Staff staff = new Staff();
         staff.setStaffFirstName(staffDto.getFirstName());
@@ -174,5 +173,4 @@ public class StaffServiceImpl implements StaffService{
     Bij de mappToStaffModel() map ik terug naar  het model, maar hier gebruik ik voorlopig enkel het id omdat dit nu
     enkel wordt toegepast bij het creëren van de hiërarchie. Deze kan uitgebreidt worden wanneer de Staff zijn velden worden aangepast.
      */
-
 }

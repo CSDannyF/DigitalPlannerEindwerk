@@ -4,16 +4,16 @@ import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
-import GroepswerkJava.DigitalPlanner.repository.PlanningRepository;
+import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
 import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,17 +23,23 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
 
-    private final PlanningRepository planningRepository;
+    private final PlanningStatusRepository planningStatusRepository;
 
     @Autowired
-    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository, PlanningRepository planningRepository) {
+    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository, PlanningStatusRepository planningStatusRepository) {
         this.workingDayRepository = workingDayRepository;
-        this.planningRepository = planningRepository;
+        this.planningStatusRepository = planningStatusRepository;
     }
 
     @Override
     public List<WorkingDay> getAll() {
         return workingDayRepository.findAll();
+    }
+
+    @Override
+    public List<WorkingDayDto> getByWeekNumber(int weekNumber) {
+        List<WorkingDay> workingDays = workingDayRepository.findByWeekNumber(weekNumber);
+        return mapToDtoList(workingDays);
     }
 
     @Override
@@ -72,7 +78,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         }
     }
 
-
     /**
      * Fill workingday until end of year
      *
@@ -95,14 +100,17 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
-
                     workingDay.setOpen(weeklyOpeningDay.isOpen());
                     workingDay.setStartTime(weeklyOpeningDay.getStartTime());
                     workingDay.setEndTime(weeklyOpeningDay.getEndTime());
                     workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+                    workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
 
                     Planning planning = new Planning();
+                    planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
+
                     planning.setWorkingDay(workingDay);
+                    workingDay.setPlanning(planning);
 
                     workingDays.add(workingDay);
                     plannings.add(planning);
@@ -112,7 +120,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             startDate = startDate.plusDays(1);
         }
         workingDayRepository.saveAll(workingDays);
-        planningRepository.saveAll(plannings);
     }
 
     @Override
@@ -125,7 +132,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         WorkingDay workingDay = workingDayRepository.findByDate(date);
         return mapToDto(workingDay);
     }
-
 
     public void deleteAll() {
         workingDayRepository.deleteAll();
@@ -140,6 +146,10 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             workingDayDto.setEndTime(workingDay.getEndTime());
             workingDayDto.setMinimalOccupation(workingDay.getMinimalOccupation());
             workingDayDto.setOpen(workingDay.isOpen());
+            workingDayDto.setWeekNumber(workingDay.getWeekNumber());
+
+            PlanningServiceImpl planningService = new PlanningServiceImpl();
+            workingDayDto.setPlanningDto(planningService.mapToPlanningDto(workingDay.getPlanning()));
         }
         return workingDayDto;
     }

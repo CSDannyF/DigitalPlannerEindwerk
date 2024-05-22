@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.WeekFields;
 
 @Getter
 @Setter
@@ -25,6 +26,9 @@ public class WorkingDay {
     @Column(name = "date",nullable = false, unique = true)
     @Temporal(TemporalType.DATE)
     private LocalDate date;
+
+    @Column(name = "weekNumber", nullable = false)
+    private int weekNumber;
 
     @Column(name = "isOpen", nullable = false)
     private boolean isOpen;

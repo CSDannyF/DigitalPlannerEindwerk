@@ -1,8 +1,11 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.model.PlanningStatus;
+import GroepswerkJava.DigitalPlanner.dto.PlanningStatusDto;
+
+import java.util.List;
 
 public interface PlanningStatusService {
-    PlanningStatus findByPlanningStatusName(String name);
-
+    List<PlanningStatusDto> getAll();
+    void save(PlanningStatusDto planningStatusDto);
+    PlanningStatusDto findByPlanningStatusName(String planningStatusName);
 }
