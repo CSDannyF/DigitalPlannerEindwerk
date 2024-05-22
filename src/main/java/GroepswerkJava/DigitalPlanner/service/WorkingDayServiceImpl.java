@@ -154,6 +154,20 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         return workingDayDto;
     }
 
+    protected WorkingDay mapToWorkingDayModel(WorkingDayDto workingDayDto)
+    {
+        WorkingDay workingDay = new WorkingDay();
+        workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
+        workingDay.setDate(workingDayDto.getDate());
+        workingDay.setStartTime(workingDayDto.getStartTime());
+        workingDay.setEndTime(workingDayDto.getEndTime());
+        workingDay.setMinimalOccupation(workingDayDto.getMinimalOccupation());
+        workingDay.setOpen(workingDayDto.isOpen());
+        workingDay.setWeekNumber(workingDayDto.getWeekNumber());
+
+        return workingDay;
+    }
+
     public List <WorkingDayDto> mapToDtoList(List<WorkingDay> workingDays){
         List<WorkingDayDto> workingDayDtos = new ArrayList<>();
         for(WorkingDay workingDay: workingDays){
@@ -162,4 +176,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         }
         return workingDayDtos;
     }
+
+
 }

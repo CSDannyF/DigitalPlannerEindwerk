@@ -13,27 +13,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 @Component
 public class Planner implements PlanningGenerator {
-
-    @Autowired
-    private AvailabilityServiceImpl availabilityService;  //geeft aan dat repo null is bij aanroepen, doet dit bij alle repos in deze klasse damn son
-
-    @Autowired
-    private WorkingDayService workingDayService;
-
-    @Autowired
-    private PlanningServiceImpl planningService;
-
-    @Autowired
-    private StaffServiceImpl staffService;
 
     private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
     @Override
-    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays)
+    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService)
     {
         List<String> logging = new ArrayList<>();
         List<PlanningDto> planningList = new ArrayList<>();
@@ -93,7 +79,7 @@ public class Planner implements PlanningGenerator {
                             detail.setEndTime(endTime);
                             detail.setStaff(staff1);
                             detail.setWorkMinutesPerDay(openingsHours*60); //todo moet worden veranderd naar uur?
-                            //detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+                            detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
 
                             totalWorkHours -= openingsHours;               //subtract openingshours/workinghours of totalWorkHours
                             minOccupation -= 1;                            //subtract employee of minOccupation
@@ -102,6 +88,7 @@ public class Planner implements PlanningGenerator {
                             logging.add("The day is fully planned, no more staff needed");
                             detail.setWorkMinutesPerDay(0);
                             detail.setStaff(staff1);
+                            planning.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
                             //detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
                         }
 
@@ -109,6 +96,8 @@ public class Planner implements PlanningGenerator {
                         logging.add("adding planningDetail to the planning");
                         planningDetails.add(detail);
                     }
+                } else {
+                    planning.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Closed"));
                 }
                 planningList.add(planning);
             }

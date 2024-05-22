@@ -57,14 +57,14 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
         return planningStatus;
     }
 
-    public PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus)
+    protected PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus)
     {
         PlanningStatusDto planningStatusDto = new PlanningStatusDto();
         planningStatusDto.setPlanningStatusName(planningStatus.getPlanningStatusName());
         return planningStatusDto;
     }
 
-    public PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto)
+    protected PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto)
     {
         PlanningStatus planningStatus = new PlanningStatus();
         planningStatus.setPlanningStatusName(planningStatusDto.getPlanningStatusName());

@@ -4,8 +4,8 @@ import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
-import GroepswerkJava.DigitalPlanner.service.StaffService;
-import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
+import GroepswerkJava.DigitalPlanner.model.PlanningStatus;
+import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -26,6 +27,15 @@ public class Placeholder1Controller
 
     @Autowired
     private StaffService staffService;
+
+    @Autowired
+    private  AvailabilityService availabilityService;
+
+    @Autowired
+    private PlanningService planningService;
+
+    @Autowired
+    private PlanningStatusService planningStatusService;
 
     @GetMapping("/rangeWeek")
     public String weeksToPlan(Model model,
@@ -91,13 +101,17 @@ public class Placeholder1Controller
         List<WorkingDayDto> workingDaysWeek = workingDayService.getByWeekNumber(weekNumber1);
         List<StaffDto> staffDtos = staffService.getAll();
         Planner planner = new Planner();
-        Response response = planner.generatePlanning(staffDtos, workingDaysWeek);
+
+        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService);
 
         //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
         for(PlanningDto planning: response.getPlannings())
         {
             planning.setPlannedByStaff(authentication.getName());
+            planning.setPlannedDate(LocalDate.now());
         }
+
+        planningService.savePlanningList(response.getPlannings());
 
         return "dashboard";
     }
