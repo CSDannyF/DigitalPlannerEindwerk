@@ -99,9 +99,9 @@ public class LogDetailServiceImplTest {
     void test_DeleteLogDetail() {
         when(logDetailRepository.existsById(1L)).thenReturn(true);
 
-        boolean isDeleted = logDetailService.deleteLogDetail(1L);
 
-        assertTrue(isDeleted);
+        assertDoesNotThrow(() -> logDetailService.deleteLogDetail(1L));
+
         verify(logDetailRepository, times(1)).deleteById(1L);
     }
 }

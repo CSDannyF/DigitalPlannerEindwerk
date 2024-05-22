@@ -1,5 +1,4 @@
 package GroepswerkJava.DigitalPlanner.dto;
-import GroepswerkJava.DigitalPlanner.PlanningGenerator.LogDetailMapper;
 import GroepswerkJava.DigitalPlanner.model.LogDetail;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.Staff;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -21,15 +19,8 @@ public class LogDto {
     private String action;
     @NotEmpty
     private LocalDate plannedDate;
-
     private UserLogin userLogin;
     private Planning planning;
     private Staff plannedByStaff;
     private List<LogDetail> logDetails;
 }
-
-
-//todo
-//todo
-//todo
-// RESPONSE CLASS
