@@ -1,8 +1,10 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
+import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
 import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +23,23 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
 
+    private final PlanningStatusRepository planningStatusRepository;
+
     @Autowired
-    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository) {
+    public WorkingDayServiceImpl(WorkingDayRepository workingDayRepository, PlanningStatusRepository planningStatusRepository) {
         this.workingDayRepository = workingDayRepository;
+        this.planningStatusRepository = planningStatusRepository;
     }
 
     @Override
     public List<WorkingDay> getAll() {
         return workingDayRepository.findAll();
+    }
+
+    @Override
+    public List<WorkingDayDto> getByWeekNumber(int weekNumber) {
+        List<WorkingDay> workingDays = workingDayRepository.findByWeekNumber(weekNumber);
+        return mapToDtoList(workingDays);
     }
 
     @Override
@@ -66,7 +78,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         }
     }
 
-
     /**
      * Fill workingday until end of year
      *
@@ -79,6 +90,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         long daysBetween = startDate.until(nextYearDate, ChronoUnit.DAYS);
 
         List<WorkingDay> workingDays = new ArrayList<>();
+        List<Planning> plannings = new ArrayList<>();
 
         for (int i = 0; i < daysBetween; i++) {
             for (WeeklyOpeningDay weeklyOpeningDay : weeklyOpeningDays) {
@@ -92,7 +104,16 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                     workingDay.setStartTime(weeklyOpeningDay.getStartTime());
                     workingDay.setEndTime(weeklyOpeningDay.getEndTime());
                     workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+                    workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
+
+                    Planning planning = new Planning();
+                    planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
+
+                    planning.setWorkingDay(workingDay);
+                    workingDay.setPlanning(planning);
+
                     workingDays.add(workingDay);
+                    plannings.add(planning);
                     break;
                 }
             }
@@ -112,7 +133,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         return mapToDto(workingDay);
     }
 
-
     public void deleteAll() {
         workingDayRepository.deleteAll();
     }
@@ -126,6 +146,10 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             workingDayDto.setEndTime(workingDay.getEndTime());
             workingDayDto.setMinimalOccupation(workingDay.getMinimalOccupation());
             workingDayDto.setOpen(workingDay.isOpen());
+            workingDayDto.setWeekNumber(workingDay.getWeekNumber());
+
+            PlanningServiceImpl planningService = new PlanningServiceImpl();
+            workingDayDto.setPlanningDto(planningService.mapToPlanningDto(workingDay.getPlanning()));
         }
         return workingDayDto;
     }

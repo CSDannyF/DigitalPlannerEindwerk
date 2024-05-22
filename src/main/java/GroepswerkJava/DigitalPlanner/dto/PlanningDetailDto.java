@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -14,10 +14,11 @@ import java.sql.Time;
 @AllArgsConstructor
 public class PlanningDetailDto {
     private long planningDetailId;
-    private String staff;
-    private String availability;
-    private Time startTime;
-    private Time endTime;
+    private StaffDto staff;
+    private AvailabilityDto availability;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private int workMinutesPerDay;
 
     @Override
     public String toString() {
@@ -26,6 +27,7 @@ public class PlanningDetailDto {
                 ", staff=" + staff +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
+                ", workMinutesPerDay=" + workMinutesPerDay +
                 ", availability=" + availability +
                 '}';
     }

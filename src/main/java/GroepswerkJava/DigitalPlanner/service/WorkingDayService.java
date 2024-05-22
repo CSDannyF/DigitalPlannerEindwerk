@@ -20,10 +20,11 @@ public interface WorkingDayService  {
 
     void fillRestOfYear(List<WeeklyOpeningDay> weeklyOpeningDays);
 
-
     void saveAll(List<WorkingDay> workingDays);
 
     WorkingDayDto getByDate(LocalDate date);
 
     List<WorkingDay> getAll();
+
+    List<WorkingDayDto> getByWeekNumber(int weekNumber);
 }

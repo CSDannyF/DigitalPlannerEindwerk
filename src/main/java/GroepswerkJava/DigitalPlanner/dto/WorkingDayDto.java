@@ -15,9 +15,11 @@ import java.time.LocalTime;
 public class WorkingDayDto {
     private long workingDayId;
     private LocalDate date;
+    private int weekNumber;
     private boolean open;
     private LocalTime startTime;
     private int minimalOccupation;
+    private PlanningDto planningDto;
     private LocalTime endTime;
 
     @Override

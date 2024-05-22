@@ -15,16 +15,17 @@ import java.util.List;
 public class PlanningDto {
     private long planningId;
     private List<PlanningDetailDto> planningDetails;
-    private String planningStatus;
+    private PlanningStatusDto planningStatusDto;
     private String plannedByStaff;
     private LocalDate plannedDate;
+    private WorkingDayDto workingDayDto;
 
     @Override
     public String toString() {
         return "PlanningDto{" +
                 "planningId=" + planningId +
                 ", planningDetails=" + planningDetails +
-                ", planningStatus=" + planningStatus +
+                ", planningStatus=" + planningStatusDto +
                 ", plannedByStaff='" + plannedByStaff + '\'' +
                 ", plannedDate=" + plannedDate +
                 '}';
