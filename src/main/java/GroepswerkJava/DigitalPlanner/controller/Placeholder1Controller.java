@@ -37,6 +37,9 @@ public class Placeholder1Controller
     @Autowired
     private PlanningStatusService planningStatusService;
 
+    @Autowired
+    private LogDetailService logDetailService;
+
     @GetMapping("/rangeWeek")
     public String weeksToPlan(Model model,
                               Authentication authentication)
@@ -102,16 +105,16 @@ public class Placeholder1Controller
         List<StaffDto> staffDtos = staffService.getAll();
         Planner planner = new Planner();
 
-        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService);
+        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService);
 
         //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
-        for(PlanningDto planning: response.getPlannings())
+        for(PlanningDto planning: response.getPlanningList())
         {
             planning.setPlannedByStaff(authentication.getName());
             planning.setPlannedDate(LocalDate.now());
         }
 
-        planningService.savePlanningList(response.getPlannings());
+        planningService.savePlanningList(response.getPlanningList());
 
         return "dashboard";
     }

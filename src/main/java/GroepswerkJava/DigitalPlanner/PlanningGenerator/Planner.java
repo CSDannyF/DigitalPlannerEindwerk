@@ -30,10 +30,13 @@ public class Planner implements PlanningGenerator {
     @Autowired
     private StaffServiceImpl staffService;
 
+    @Autowired
+    private LogDetailService logDetailService;
+
     private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
     @Override
-    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService)
+    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService, LogDetailService logDetailService)
     {
         List<LogDetailDto> logging = new ArrayList<>();
         List<PlanningDto> planningList = new ArrayList<>();
@@ -135,7 +138,7 @@ public class Planner implements PlanningGenerator {
         }
         response.setPlanningList(planningList);
         response.setLogging(logging);
-        response.saveLogsToDatabase();
+        response.saveLogsToDatabase(logDetailService);
         return response;
     }
 

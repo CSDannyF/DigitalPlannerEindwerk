@@ -23,7 +23,7 @@ public class Response {
     private LogService logService;
 
     @Autowired
-    private LogDetailService logDetailService;
+    private LogDetailService logDetailService;  //mag weg
 
     public void addLogMessage(LogDetailDto logDetailDto) {
         this.logging.add(logDetailDto);
@@ -47,7 +47,7 @@ public class Response {
         this.logging.clear();
     }
 
-    public void saveLogsToDatabase() {
+    public void saveLogsToDatabase(LogDetailService logDetailService) {
         for (LogDetailDto logDetailDto: logging) {
             logDetailService.saveLogDetail(logDetailDto);
         }
