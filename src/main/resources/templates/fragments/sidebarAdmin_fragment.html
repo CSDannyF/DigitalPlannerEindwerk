@@ -52,12 +52,16 @@
                 <li><a class="dropdown-item" th:href="@{/department}">Departments</a></li>
                 <li><a class="dropdown-item" th:href="@{/staff/function}">Staff functions</a></li>
             </ul>
-
         </li>
         <li>
-            <a href="#" class="nav-link text-white">
+            <a href="#" class="nav-link dropdown-toggle" id="myPlanningDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
                 My planning
             </a>
+            <ul class="dropdown-menu" aria-labelledby="testDropdown3">
+                <li><a class="dropdown-item" th:href="@{/weekPlanning/proposal}">Show week planning</a></li>
+            </ul>
+
         </li>
     </ul>
     <hr>

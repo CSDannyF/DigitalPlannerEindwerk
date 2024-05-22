@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,7 @@ public class Planning {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long planningId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "workingDayId", referencedColumnName = "workingDayId")
     private WorkingDay workingDay;
 
@@ -41,6 +40,8 @@ public class Planning {
     public String toString() {
         return "Planning{" +
                 "planningId=" + planningId +
+                "planningDetails=" + planningDetails +
+
                 ", planningStatus=" + planningStatus +
                 ", plannedByStaff='" + plannedByStaff + '\'' +
                 ", plannedDate=" + plannedDate +

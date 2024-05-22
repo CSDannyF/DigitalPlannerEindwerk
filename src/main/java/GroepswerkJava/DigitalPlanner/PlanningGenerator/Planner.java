@@ -13,29 +13,48 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Component
 public class Planner implements PlanningGenerator {
+
+    @Autowired
+    private AvailabilityServiceImpl availabilityService;  //geeft aan dat repo null is bij aanroepen, doet dit bij alle repos in deze klasse damn son
+
+    @Autowired
+    private WorkingDayService workingDayService;
+
+    @Autowired
+    private PlanningServiceImpl planningService;
+
+    @Autowired
+    private StaffServiceImpl staffService;
 
     private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
     @Override
     public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService)
     {
-        List<String> logging = new ArrayList<>();
+        List<LogDetailDto> logging = new ArrayList<>();
         List<PlanningDto> planningList = new ArrayList<>();
         Response response = new Response();
 
-        logging.add("check if workingdays has 7 days");
+        logDetailService.addLog(logging, "check if workingdays has 7 days", LogType.INFO);
+//        logging.add("check if workingdays has 7 days");
         if(workingDays.size() != 7)     //check If the 7 workingDays are configured
         {
-            logging.add("Week of WorkingDays not completely configured");
+            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
+
+//            logging.add("Week of WorkingDays not completely configured");
             return response;
         } else {
 
-            logging.add("Week of WorkingDays is complete");
+            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
+//            logging.add("Week of WorkingDays is complete");
 
             //Check if every WorkingDay has a corresponding Planning
-            logging.add("Checking if every workingDay has a corresponding Planning");
+            logDetailService.addLog(logging, "Checking if every workingDay has a corresponding Planning", LogType.INFO);
+//            logging.add("Checking if every workingDay has a corresponding Planning");
             //planningStatusService.getAll();
 
             //planningList = setWorkingDayToPlanning(workingDays);        // als dit werkt moet de planning niet worden meegegeven in de methode want deze zit in de workingDays
@@ -51,19 +70,24 @@ public class Planner implements PlanningGenerator {
                 planning.setPlanningDetails(planningDetails);
 
                 if(isDayPlannedAndOpen(planning)){
-                    logging.add("PlanningDay is not complete \n" + "Start planning");
+                    logDetailService.addLog(logging, "PlanningDay is not complete \n" + "Start planning", LogType.INFO);
+
+//                    logging.add("PlanningDay is not complete \n" + "Start planning");
 
                     LocalTime startTime = planning.getWorkingDayDto().getStartTime();
                     LocalTime endTime = planning.getWorkingDayDto().getEndTime();
 
                     //Set the total work hours for the day
-                    logging.add("Setting the parameters for the planning day");
+                    logDetailService.addLog(logging, "Setting the parameters for the planning day", LogType.INFO);
+
+//                    logging.add("Setting the parameters for the planning day");
                     int minOccupation = planning.getWorkingDayDto().getMinimalOccupation();
                     int openingsHours = endTime.getHour() - startTime.getHour();
                     int totalWorkHours = minOccupation * openingsHours;
 
                     //loop trough staffmembers to set de planningDetail
-                    logging.add("looping trough the staffmembers");
+                    logDetailService.addLog(logging, "looping trough the staffmembers", LogType.INFO);
+//                    logging.add("looping trough the staffmembers");
                     for(StaffDto staff1 : staff)
                     {
                         //set staff to planningdetail and add to planning
@@ -71,21 +95,26 @@ public class Planner implements PlanningGenerator {
 
 
                         //check if schedule for the day is full, if not  set work
-                        logging.add("check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members");
+                        logDetailService.addLog(logging, "check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members", LogType.INFO);
+//                        logging.add("check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members");
                         if(minOccupation > 0)
                         {
-                            logging.add("There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member " + staff1.getFirstName());
+                            logDetailService.addLog(logging, "There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member ", LogType.INFO);
+
+//                            logging.add("There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member " + staff1.getFirstName());
                             detail.setStartTime(startTime);
                             detail.setEndTime(endTime);
                             detail.setStaff(staff1);
                             detail.setWorkMinutesPerDay(openingsHours*60); //todo moet worden veranderd naar uur?
-                            detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+                            //detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
 
                             totalWorkHours -= openingsHours;               //subtract openingshours/workinghours of totalWorkHours
                             minOccupation -= 1;                            //subtract employee of minOccupation
                         } else
                         {
-                            logging.add("The day is fully planned, no more staff needed");
+                            logDetailService.addLog(logging, "The day is fully planned, no more staff needed", LogType.INFO);
+
+//                            logging.add("The day is fully planned, no more staff needed");
                             detail.setWorkMinutesPerDay(0);
                             detail.setStaff(staff1);
                             planning.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
@@ -93,7 +122,9 @@ public class Planner implements PlanningGenerator {
                         }
 
                         //add planningDetail to planning
-                        logging.add("adding planningDetail to the planning");
+                        logDetailService.addLog(logging, "adding planningDetail to the planning", LogType.INFO);
+
+//                        logging.add("adding planningDetail to the planning");
                         planningDetails.add(detail);
                     }
                 } else {
@@ -102,8 +133,9 @@ public class Planner implements PlanningGenerator {
                 planningList.add(planning);
             }
         }
-        response.setPlannings(planningList);
+        response.setPlanningList(planningList);
         response.setLogging(logging);
+        response.saveLogsToDatabase();
         return response;
     }
 

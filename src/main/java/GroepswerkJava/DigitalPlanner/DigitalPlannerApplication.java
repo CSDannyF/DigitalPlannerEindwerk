@@ -8,5 +8,7 @@ public class DigitalPlannerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DigitalPlannerApplication.class, args);
+
+
 	}
 }
