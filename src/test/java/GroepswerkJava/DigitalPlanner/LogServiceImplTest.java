@@ -45,7 +45,7 @@ public class LogServiceImplTest {
         log.setPlannedDate(LocalDate.now());
 
         // Simulate mapping from Log to LogDto
-        logDto = new LogDto();
+        logdto = new logdto();
         logDto.setLogId(1L);
         logDto.setAction("Test action");
         logDto.setPlannedDate(LocalDate.now());
@@ -53,7 +53,7 @@ public class LogServiceImplTest {
 
     // Check if logRepository.save() gets called exactly once when running saveLog()
     @Test
-    void test_SaveLog() {
+    void testSaveLog() {
         when(logRepository.save(any(Log.class))).thenReturn(log);
 
         logService.saveLog(logDto);
@@ -63,7 +63,7 @@ public class LogServiceImplTest {
 
     // Check if correct LogDto gets returned
     @Test
-    void test_FindById() {
+    void testFindById() {
         when(logRepository.findById(1L)).thenReturn(Optional.of(log));
 
         LogDto found = logService.findById(1L);
@@ -76,7 +76,7 @@ public class LogServiceImplTest {
 
     // Check if expected list gets returned
     @Test
-    void test_FindAllLogs() {
+    void testFindAllLogs() {
         List<Log> logs = Arrays.asList(log);
         when(logRepository.findAll()).thenReturn(logs);
 
@@ -88,7 +88,7 @@ public class LogServiceImplTest {
 
     // Check if Log gets updated & saved correctly
     @Test
-    void test_UpdateLog() {
+    void testUpdateLog() {
         when(logRepository.existsById(1L)).thenReturn(true);
         when(logRepository.save(any(Log.class))).thenReturn(log);
 
@@ -102,7 +102,7 @@ public class LogServiceImplTest {
 
     // Check if correct LogId gets deleted
     @Test
-    void test_DeleteLog() {
+    void testDeleteLog() {
         when(logRepository.existsById(1L)).thenReturn(true);
 
         assertDoesNotThrow(() -> logService.deleteLog(1L));

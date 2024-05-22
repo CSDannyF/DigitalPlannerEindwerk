@@ -1,6 +1,6 @@
 package GroepswerkJava.DigitalPlanner.model;
 
-// Used enum so future types can be added
+// Enum gebruikt indien toekomstige uitbreidingen nodig zijn
 public enum LogType {
     INFO,
     WARNING,
