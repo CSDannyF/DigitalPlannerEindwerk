@@ -36,6 +36,11 @@ public class PlanningServiceImpl implements PlanningService{
     }
 
     @Override
+    public void saveAll(List<PlanningDto> planningDtoList) {
+
+    }
+
+    @Override
     public PlanningDto getByWorkingDay(WorkingDayDto workingDayDto) {
         return mapToPlanningDto(planningRepository.findByWorkingDay(mapFromWorkingDayDto(workingDayDto)));
     }

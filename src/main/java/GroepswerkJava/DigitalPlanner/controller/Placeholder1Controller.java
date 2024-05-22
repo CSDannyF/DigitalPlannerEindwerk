@@ -1,104 +1,104 @@
-package GroepswerkJava.DigitalPlanner.controller;
-import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
-import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
-import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
-import GroepswerkJava.DigitalPlanner.dto.StaffDto;
-import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
-import GroepswerkJava.DigitalPlanner.service.StaffService;
-import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.time.DayOfWeek;
-import java.util.*;
-
-@Controller
-public class Placeholder1Controller
-{
-    @Autowired
-    private WorkingDayService workingDayService;
-
-    @Autowired
-    private StaffService staffService;
-
-    @GetMapping("/rangeWeek")
-    public String weeksToPlan(Model model,
-                              Authentication authentication)
-    {
-        List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
-        Map<Integer, String> workingDayDtoMap = new HashMap<>();
-
-        //bind weekNumber and workingDay into a map to show range of days (full week) in FE
-        for (WorkingDayDto workingDay: workingDayDtos)
-        {
-            if(workingDay.getDate().getDayOfWeek() == DayOfWeek.MONDAY) {
-                int weekNumber = workingDay.getWeekNumber();
-                workingDayDtoMap.put(weekNumber, workingDay.getDate() + " - " + workingDay.getDate().plusDays(6).toString());
-            }
-        }
-
-        model.addAttribute("weekNumber1", new WorkingDayDto());
-        //model.addAttribute("weekNumber2", new WorkingDayDto());
-        model.addAttribute("weeks", workingDayDtoMap);
-        return "rangeWeek";
-    }
-
-    /*
-    omdat ik niet met th:field werk maar met name="" kan ik spring niet gebruiken voor validatie,
-    Nu moet ik dat doen met flash attributes
-    */
-    @PostMapping("/RangeWeek")
-    public String generatePlanning(@RequestParam(value = "weekNumber1") int weekNumber1,
-                                   //@RequestParam(value = "weekNumber2") int weekNumber2,      voor later als we meerdere weken tegelijk willen renderen
-                                   Authentication authentication,
-                                   RedirectAttributes redirectAttributes,
-                                   Model model)
-    {
-
-
-        model.addAttribute("weekNumber1", new WorkingDayDto());
-        //model.addAttribute("weekNumber2", new WorkingDayDto());
-
-        /*
-        error handling als er een verkeerde input gegeven wordt.
-        Week 1 mag niet null zijn en mag niet groter of na week 2 komen
-         */
-        boolean hasErrors = false;
-        if(weekNumber1 == 0)
-        {
-            redirectAttributes.addFlashAttribute("error1", "Choose a start week");
-            hasErrors = true;
-        }
-        /*
-        //controle als 2de week wel degelijk na de 1ste week start
-        else if(weekNumber1 > weekNumber2 && weekNumber2 != 0)
-        {
-            redirectAttributes.addFlashAttribute("error1", "Start week must come before the end week");
-            hasErrors = true;
-        }
-         */
-        if(hasErrors)
-        {
-            return "redirect:/rangeWeek";
-        }
-
-        List<WorkingDayDto> workingDaysWeek = workingDayService.getByWeekNumber(weekNumber1);
-        List<StaffDto> staffDtos = staffService.getAll();
-        Planner planner = new Planner();
-        Response response = planner.generatePlanning(staffDtos, workingDaysWeek);
-
-        //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
-        for(PlanningDto planning: response.getPlannings())
-        {
-            planning.setPlannedByStaff(authentication.getName());
-        }
-
-        return "dashboard";
-    }
-}
+//package GroepswerkJava.DigitalPlanner.controller;
+//import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
+//import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
+//import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
+//import GroepswerkJava.DigitalPlanner.dto.StaffDto;
+//import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+//import GroepswerkJava.DigitalPlanner.service.StaffService;
+//import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.stereotype.Controller;
+//import org.springframework.ui.Model;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+//
+//import java.time.DayOfWeek;
+//import java.util.*;
+//
+//@Controller
+//public class Placeholder1Controller
+//{
+//    @Autowired
+//    private WorkingDayService workingDayService;
+//
+//    @Autowired
+//    private StaffService staffService;
+//
+//    @GetMapping("/rangeWeek")
+//    public String weeksToPlan(Model model,
+//                              Authentication authentication)
+//    {
+//        List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
+//        Map<Integer, String> workingDayDtoMap = new HashMap<>();
+//
+//        //bind weekNumber and workingDay into a map to show range of days (full week) in FE
+//        for (WorkingDayDto workingDay: workingDayDtos)
+//        {
+//            if(workingDay.getDate().getDayOfWeek() == DayOfWeek.MONDAY) {
+//                int weekNumber = workingDay.getWeekNumber();
+//                workingDayDtoMap.put(weekNumber, workingDay.getDate() + " - " + workingDay.getDate().plusDays(6).toString());
+//            }
+//        }
+//
+//        model.addAttribute("weekNumber1", new WorkingDayDto());
+//        //model.addAttribute("weekNumber2", new WorkingDayDto());
+//        model.addAttribute("weeks", workingDayDtoMap);
+//        return "rangeWeek";
+//    }
+//
+//    /*
+//    omdat ik niet met th:field werk maar met name="" kan ik spring niet gebruiken voor validatie,
+//    Nu moet ik dat doen met flash attributes
+//    */
+//    @PostMapping("/RangeWeek")
+//    public String generatePlanning(@RequestParam(value = "weekNumber1") int weekNumber1,
+//                                   //@RequestParam(value = "weekNumber2") int weekNumber2,      voor later als we meerdere weken tegelijk willen renderen
+//                                   Authentication authentication,
+//                                   RedirectAttributes redirectAttributes,
+//                                   Model model)
+//    {
+//
+//
+//        model.addAttribute("weekNumber1", new WorkingDayDto());
+//        //model.addAttribute("weekNumber2", new WorkingDayDto());
+//
+//        /*
+//        error handling als er een verkeerde input gegeven wordt.
+//        Week 1 mag niet null zijn en mag niet groter of na week 2 komen
+//         */
+//        boolean hasErrors = false;
+//        if(weekNumber1 == 0)
+//        {
+//            redirectAttributes.addFlashAttribute("error1", "Choose a start week");
+//            hasErrors = true;
+//        }
+//        /*
+//        //controle als 2de week wel degelijk na de 1ste week start
+//        else if(weekNumber1 > weekNumber2 && weekNumber2 != 0)
+//        {
+//            redirectAttributes.addFlashAttribute("error1", "Start week must come before the end week");
+//            hasErrors = true;
+//        }
+//         */
+//        if(hasErrors)
+//        {
+//            return "redirect:/rangeWeek";
+//        }
+//
+//        List<WorkingDayDto> workingDaysWeek = workingDayService.getByWeekNumber(weekNumber1);
+//        List<StaffDto> staffDtos = staffService.getAll();
+//        Planner planner = new Planner();
+//        Response response = planner.generatePlanning(staffDtos, workingDaysWeek);
+//
+//        //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
+//        for(PlanningDto planning: response.getPlannings())
+//        {
+//            planning.setPlannedByStaff(authentication.getName());
+//        }
+//
+//        return "dashboard";
+//    }
+//}

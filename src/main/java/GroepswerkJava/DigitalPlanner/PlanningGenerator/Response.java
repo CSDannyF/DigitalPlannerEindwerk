@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.dto.LogDetailDto;
+import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.service.LogDetailService;
 import GroepswerkJava.DigitalPlanner.service.LogService;
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Response {
-    private List<Planning> planningList;
+    private List<PlanningDto> planningList;
     private List<LogDetailDto> logging;
 
     @Autowired
@@ -33,12 +34,12 @@ public class Response {
     }
 
     //todo PlanningDto?
-    public void addPlanning(Planning planning) {
-        this.planningList.add(planning);
+    public void addPlanning(PlanningDto planningDto) {
+        this.planningList.add(planningDto);
     }
 
     //todo PlanningDto?
-    public void addPlannings(List<Planning> plannings) {
+    public void addPlannings(List<PlanningDto> plannings) {
         this.planningList.addAll(plannings);
     }
 

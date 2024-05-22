@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
+import GroepswerkJava.DigitalPlanner.model.Staff;
 
 import java.util.List;
 

@@ -1,9 +1,7 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
-import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
-import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
-import GroepswerkJava.DigitalPlanner.dto.WeekPlanningWrapper;
-import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
+import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,9 +58,13 @@ public class PlannerController {
             List<PlanningDetailDto> details = new ArrayList<>();
             for (int j = 0; j < 7; j++) {
                 PlanningDetailDto planningDetailDto = new PlanningDetailDto();
-                //todo
-                planningDetailDto.setStaff(staffService.getById(j + 1).getFirstName());  //.getFirstName()));
-                planningDetailDto.setStaffId(staffService.getById(j + 1).getStaffId());
+                //todo haalt 7 staffleden uit database, als deze er niet in zitten
+//                if(staffService.getById(j + 1) == null){
+                StaffDto staffDto = new StaffDto();
+                staffDto.setFirstName("jos" + j);
+//                } else {
+//                    planningDetailDto.setStaff(staffService.getById(j + 1));  //.getFirstName()));
+//                }
                 planningDetailDto.setStartTime(LocalTime.of(8, 0));
                 planningDetailDto.setEndTime(LocalTime.of(20, 0));
                 details.add(planningDetailDto);
