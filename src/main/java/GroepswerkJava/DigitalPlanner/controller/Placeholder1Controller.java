@@ -41,8 +41,16 @@ public class Placeholder1Controller
     private LogDetailService logDetailService;
 
     @GetMapping("/rangeWeek")
-    public String weeksToPlan(Model model)
+    public String weeksToPlan(Model model,
+                              Authentication authentication)
     {
+
+        //checked als er een gebruiker is ingelogd, anders wordt hij naar het loginscherm gestuurd
+        if(authentication == null)
+        {
+            return "redirect:/";
+        }
+
         List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
         Map<Integer, String> workingDayDtoMap = new HashMap<>();
 
