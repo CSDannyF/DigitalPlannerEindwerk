@@ -470,6 +470,10 @@ h1 {
     text-align: left;
 }
 
+#rangeWeekCard {
+    margin: auto;
+}
+
 /* Add employee */
 
 .container {

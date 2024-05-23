@@ -41,8 +41,7 @@ public class Placeholder1Controller
     private LogDetailService logDetailService;
 
     @GetMapping("/rangeWeek")
-    public String weeksToPlan(Model model,
-                              Authentication authentication)
+    public String weeksToPlan(Model model)
     {
         List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
         Map<Integer, String> workingDayDtoMap = new HashMap<>();
@@ -74,13 +73,12 @@ public class Placeholder1Controller
                                    Model model)
     {
 
-
         model.addAttribute("weekNumber1", new WorkingDayDto());
         //model.addAttribute("weekNumber2", new WorkingDayDto());
 
         /*
         error handling als er een verkeerde input gegeven wordt.
-        Week 1 mag niet null zijn en mag niet groter of na week 2 komen
+        Week 1 mag niet null zijn en mag niet groter of na week 2 komen -->  groter dan week 2 staat in comments
          */
         boolean hasErrors = false;
         if(weekNumber1 == 0)
@@ -111,10 +109,9 @@ public class Placeholder1Controller
         for(PlanningDto planning: response.getPlanningList())
         {
             planning.setPlannedByStaff(authentication.getName());
-            planning.setPlannedDate(LocalDate.now());
+            planning.setPlannedDate(LocalDate.now());               //Hier zou misschien nog het tijdstip kunnen bijkomen
         }
-
-        planningService.savePlanningList(response.getPlanningList());
+        planningService.saveAll(response.getPlanningList());
 
         return "dashboard";
     }

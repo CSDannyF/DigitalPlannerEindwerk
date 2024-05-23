@@ -109,7 +109,7 @@ public class Planner implements PlanningGenerator {
                             detail.setEndTime(endTime);
                             detail.setStaff(staff1);
                             detail.setWorkMinutesPerDay(openingsHours*60); //todo moet worden veranderd naar uur?
-                            //detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+                            detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
 
                             totalWorkHours -= openingsHours;               //subtract openingshours/workinghours of totalWorkHours
                             minOccupation -= 1;                            //subtract employee of minOccupation
@@ -121,7 +121,7 @@ public class Planner implements PlanningGenerator {
                             detail.setWorkMinutesPerDay(0);
                             detail.setStaff(staff1);
                             planning.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
-                            //detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
+                            detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
                         }
 
                         //add planningDetail to planning
@@ -141,33 +141,6 @@ public class Planner implements PlanningGenerator {
         response.saveLogsToDatabase(logDetailService);
         return response;
     }
-
-    //Method to check if there is already a Planning linked to the workingDay, if not: the workingDay wil be set to an
-    //new planning object corresponding to the workingDay object
-
-    //de datum van het planning object en workingday object moeten hier nog hetzelfde gemaakt worden
-    /*
-    public List<PlanningDto> setWorkingDayToPlanning(List<WorkingDayDto> workingDays)
-    {
-        planningStatusServiceImpl.getAll();
-        PlanningStatusDto planningStatus = planningStatusServiceImpl.findByPlanningStatusName("Not planned");
-
-        for(WorkingDayDto workingDay: workingDays)
-        {
-            if(workingDay.getPlanningDto() == null)
-            {
-                PlanningDto planning = new PlanningDto();
-                planning.setWorkingDayDto(workingDay);
-                planning.setPlanningStatusDto(planningStatus);
-                plannings.add(planning);
-            } else {
-                plannings.add(workingDay.getPlanningDto());
-            }
-        }
-        return plannings;
-    }
-
-     */
 
     //check if day is planned
     private boolean isDayPlannedAndOpen(PlanningDto planning)
@@ -260,4 +233,30 @@ public class Planner implements PlanningGenerator {
         workingDays.add(workingDay7);
         return workingDays;
     }
+
+    //Method to check if there is already a Planning linked to the workingDay, if not: the workingDay wil be set to an
+    //new planning object corresponding to the workingDay object
+
+    //de datum van het planning object en workingday object moeten hier nog hetzelfde gemaakt worden
+    /*
+    public List<PlanningDto> setWorkingDayToPlanning(List<WorkingDayDto> workingDays)
+    {
+        planningStatusServiceImpl.getAll();
+        PlanningStatusDto planningStatus = planningStatusServiceImpl.findByPlanningStatusName("Not planned");
+
+        for(WorkingDayDto workingDay: workingDays)
+        {
+            if(workingDay.getPlanningDto() == null)
+            {
+                PlanningDto planning = new PlanningDto();
+                planning.setWorkingDayDto(workingDay);
+                planning.setPlanningStatusDto(planningStatus);
+                plannings.add(planning);
+            } else {
+                plannings.add(workingDay.getPlanningDto());
+            }
+        }
+        return plannings;
+    }
+     */
 }

@@ -10,5 +10,4 @@ public interface PlanningService {
     void save(PlanningDto planningDto);
     void saveAll(List<PlanningDto> planningDtoList);
     PlanningDto getByWorkingDay(WorkingDayDto workingDayDto);
-    void savePlanningList(List<PlanningDto> planningDtos);
 }

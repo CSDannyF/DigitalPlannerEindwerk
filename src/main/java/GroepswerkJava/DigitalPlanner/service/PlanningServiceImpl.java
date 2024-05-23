@@ -35,24 +35,23 @@ public class PlanningServiceImpl implements PlanningService{
     @Override
     public void save(PlanningDto planningDto)
     {
-
+        //TODO nog geimplementeerd worden
     }
 
-    public void savePlanningList(List<PlanningDto> planningDtos)
-    {
+    /*
+    Om de save te laten werken om een update te doen moeten de ID's van alle modellen die al in de database staan geset worden
+    want bijna alle modellen hebben velden die uniek zijn of er linken mee. anders gaat die in fout over duplicates.
+    enkel bij de models die nog niet in de database staan hoeft dit niet want dit zijn nieuwe records (PlanningDetail)
+     */
+    @Override
+    public void saveAll(List<PlanningDto> planningDtoList) {
         List<Planning> plannings = new ArrayList<>();
-        for(PlanningDto planningDto: planningDtos)
+        for(PlanningDto planningDto: planningDtoList)
         {
             Planning planning = mapToPlanningModel(planningDto);
-            planning.setPlanningId(planningDto.getPlanningId());  //setten van de ID zou in de mapper moeten komen!
             plannings.add(planning);
         }
         planningRepository.saveAll(plannings);
-    }
-
-    @Override
-    public void saveAll(List<PlanningDto> planningDtoList) {
-
     }
 
     @Override
@@ -62,7 +61,7 @@ public class PlanningServiceImpl implements PlanningService{
 
     //Dto mappers
 
-    public WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){    //effe op public, stond op private
+    private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){    //effe op public, stond op private
         WorkingDay workingDay = new WorkingDay();
         workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
         workingDay.setDate(workingDayDto.getDate());
@@ -79,7 +78,7 @@ public class PlanningServiceImpl implements PlanningService{
 
         if(planning != null){
 
-            planningDto.setPlanningId(planning.getPlanningId());
+            planningDto.setPlanningId(planning.getPlanningId()); //id zou hier via de WorkingDay moeten worden opgehaald (getByDate())
             if(planning.getPlanningStatus() != null){
 
                 //map to planningStatusDto
@@ -102,7 +101,7 @@ public class PlanningServiceImpl implements PlanningService{
 
     public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
-        planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
+        planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());  //setten van Id zou weg mogen als bij het mappen naar model de ID geset wordt via WorkingDay
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
         planningDetailDto.setWorkMinutesPerDay(planningDetail.getWorkMinutesPerDay());
@@ -127,6 +126,24 @@ public class PlanningServiceImpl implements PlanningService{
         planning.setPlannedDate(planningDto.getPlannedDate());
         planning.setPlanningDetails(mapToPlanningDetailModel(planningDto.getPlanningDetails()));
 
+
+        WorkingDay workingDay = workingDayRepository.findByDate(planningDto.getWorkingDayDto().getDate());
+        if(!workingDay.getPlanning().getPlanningDetails().isEmpty())
+        {
+            for (PlanningDetail repoPlanningDetail: workingDay.getPlanning().getPlanningDetails())
+            {
+                for (PlanningDetail mappedPlanningDetail: planning.getPlanningDetails())
+                {
+                    if(repoPlanningDetail.getStaff() == mappedPlanningDetail.getStaff())
+                    {
+                        mappedPlanningDetail.setPlanningDetailId(repoPlanningDetail.getPlanningDetailId());
+                    }
+                }
+            }
+        }
+
+        planning.setPlanningId(planningDto.getPlanningId());  //TODO setten van Id zou via de workingDay moeten
+
         WorkingDayServiceImpl workingDayService = new WorkingDayServiceImpl(workingDayRepository, planningStatusRepository);
         planning.setWorkingDay(workingDayService.mapToWorkingDayModel(planningDto.getWorkingDayDto()));
 
@@ -148,10 +165,12 @@ public class PlanningServiceImpl implements PlanningService{
 
         for(PlanningDetailDto planningDetailDto: planningDetailDtoList)
         {
+
+
             PlanningDetail planningDetail = new PlanningDetail();
             planningDetail.setStartTime(planningDetailDto.getStartTime());
             planningDetail.setEndTime(planningDetailDto.getEndTime());
-            planningDetail.setWorkMinutesPerDay(planningDetail.getWorkMinutesPerDay());
+            planningDetail.setWorkMinutesPerDay(planningDetailDto.getWorkMinutesPerDay());
 
             Staff staff = staffRepository.findByStaffLastNameAndStaffFirstName(planningDetailDto.getStaff().getLastName(), planningDetailDto.getStaff().getFirstName());
             planningDetail.setStaff(staff);
