@@ -65,13 +65,47 @@
 
 <div th:replace="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
 
+
+
+
+
 <!-- Insert calendar fragment -->
 <div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>
 
 <div class="clearfix"></div>
 
+
+
+<!--error message that fades out-->
+<style>
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 3s forwards;
+        animation-delay: 6s;
+    }
+</style>
+<div th:if="${error}" class="alert alert-danger fade-out" role="alert">
+    <span th:text="${error}"></span>
+</div>
+
+
+
 <!-- Place shiftsContainer below calendarMonthContent -->
 <div id="shiftsContainer"></div>
+
+
+
+
+
+
+
+<!--TODO trying stuff-->
+<div id="thymeleafContent"></div>
+
 
 <!-- Background container -->
 <div class="background-image"></div>

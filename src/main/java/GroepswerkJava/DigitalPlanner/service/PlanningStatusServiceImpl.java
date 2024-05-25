@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.dto.PlanningStatusDto;
 import GroepswerkJava.DigitalPlanner.model.PlanningStatus;
 import GroepswerkJava.DigitalPlanner.repository.PlanningStatusRepository;
@@ -8,7 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,11 +53,15 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     @Override
     public PlanningStatusDto findByPlanningStatusName(String planningStatusName) {
         PlanningStatusDto planningStatus = new PlanningStatusDto();
-        if(planningStatusRepository.findByPlanningStatusName(planningStatusName) != null)
-        {
+        if(planningStatusRepository.findByPlanningStatusName(planningStatusName) != null){
             planningStatus = mapToPlanningStatusDto(planningStatusRepository.findByPlanningStatusName(planningStatusName));
         }
         return planningStatus;
+    }
+
+    @Override
+    public PlanningStatusDto findByPlanningStatusId(long planningStatusId) {
+        return mapToPlanningStatusDto(planningStatusRepository.findByPlanningStatusId(planningStatusId));
     }
 
     protected PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus)

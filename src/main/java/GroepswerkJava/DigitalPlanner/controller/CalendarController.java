@@ -6,10 +6,9 @@ import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.service.PlanningService;
 import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +21,7 @@ public class CalendarController {
     private PlanningService planningService;
 
     @Autowired
-    public CalendarController(WorkingDayService workingDayService, PlanningService planningService){
+    public CalendarController(WorkingDayService workingDayService, PlanningService planningService) {
         this.workingDayService = workingDayService;
         this.planningService = planningService;
     }
@@ -37,7 +36,7 @@ public class CalendarController {
         LocalDate date = LocalDate.of(year, month, day);
         WorkingDayDto workingDayDto = workingDayService.getByDate(date);
         PlanningDto planningDto = null;
-        if(workingDayDto.getWorkingDayId() != 0){
+        if (workingDayDto.getWorkingDayId() != 0) {
             planningDto = planningService.getByWorkingDay(workingDayDto);
         }
         if (planningDto == null) {
@@ -58,4 +57,5 @@ public class CalendarController {
 
         return ResponseEntity.ok(workingDaysDto); // Return 200 with the retrieved data
     }
+
 }

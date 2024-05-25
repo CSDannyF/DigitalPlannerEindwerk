@@ -8,4 +8,6 @@ public interface PlanningStatusService {
     List<PlanningStatusDto> getAll();
     void save(PlanningStatusDto planningStatusDto);
     PlanningStatusDto findByPlanningStatusName(String planningStatusName);
+    PlanningStatusDto findByPlanningStatusId(long planningStatusId);
+
 }

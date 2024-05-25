@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Details</title>
+
+    <script th:src="@{/js/scriptCalendar.js}" ></script>
+
+</head>
+<body>
+
+<div class="card w-50 mx-auto" id="editShifts">
+    <h3 align="center">Shifts for <span th:text="${date}"></span></h3>
+
+
+
+    <form id="editShiftsForm" action="/planningDetails/save" method="post" th:object="${ListPlanningDetailsDTO}">
+        <div th:each="planning : ${planning}">
+            <input type="hidden" name="planningId" th:value="${planning.planningId}">
+            <input type="hidden" name="workingDayDtoId" th:value="${planning.workingDayDtoId}">
+
+            <!-- Existing Planning Details -->
+            <div th:each="detail, detailIndex : ${planning.planningDetails}">
+                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].planningDetailId"
+                       th:value="${detail.planningDetailId}">
+                <label>Start Time:</label>
+                <input type="time" th:name="planningDetails[__${detailIndex.index}__].startTime"
+                       th:value="${detail.startTime}">
+                <label>End Time:</label>
+                <input type="time" th:name="planningDetails[__${detailIndex.index}__].endTime"
+                       th:value="${detail.endTime}">
+                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].staffId"
+                       th:value="${detail.staff.staffId}">
+
+                <!-- Change Staff Dropdown TODO not working yet as should -->
+                <label class="form-label">Change Staff
+                    <select class="form-select change-staff-dropdown"
+                            data-planning-detail-index="${detailIndex.index}">
+                        <option th:each="staffDto : ${staffMembers}" th:value="${staffDto.staffId}"
+                                th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"
+                                th:selected="${staffDto.staffId} == ${detail.staff.staffId}"></option>
+                    </select>
+                </label>
+                <br>
+            </div>
+
+        </div>
+
+        <!-- New Planning Detail Section -->
+        <div id="newDetailsSection">
+            <h4>Add New Planning Detail</h4>
+            <div th:each="i : ${#numbers.sequence(0, 4)}">
+                <label>Start Time:</label>
+                <input type="time" th:name="newPlanningDetails[__${i}__].startTime">
+                <label>End Time:</label>
+                <input type="time" th:name="newPlanningDetails[__${i}__].endTime">
+                <label class="form-label">Select Staff
+                    <select class="form-select" th:name="newPlanningDetails[__${i}__].staffId">
+                        <option th:each="staffDto : ${availableStaff}" th:value="${staffDto.staffId}"
+                                th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"></option>
+                    </select>
+                </label>
+                <br>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-success mx-2" type="submit">Save</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

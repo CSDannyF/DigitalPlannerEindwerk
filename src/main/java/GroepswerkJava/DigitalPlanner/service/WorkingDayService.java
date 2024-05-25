@@ -8,7 +8,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface WorkingDayService  {
+public interface WorkingDayService {
 
     @Transactional
     void updateWorkingDay(WorkingDay exceptionDay);
@@ -16,6 +16,7 @@ public interface WorkingDayService  {
     List<WorkingDayDto> getAllDto();
 
     public void save(WorkingDay workingDay);
+
     public WorkingDay getById(long id);
 
     void fillRestOfYear(List<WeeklyOpeningDay> weeklyOpeningDays);
@@ -27,4 +28,8 @@ public interface WorkingDayService  {
     List<WorkingDay> getAll();
 
     List<WorkingDayDto> getByWeekNumber(int weekNumber);
+
+    WorkingDayDto mapToDto(WorkingDay workingDay);
 }
+
+
