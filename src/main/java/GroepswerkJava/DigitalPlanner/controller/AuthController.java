@@ -32,10 +32,10 @@ public class AuthController {
         return "index";
     }
 
-    @PostMapping("/login")
-    public String dashboard() {
-        return "dashboard";
-    }
+//    @PostMapping("/login")
+//    public String dashboard() {
+//        return "dashboard";
+//    }
 
     // handler method to handle user registration request
     @GetMapping("/register")
