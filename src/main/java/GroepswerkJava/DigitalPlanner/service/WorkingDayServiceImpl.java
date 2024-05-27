@@ -54,7 +54,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     @Override
     public WorkingDay getById(long id) {
-        throw new UnsupportedOperationException("methode nog niet geimplementeerd");
+        return workingDayRepository.findByWorkingDayId((int)id);
     }
 
     /**

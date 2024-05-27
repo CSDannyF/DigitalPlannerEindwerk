@@ -1,22 +1,26 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
+import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
+import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
+import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class PlannerController {
+
+
     @Autowired
     PlanningService planningService;
 
@@ -26,54 +30,140 @@ public class PlannerController {
     @Autowired
     StaffService staffService;
 
-// show weekPlanning
-    @GetMapping("/weekPlanning/proposal")
-    public String showGeneratedWeekPlanning(@ModelAttribute("weekPlannings") ArrayList<PlanningDto> weekPlannings, Model model) {
-        //TODO remove this method, for now it is for testing with dummy data
-        List<PlanningDto> weekPlanning = getDummyData2(LocalDate.now());
-        WeekPlanningWrapper weekPlanningWrapper = new WeekPlanningWrapper();
-        weekPlanningWrapper.setWeekPlanning(weekPlanning);
-        model.addAttribute("weekWrapper", weekPlanningWrapper);
-        return "generatedWeek";
+    @Autowired
+    private AvailabilityService availabilityService;
+
+    @Autowired
+    private PlanningStatusService planningStatusService;
+
+    @Autowired
+    private LogDetailService logDetailService;
+
+    @GetMapping("/rangeWeek")
+    public String weeksToPlan(Model model,
+                              Authentication authentication) {
+
+        //checked als er een gebruiker is ingelogd, anders wordt hij naar het loginscherm gestuurd
+        if (authentication == null) {
+            return "redirect:/";
+        }
+
+        List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
+        Map<Integer, String> workingDayDtoMap = new HashMap<>();
+
+        //bind weekNumber and workingDay into a map to show range of days (full week) in FE
+        for (WorkingDayDto workingDay : workingDayDtos) {
+            if (workingDay.getDate().getDayOfWeek() == DayOfWeek.MONDAY) {
+                int weekNumber = workingDay.getWeekNumber();
+                workingDayDtoMap.put(weekNumber, workingDay.getDate() + " - " + workingDay.getDate().plusDays(6).toString());
+            }
+        }
+
+        model.addAttribute("weekNumber1", new WorkingDayDto());
+        //model.addAttribute("weekNumber2", new WorkingDayDto());
+        model.addAttribute("weeks", workingDayDtoMap);
+        return "rangeWeek";
     }
 
-    //TODO WAS methode om op te slaan nadat gegenereerde weekplanning was goedgekeurd, nu wordt onmiddelijk geschreven
-    //todo naar de db en dan approven of niet approven. Waarschijnlijk dus niet meer nodig
-////Approve weekPlanning and (try to) write to db
-//    @PostMapping("/weekPlanning/approve")
-//    public String approveWeekPlanning(WeekPlanningWrapper weekWrapper, Model model) {
-//        if (weekWrapper == null || weekWrapper.getWeekPlanning() == null || weekWrapper.getWeekPlanning().isEmpty()) {
-//            throw new IllegalArgumentException("Week planning list cannot be null or empty");
-//        }
-////        model.addAttribute("weekWrapper", weekWrapper);
-//        planningService.saveAll(weekWrapper.getWeekPlanning());
-//        return "/dashboard"; //
-//    }
-//
-    public List<PlanningDto> getDummyData2(LocalDate date){
-        List<PlanningDto> planningDtoList = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            WorkingDayDto workingDayDto = workingDayService.getByDate(date);
-            PlanningDto planningDto = planningService.getByWorkingDay(workingDayDto);
-            List<PlanningDetailDto> details = new ArrayList<>();
-            for (int j = 0; j < 7; j++) {
-                PlanningDetailDto planningDetailDto = new PlanningDetailDto();
-                //todo haalt 7 staffleden uit database, als deze er niet in zitten
-//                if(staffService.getById(j + 1) == null){
-                StaffDto staffDto = new StaffDto();
-                staffDto.setFirstName("jos" + j);
-//                } else {
-//                    planningDetailDto.setStaff(staffService.getById(j + 1));  //.getFirstName()));
-//                }
-                planningDetailDto.setStartTime(LocalTime.of(8, 0));
-                planningDetailDto.setEndTime(LocalTime.of(20, 0));
-                details.add(planningDetailDto);
-            }
-            planningDto.setPlanningDetails(details);
-            planningDto.setWorkingDayDto(workingDayDto);
-            planningDtoList.add(planningDto);
-            date = date.plusDays(1);
+    /*
+    omdat ik niet met th:field werk maar met name="" kan ik spring niet gebruiken voor validatie,
+    Nu moet ik dat doen met flash attributes
+    */
+    @PostMapping("/RangeWeek")
+    public String generatePlanning(@RequestParam(value = "weekNumber1") int weekNumber1,
+                                   //@RequestParam(value = "weekNumber2") int weekNumber2,      voor later als we meerdere weken tegelijk willen renderen
+                                   Authentication authentication,
+                                   RedirectAttributes redirectAttributes,
+                                   Model model) {
+
+        model.addAttribute("weekNumber1", new WorkingDayDto());
+        //model.addAttribute("weekNumber2", new WorkingDayDto());
+
+        /*
+        error handling als er een verkeerde input gegeven wordt.
+        Week 1 mag niet null zijn en mag niet groter of na week 2 komen -->  groter dan week 2 staat in comments
+         */
+        boolean hasErrors = false;
+        if (weekNumber1 == 0) {
+            redirectAttributes.addFlashAttribute("error1", "Choose a start week");
+            hasErrors = true;
         }
-        return planningDtoList;
+        /*
+        //controle als 2de week wel degelijk na de 1ste week start
+        else if(weekNumber1 > weekNumber2 && weekNumber2 != 0)
+        {
+            redirectAttributes.addFlashAttribute("error1", "Start week must come before the end week");
+            hasErrors = true;
+        }
+         */
+        if (hasErrors) {
+            return "redirect:/rangeWeek";
+        }
+
+        List<WorkingDayDto> workingDaysWeek = workingDayService.getByWeekNumber(weekNumber1);
+        List<StaffDto> staffDtos = staffService.getAll();
+        Planner planner = new Planner();
+
+        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService);
+
+        //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
+        for (PlanningDto planning : response.getPlanningList()) {
+            planning.setPlannedByStaff(authentication.getName());
+            planning.setPlannedDate(LocalDate.now());               //Hier zou misschien nog het tijdstip kunnen bijkomen
+        }
+        planningService.saveAll(response.getPlanningList());
+
+        model.addAttribute("weekWrapper", response.getPlanningList());
+
+
+        return "generatedWeek";
+//        return "dashboard";
+    }
+
+
+    @GetMapping("/planningDetails/edit")
+    public String getThymeleafTemplate(@RequestParam int year, @RequestParam int month, @RequestParam int day,
+                                       Model model) {
+
+        LocalDate date = LocalDate.of(year, month, day);
+
+        PlanningDto planningDto = workingDayService.getByDate(date).getPlanningDto();
+
+        List<StaffDto> staffList = staffService.getAll();
+
+        //removing staff that is already planned on this day, staffList is for dropDown select
+        for(PlanningDetailDto planningDetailDto: planningDto.getPlanningDetails()){
+            staffList.remove(planningDetailDto.getStaff());
+        }
+
+        model.addAttribute("date", date);
+        model.addAttribute("planning", workingDayService.getByDate(date).getPlanningDto());
+
+        StaffDto staffDto = new StaffDto();
+        model.addAttribute("staffDto", staffDto);
+        model.addAttribute("availableStaff", staffList);
+
+        model.addAttribute("staffMembers", staffService.getAll());
+
+        return "editShifts";
+    }
+
+
+    @PostMapping("/planningDetails/save")
+    public String savePlanningDetails(@ModelAttribute PlanningDto planningDto,
+                                      @ModelAttribute ListPlanningDetailDto listPlanningDetailDto,
+                                      Authentication authentication, Model model) {
+
+        WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
+
+
+        try {
+            planningService.savePlanningDetails(planningDto, listPlanningDetailDto, authentication.getName());
+        } catch (DuplicateStaffException e) {
+            model.addAttribute("error", e.getMessage());
+
+            return "dashboard";
+        }
+        return "redirect:/dashboard";
     }
 }

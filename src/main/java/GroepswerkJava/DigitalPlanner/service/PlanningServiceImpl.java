@@ -1,14 +1,18 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.*;
+import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
 import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Service
@@ -32,11 +36,69 @@ public class PlanningServiceImpl implements PlanningService{
     @Autowired
     private StaffRepository staffRepository;
 
+    @Autowired
+    private WorkingDayService workingDayService;
+
+    @Autowired
+    private PlanningStatusService planningStatusService;
+
     @Override
     public void save(PlanningDto planningDto)
     {
+        Planning planning =  mapToPlanningModel(planningDto);
+        System.out.println(planning);
+        planningRepository.save(planning);
         //TODO nog geimplementeerd worden
     }
+
+
+
+
+    @Override
+    public void savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy) {
+        WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
+        planningDto.setWorkingDayDto(workingDayService.mapToDto(workingDay));
+        planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned manually"));
+        planningDto.setPlannedByStaff(plannedBy);
+        planningDto.setPlannedDate(LocalDate.now());
+
+        if (planningDto.getPlanningDetails() != null) {
+            for (PlanningDetailDto detail : planningDto.getPlanningDetails()) {
+                StaffDto staff = staffService.getById(detail.getStaffId());
+                detail.setStaff(staff);
+            }
+        } else {
+            planningDto.setPlanningDetails(new ArrayList<>());
+        }
+
+        if (listPlanningDetailDto != null) {
+            for (PlanningDetailDto newDetail : listPlanningDetailDto.getNewPlanningDetails()) {
+                if (newDetail.getStartTime() != null && newDetail.getEndTime() != null) {
+                    long staffId = newDetail.getStaffId();
+                    if(staffId != 0){
+                        StaffDto staff = staffService.getById(staffId);
+                        PlanningDetailDto newPlanningDetail = new PlanningDetailDto();
+                        newPlanningDetail.setStartTime(newDetail.getStartTime());
+                        newPlanningDetail.setEndTime(newDetail.getEndTime());
+                        newPlanningDetail.setStaff(staff);
+                        planningDto.getPlanningDetails().add(newPlanningDetail);
+                    }
+                }
+            }
+        }
+        // Check for duplicate staff in planning details
+        if (hasDuplicateStaff(planningDto.getPlanningDetails())) {
+            System.out.println("ERRRRRORRRR");
+            throw new DuplicateStaffException("Failed planning edit: It is not possible to plan the same staff more than once per day");
+
+        }
+
+        // Save the planningDto
+        planningRepository.save(mapToPlanningModel(planningDto));
+    }
+
+
+
 
     /*
     Om de save te laten werken om een update te doen moeten de ID's van alle modellen die al in de database staan geset worden
@@ -57,6 +119,21 @@ public class PlanningServiceImpl implements PlanningService{
     @Override
     public PlanningDto getByWorkingDay(WorkingDayDto workingDayDto) {
         return mapToPlanningDto(planningRepository.findByWorkingDay(mapFromWorkingDayDto(workingDayDto)));
+    }
+
+    // check if no duplicate staff is planned in same planning
+    @Override
+    public boolean hasDuplicateStaff(List<PlanningDetailDto> planningDetails) {
+        System.out.println("duplicate?");
+        Set<String> staffNames = new HashSet<>();
+        for (PlanningDetailDto detail : planningDetails) {
+            if (!staffNames.add(detail.getStaff().getFirstName() + ", " + detail.getStaff().getLastName())) {
+                System.out.println("TRUE");
+                return true;
+            }
+        }
+        System.out.println("FALSE");
+        return false;
     }
 
     //Dto mappers
@@ -87,6 +164,7 @@ public class PlanningServiceImpl implements PlanningService{
             }
             planningDto.setPlannedByStaff(planning.getPlannedByStaff());
             planningDto.setPlannedDate(planning.getPlannedDate());
+            planningDto.setWorkingDayDtoId(planning.getWorkingDay().getWorkingDayId());
             List<PlanningDetailDto> planningDetailDtoList = new ArrayList<>();
             for(PlanningDetail planningDetail: planning.getPlanningDetails()){
                 PlanningDetailDto planningDetailDto = mapToPlanningDetailDto(planningDetail);
@@ -127,6 +205,7 @@ public class PlanningServiceImpl implements PlanningService{
         planning.setPlanningDetails(mapToPlanningDetailModel(planningDto.getPlanningDetails()));
 
 
+
         WorkingDay workingDay = workingDayRepository.findByDate(planningDto.getWorkingDayDto().getDate());
         if(!workingDay.getPlanning().getPlanningDetails().isEmpty())
         {
@@ -148,8 +227,10 @@ public class PlanningServiceImpl implements PlanningService{
         planning.setWorkingDay(workingDayService.mapToWorkingDayModel(planningDto.getWorkingDayDto()));
 
         PlanningStatusServiceImpl planningStatusService = new PlanningStatusServiceImpl(planningStatusRepository);
-        PlanningStatus planningStatus = planningStatusService.mapToPlanningStatus(planningDto.getPlanningStatusDto());
-        planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName(planningStatus.getPlanningStatusName()));
+        if(planningDto.getPlanningStatusDto() != null){
+            PlanningStatus planningStatus = planningStatusService.mapToPlanningStatus(planningDto.getPlanningStatusDto());
+            planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName(planningStatus.getPlanningStatusName()));
+        }
 
         for(PlanningDetail planningDetail: planning.getPlanningDetails())
         {

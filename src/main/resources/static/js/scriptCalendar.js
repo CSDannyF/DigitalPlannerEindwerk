@@ -28,7 +28,7 @@ monthPicker.onclick = () => {
 
 let workingDayData = {};
 
-// Fetch workingDays data from API and use handleWorkingDays() to generate calendar based on workingDays
+// Fetch workingDays data from API and use handleWorkingDays() to generate calendar based on workingDays (mark closed days,...)
 fetch('/workingDay')
     .then(response => {
 
@@ -79,7 +79,6 @@ generateCalendar = (month, year) => {
         if (i >= firstDay.getDay()) {
             let dayNumber = i - firstDay.getDay() + 1;
             day.textContent = dayNumber;
-            day.classList.add('calendarDayHover');
 
             // Ensure consistent dateKey format (YYYY-MM-DD) for comparison
             const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed(02-04-2024 instead of 2-4-2024)
@@ -95,16 +94,16 @@ generateCalendar = (month, year) => {
 
             // Add styles to the days in the calendar
             if (!isOpen) {
-                day.classList.add('closedDay'); // Apply styles for closed days
+                day.classList.add('closedDay');
             } else {
-                day.classList.add('openDay'); // Apply styles for open days
+                day.classList.add('openDay');
             }
 
             if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
                 if (!isOpen) {
-                    day.classList.add('currClosedDay'); // Apply styles for closed current day
+                    day.classList.add('currClosedDay');
                 } else {
-                    day.classList.add('currOpenDay'); // Apply styles for open current day
+                    day.classList.add('currOpenDay');
                 }
             }
         }
@@ -120,6 +119,7 @@ monthNames.forEach((e, index) => {
     let month = document.createElement('div')
     month.innerHTML = `<div>${e}</div>`
     month.onclick = () => {
+        hideElements();
         monthList.classList.remove('show')
         currMonth.value = index
         generateCalendar(currMonth.value, currYear.value)
@@ -129,14 +129,24 @@ monthNames.forEach((e, index) => {
 
 //change year controls
 document.querySelector('#prev-year').onclick = () => {
+    hideElements();
     --currYear.value
     generateCalendar(currMonth.value, currYear.value)
 };
 
 document.querySelector('#next-year').onclick = () => {
+    hideElements();
     ++currYear.value
     generateCalendar(currMonth.value, currYear.value)
 };
+
+
+// Hide the thymeleafContent when a new date is selected
+function hideElements(){
+                const thymeleafContent = document.getElementById('thymeleafContent');
+                thymeleafContent.innerHTML = '';
+                thymeleafContent.style.display = 'none';
+}
 
 
 let currDate = new Date();
@@ -148,6 +158,8 @@ generateCalendar(currMonth.value, currYear.value);
 // click on a day to show it's planning
 handleDayClick = (day, month, year, isOpen) => {
     updateDayTitle(day, month, year, isOpen);
+    hideElements();
+
 
     //month + 1 because javascript starts counting months at 0 (januari = 0)
     const javaMonth = month + 1;
@@ -167,23 +179,34 @@ handleDayClick = (day, month, year, isOpen) => {
         });
 };
 
+
 // shows the date of which the planning is shown in a title
-updateDayTitle = (year, month, day, isOpen) => {
+updateDayTitle = (day, month, year, isOpen) => {
     const shiftsContainer = document.getElementById('shiftsContainer');
     shiftsContainer.innerHTML = '';
     const detailDiv = document.createElement('div');
     detailDiv.classList.add('shiftTitle');
-    let openTitle;
-    if(isOpen){
-        openTitle = "OPEN";
-    } else {
-        openTitle = "CLOSED";
-    }
+
+    let openTitle = isOpen ? "OPEN" : "CLOSED";
 
     const dayString = `${year} /  ${month + 1} / ${day} : ${openTitle}`;
     detailDiv.textContent = dayString;
+
+        const button = document.createElement('button');
+            button.textContent = '  EDIT PLANNING';
+            button.classList.add('btn', 'btn-primary');
+            button.style.marginLeft = '20px';
+            button.onclick = () => {
+                console.log(year , month, day);
+                loadThymeleafTemplate(year, month + 1, day);
+            };
+
+            // Append the button to detailDiv
+            detailDiv.appendChild(button);
+
     shiftsContainer.appendChild(detailDiv);
 }
+
 
 // shows the planningDetails of a certain date in planningDetails
 updateUIWithData = (data) => {
@@ -195,9 +218,9 @@ updateUIWithData = (data) => {
             detailDiv.classList.add('shiftDetail');
 
             //\xa0 = spacing, probably better way?
-            const shiftString = `${detail.startTime || 'N/A'} - ${detail.endTime}
+            const shiftString = `${detail.startTime || 'FREE'} - ${detail.endTime || 'Not planned'}
             \xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0
-            ${detail.staff}`;
+            ${detail.staff.firstName} , ${detail.staff.lastName}`;
             detailDiv.textContent = shiftString;
 
             shiftsContainer.appendChild(detailDiv);
@@ -206,3 +229,25 @@ updateUIWithData = (data) => {
 };
 
 
+// Function to load Thymeleaf fragment to edit or add planning details
+loadThymeleafTemplate = (year, month, day) => {
+    const thymeleafContent = document.getElementById('thymeleafContent');
+    const url = `/planningDetails/edit?year=${year}&month=${month}&day=${day}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.text();
+        })
+        .then(data => {
+            thymeleafContent.innerHTML = data;
+            thymeleafContent.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            thymeleafContent.innerHTML = `<p>Error loading content: ${error.message}</p>`;
+            thymeleafContent.style.display = 'block';
+        });
+};

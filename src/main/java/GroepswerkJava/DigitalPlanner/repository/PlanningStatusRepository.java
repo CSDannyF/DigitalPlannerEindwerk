@@ -8,4 +8,7 @@ import org.springframework.stereotype.Repository;
 public interface PlanningStatusRepository extends JpaRepository<PlanningStatus, Long>
 {
     PlanningStatus findByPlanningStatusName(String planningStatusName);
+
+    PlanningStatus findByPlanningStatusId(long planningStatusId);
+
 }
