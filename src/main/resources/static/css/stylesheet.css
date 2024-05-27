@@ -55,7 +55,7 @@ _______________*/
 }
 
 body {
-    margin: 0;
+    height: 100%;
     font-family: 'Roboto', sans-serif;
     background-image: url('/images/dashboard/Space.jpg');
     background-size: cover;
@@ -72,8 +72,23 @@ body {
   background-size: cover;
   color: #ffb78c;
 }
+/*_______________*/
+
+/* DASHBOARD
+_______________*/
+.dashboard-container {
+    display: flex;
+    /*justify-content: flex-start;
+    align-items: flex-start; */
+    width: 100%;
+    /*padding: 20px;
+    box-sizing: border-box;*/
+    height: 100%;
+}
 
 /*_______________*/
+
+
 
 /* SIDEBAR
 _______________*/
@@ -81,9 +96,12 @@ _______________*/
   width: 250px;
   height: 100vh;
   position: fixed;
+  top: 0;
+  left: 0;
   background-color: var(--bg-main);
   color: #fff; /* Tekstkleur */
-  left: 0;
+
+  overflow-y: auto; /* Voeg scrollbalk toe voor de sidebar-inhoud indien nodig */
 }
 #sidebarContent a {
   color: #fff; /* Linkkleur */
@@ -184,8 +202,11 @@ _______________*/
     flex-direction: column; /* Ensure calendar content stacks vertically */
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    width: 110%;
+    min-height: 75vh;
+    width: 70%;
+    box-sizing: border-box;
+    margin-left: 270px;
+    margin-right: 20px;
 }
 
 .calendar {
@@ -431,8 +452,8 @@ _______________*/
     }
 }
 
-/* Login screen */
-
+/* LOGIN SCREEN
+_______________*/
 #loginBanner {
     height: 500px;
     background: rgb(90,149,193);
@@ -485,6 +506,8 @@ h1 {
     font-family: 'Roboto';
     margin-left: 20px;
 }
+/*_______________*/
+
 
 
 /*  show day shifts when clicked on a day in the calendar */
@@ -493,6 +516,8 @@ h1 {
     font-family: Arial, sans-serif;
     font-size: 16px;
     line-height: 2;
+    width: 30%;
+    box-sizing: border-box;
 }
 
 

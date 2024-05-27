@@ -56,13 +56,10 @@
 </head>
 
 <body>
-<!-- Insert sidebar ADMIN / USER fragment -->
-<!-- todo future sprint - Load view based on role -->
 
-<!--
-<div th:replace="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
--->
+<div class="dashboard-container">
 
+<!-- Insert sidebar fragment -->
 <div th:replace="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
 
 
@@ -72,7 +69,7 @@
 <!-- Insert calendar fragment -->
 <div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>
 
-<div class="clearfix"></div>
+<!-- <div class="clearfix"></div> -->
 
 
 
@@ -110,6 +107,7 @@
 <!-- Background container -->
 <div class="background-image"></div>
 
-<!-- JS calendar -->
+</div>
+
 </body>
 </html>
