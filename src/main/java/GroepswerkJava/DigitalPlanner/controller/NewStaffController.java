@@ -18,7 +18,7 @@ import java.util.Set;
 
 @Controller
 @Validated
-public class NewStaffController {
+public class  NewStaffController {
 
     @Autowired
     private StaffServiceImpl staffService;
