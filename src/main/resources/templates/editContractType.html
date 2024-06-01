@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:background-color="http://www.w3.org/1999/xhtml">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <link th:href="@{css/stylesheet.css}" type="text/css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Digital Planner</title>
+</head>
+<body>
+<div class="container-flex">
+
+  <div class="row justify-content-center">
+    <div class="col-6">
+
+      <div class="card" id="popupCard">
+        <div class="card-header">
+          <h3>Edit ContractType</h3>
+        </div>
+        <div class="card-body">
+
+          <!-- Form for editing Department -->
+          <form th:action="@{/editContractType/} + ${contractType.contractTypeName}" th:object="${contractType}" method="post">
+            <div class="mb-5">
+
+              <div>
+                <label class="form-label">Edit Contract type
+                  <input th:field="*{contractType}" type="text" placeholder="name" class="form-control">
+                </label>
+              </div>
+
+              <br>
+              <a class="btn btn-primary" type="button" th:href="@{/contractType}">Go back</a>
+              <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
