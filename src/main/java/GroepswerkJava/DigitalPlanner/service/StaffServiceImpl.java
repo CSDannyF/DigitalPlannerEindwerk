@@ -85,7 +85,7 @@ public class StaffServiceImpl implements StaffService{
         staffDto.setDepartment(departmentService.mapToDepartmentDto(staff.getDepartment()));
         staffDto.setContractType(contractTypeService.mapToContractTypeDto(staff.getContractType()));
         staffDto.setFunction(staffFunctionService.mapToStaffFunctionDto(staff.getStaffFunction()));
-        staffDto.setCompanyDto(companyService.mapToCompanyDto(staff.getCompany()));
+        //staffDto.setCompanyDto(companyService.mapToCompanyDto(staff.getCompany()));
 
         if (staff.getEndDate() != null)
         {
@@ -126,7 +126,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
         staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
         staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
-        staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
+        //staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
 
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
         if (staffDto.getStaffId() != 0)

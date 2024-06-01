@@ -149,9 +149,11 @@ public class  NewStaffController {
         }
 
         //toevoegen van company aan staff
+        /*
         CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
         List<CompanyDto> companyDtos = companyService.getAll();
         staffDto.setCompanyDto(companyDtos.getFirst());
+         */
 
         userLoginDto.setStaffDto(staffDto);
         userLoginDto.setPassword(staffDto.getFirstName()+staffDto.getLastName());
