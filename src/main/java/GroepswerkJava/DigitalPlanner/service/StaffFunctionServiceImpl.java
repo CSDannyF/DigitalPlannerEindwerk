@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.dto.DepartmentDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffFunctionDto;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
 import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
@@ -29,18 +28,36 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     }
 
     @Override
-    public void save(StaffFunctionDto staffFunction) {
-        StaffFunction function = new StaffFunction();
-        function.setFunctionName(staffFunction.getFunctionName());
-        function.setFunctionDescription(staffFunction.getFunctionDescription());
-        staffFunctionRepository.save(function);
+    public void deleteStaffFunctionByName(String staffFunctionName)
+    {
+        StaffFunction staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionName);
+        staffFunctionRepository.delete(staffFunction);
     }
 
     @Override
-    public StaffFunctionDto getById(long id) {
+    public void save(StaffFunctionDto staffFunctionDto)
+    {
+        StaffFunction staffFunction = new StaffFunction();
+
+        //hier moet er nog nagekeken worden als het object wel uniek is, indien wel krijgt hij geen id, anders niet
+        if (staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName()) == null)
+        {
+            staffFunction = mapToStaffFunctionModel(staffFunctionDto);
+            staffFunctionRepository.save(staffFunction);
+        } else {
+            staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName());
+            staffFunction.setFunctionName(staffFunctionDto.getFunctionName());
+            staffFunction.setFunctionDescription(staffFunctionDto.getFunctionDescription());
+            staffFunctionRepository.save(staffFunction);
+        }
+    }
+
+    @Override
+    public StaffFunctionDto getById(long id)
+    {
         Optional<StaffFunction> optional = staffFunctionRepository.findById(id);
         StaffFunction staffFunction = null;
-        if(optional.isPresent())
+        if (optional.isPresent())
         {
             staffFunction = optional.get();
         }
@@ -52,8 +69,15 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     }
 
     @Override
-    public StaffFunctionDto getByName(String name) {
-        return mapToStaffFunctionDto(staffFunctionRepository.findByFunctionName(name));
+    public StaffFunctionDto getByStaffFunctionName(String staffFunctionName)
+    {
+        StaffFunction staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionName);
+        StaffFunctionDto staffFunctionDto = new StaffFunctionDto();
+        if (staffFunction != null)
+        {
+            staffFunctionDto = mapToStaffFunctionDto(staffFunction);
+        }
+        return staffFunctionDto;
     }
 
     //protected gebruikt zodat ze enkel kunnen worder aangeroepen in de service klassen.

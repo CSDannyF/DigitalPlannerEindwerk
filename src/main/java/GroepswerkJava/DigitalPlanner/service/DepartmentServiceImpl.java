@@ -28,23 +28,46 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public void deleteDepartmentByName(String departmentName)
+    {
+        Department department = departmentRepository.findByDepartmentName(departmentName);
+        this.departmentRepository.delete(department);
+    }
+
+    @Override
     public void save(DepartmentDto departmentDto)
     {
         Department department = new Department();
-        department.setDepartmentName(departmentDto.getDepartmentName());
-        departmentRepository.save(department);
+
+        if (departmentRepository.findByDepartmentName(departmentDto.getDepartmentName()) == null)
+        {
+            department = mapToDepartmentModel(departmentDto);
+            departmentRepository.save(department);
+        } else {
+            department = departmentRepository.findByDepartmentName(departmentDto.getDepartmentName());
+            department.setDepartmentName(departmentDto.getDepartmentName());
+            departmentRepository.save(department);
+        }
     }
 
     @Override
-    public DepartmentDto getByName(String name) {
-        return mapToDepartmentDto(departmentRepository.findByDepartmentName(name));
+    public DepartmentDto getByDepartmentName(String departmentName)
+    {
+        Department department = departmentRepository.findByDepartmentName(departmentName);
+        DepartmentDto departmentDto = new DepartmentDto();
+        if (department != null)
+        {
+            departmentDto = mapToDepartmentDto(department);
+        }
+        return departmentDto;
     }
 
     @Override
-    public DepartmentDto getById(long id) {
+    public DepartmentDto getById(long id)
+    {
         Optional<Department> optional = departmentRepository.findById(id);
         Department department = null;
-        if(optional.isPresent())
+        if (optional.isPresent())
         {
             department = optional.get();
         }
@@ -60,8 +83,13 @@ public class DepartmentServiceImpl implements DepartmentService {
     protected DepartmentDto mapToDepartmentDto(Department department)
     {
         DepartmentDto departmentDto = new DepartmentDto();
-        departmentDto.setDepartmentId(department.getDepartmentId());
         departmentDto.setDepartmentName(department.getDepartmentName());
+
+        if (department.getDepartmentId() != 0)
+        {
+            departmentDto.setDepartmentId(department.getDepartmentId());
+        }
+
         return departmentDto;
     }
 
@@ -69,7 +97,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     {
         Department department = new Department();
         department.setDepartmentId(departmentDto.getDepartmentId());
-        department.setDepartmentName(department.getDepartmentName());
+        department.setDepartmentName(departmentDto.getDepartmentName());
         return department;
     }
 }

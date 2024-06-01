@@ -3,7 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
-import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
+import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -40,6 +41,9 @@ public class  NewStaffController {
 
     @Autowired
     private RoleServiceImpl roleService;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     @GetMapping("/staff")
     public String newStaff(Model model)
@@ -68,14 +72,14 @@ public class  NewStaffController {
     @PostMapping("/Staff")
     public String saveStaff(@Valid @ModelAttribute("staffDto") StaffDto staffDto,
                             @ModelAttribute("userLogin") UserLoginDto userLoginDto,
-                            @RequestParam(value = "departmentId", required = false) long departmentId,
+                            @RequestParam(value = "departmentId") long departmentId,
                             @RequestParam("functionId") long functionId,
                             @RequestParam(value = "staffId", required = false)long staffId,
                             @RequestParam("contractTypeId") long contractTypeId,
                             @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
-                            BindingResult result, Model model)
+                            BindingResult result,
+                            Model model)
     {
-
         //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
         model.addAttribute("departmentDto", new DepartmentDto());
         model.addAttribute("staffFunctionDto", new StaffFunction());
@@ -88,53 +92,26 @@ public class  NewStaffController {
         model.addAttribute("contractTypes", contractTypeService.getAll());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
 
-        /*hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
+        //check/validatie als departement, contract type en functie niet null zijn
+        if (departmentId == 0 || functionId == 0 || contractTypeId == 0)
+        {
+            model.addAttribute("error", "The fields department, contract type and staff function are required");
+            return "staff";
+        }
+
+        /*
+        hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
         uniek is of niet en reject doen ingeval van niet uniek
         */
         UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
-
-        if(existing.getEmail() != null) {
+        if (existing.getEmail() != null)
+        {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
         if (result.hasErrors())
         {
             return "staff";
         }
-
-/*
-        //in deze blok wordt nagekeken als een bepaald veld al dan niet in ingevuld + geef ik een error boodschap mee
-        if(staffDto.getFirstName() == null || staffDto.getFirstName().isEmpty())
-        {
-            result.rejectValue("firstName", "NotEmpty", "First name cannot be empty");
-        }
-        if(staffDto.getLastName() == null || staffDto.getLastName().isEmpty())
-        {
-            result.rejectValue("lastName", "NotEmpty", "Last name cannot be empty");
-        }
-        if(staffDto.getAddressLine1() == null || staffDto.getAddressLine1().isEmpty())
-        {
-            result.rejectValue("addressLine1", "NotEmpty", "Address line 1 name cannot be empty");
-        }
-        if(staffDto.getZipcode() == null || staffDto.getZipcode().isEmpty())
-        {
-            result.rejectValue("zipcode", "NotEmpty", "Zipcode name cannot be empty");
-        }
-        if(staffDto.getCity() == null || staffDto.getCity().isEmpty())
-        {
-            result.rejectValue("city", "NotEmpty", "City name cannot be empty");
-        }
-        if(staffDto.getPhoneNumber() == null || staffDto.getPhoneNumber().isEmpty())
-        {
-            result.rejectValue("phoneNumber", "NotEmpty", "Phone number name cannot be empty");
-        }
-        if(staffDto.getBirthDate() == null)
-        {
-            result.rejectValue("birthDate", "NotEmpty", "Birth date cannot be empty");
-        }
-*/
-        //indien er een foutmelding is ga ik gewoon returnen naar dezelfde html
-
-
 
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
         //Als er een niks is aangeduid gaat de id 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
@@ -171,13 +148,17 @@ public class  NewStaffController {
             staffDto.setFixedDaysOff(daysOff);
         }
 
+        //toevoegen van company aan staff
+        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
+        List<CompanyDto> companyDtos = companyService.getAll();
+        staffDto.setCompanyDto(companyDtos.getFirst());
+
         userLoginDto.setStaffDto(staffDto);
         userLoginDto.setPassword(staffDto.getFirstName()+staffDto.getLastName());
 
         //staffDTO object zit in de userloginDTO object en wordt er samen mee opgeslagen.
-        //als de staff een aparte save doet staat die er 2x in
-        this.userLoginService.saveUser(userLoginDto);
-
+        //Als de staff een aparte save doet staat die er 2x in
+        userLoginService.saveUser(userLoginDto);
         return "dashboard";
     }
 }

@@ -1,14 +1,17 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.ContractTypeDto;
+import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.service.ContractTypeServiceImpl;
+import GroepswerkJava.DigitalPlanner.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 //controller moet nog aangepast worden om volledig beheer te doen
 @Controller
@@ -17,19 +20,105 @@ public class ContractTypeController {
     @Autowired
     private ContractTypeServiceImpl contractTypeService;
 
+    @Autowired
+    private StaffService staffService;
+
     @GetMapping("/contractType")
     public String contractType(Model model)
     {
         ContractType contractType = new ContractType();
+        List<ContractTypeDto> contractTypeDtos;
+        contractTypeDtos = contractTypeService.getAll();
+
+        model.addAttribute("contractTypes", contractTypeDtos);
         model.addAttribute("contractType", contractType);
         return "contractType";
     }
 
     @PostMapping("/contractType")
-    public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractType, Model model)  //model mag weg
+    public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractTypeDto,
+                                   BindingResult result,
+                                   Model model)
     {
-        this.contractTypeService.save(contractType);
-        //moet veranderd worden naar admindashboard indien klaar
-        return "dashboard";
+        List<ContractTypeDto> contractTypeDtos;
+        contractTypeDtos = contractTypeService.getAll();
+        model.addAttribute("contractTypes", contractTypeDtos);
+
+        //Check als niet 2x hetzelfde type wordt aangemaakt
+        ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
+        if (existing.getContractTypeName() != null)
+        {
+            result.rejectValue("contractTypeName", null, "The contract type name has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/contractType";
+        }
+
+        contractTypeService.save(contractTypeDto);
+        return "redirect:/contractType";
+    }
+
+    @GetMapping("deleteContractType")
+    public String deleteContractType(@RequestParam String contractTypeName,
+                                     Model model)
+    {
+        List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
+        model.addAttribute("contractTypes", contractTypeDtos);
+        model.addAttribute("contractType", new ContractTypeDto());
+
+        //hier vergelijken als het een staff member niet afhankelijk is van referentiële integriteit (anders fout op de referentie bij delete)
+        List<StaffDto> staffDtos = staffService.getAll();
+        boolean stillLinked = false;
+        for(StaffDto staffDto: staffDtos)
+        {
+            if (staffDto.getContractType().getContractTypeName().equals(contractTypeName)) {
+                stillLinked = true;
+                break;
+            }
+        }
+        if (stillLinked)
+        {
+            model.addAttribute("errorMessage", "There are still staff members linked to this contract type.");
+            return "/contractType";
+        }
+
+        contractTypeService.deleteContractTypeByName(contractTypeName);
+        return "redirect:/contractType";
+    }
+
+    @GetMapping("/editContractType/{contractTypeName}")
+    public String editContractType(@PathVariable String contractTypeName,
+                                   Model model)
+    {
+        ContractTypeDto contractTypeDto = contractTypeService.getByContractTypeName(contractTypeName);
+        model.addAttribute("contractType", contractTypeDto);
+        return "/editContractType";
+    }
+
+    //om de edit te doen moet ik via de name van de aan te passen object de Id uit de database halen om ze zo te kunnen updaten
+    @PostMapping("/editContractType/{contractTypeName}")
+    public String saveEditedContractType(@PathVariable String contractTypeName,
+                                         @ModelAttribute("contractType") ContractTypeDto contractTypeDto,
+                                         BindingResult result)
+    {
+        //bestaande type wijzigen en checken als deze al dan niet bestaat (moet uniek zijn)
+        ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
+        if (existing.getContractTypeName() != null)
+        {
+            if (contractTypeName.equals(contractTypeDto.getContractTypeName()) || existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()))
+            {
+                result.rejectValue("contractTypeName", null, "The contracttype name name has to be unique");
+            }
+            if (result.hasErrors())
+            {
+                return "/editContractType";
+            }
+        }
+
+        ContractTypeDto contractTypeDto1 = contractTypeService.getByContractTypeName(contractTypeName);
+        contractTypeDto.setContractTypeId(contractTypeDto1.getContractTypeId());
+        contractTypeService.save(contractTypeDto);
+        return "redirect:/contractType";
     }
 }

@@ -8,6 +8,7 @@ public interface ContractTypeService
 {
     void save (ContractTypeDto contractTypeDto);
     ContractTypeDto getById(long id);
-    ContractTypeDto getByName(String name);
+    ContractTypeDto getByContractTypeName(String name);
     List<ContractTypeDto> getAll();
+    void deleteContractTypeByName(String contractTypeName);
 }

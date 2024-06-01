@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class DepartmentDto {
     private long departmentId;
     private String departmentName;

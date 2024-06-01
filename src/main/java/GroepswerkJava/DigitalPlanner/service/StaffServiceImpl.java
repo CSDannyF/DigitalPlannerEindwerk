@@ -4,6 +4,7 @@ import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
 import GroepswerkJava.DigitalPlanner.model.Staff;
+import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class StaffServiceImpl implements StaffService{
 
     @Autowired
     private StaffRepository staffRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
 
     public StaffServiceImpl(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
@@ -76,25 +80,19 @@ public class StaffServiceImpl implements StaffService{
         ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
         StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
         DaysOfWeekServiceImpl daysOfWeekService = new DaysOfWeekServiceImpl();
+        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
 
-        if (staff.getDepartment() != null)
-        {
-            staffDto.setDepartment(departmentService.mapToDepartmentDto(staff.getDepartment()));
-        }
-        if (staff.getContractType() != null)
-        {
-            staffDto.setContractType(contractTypeService.mapToContractTypeDto(staff.getContractType()));
-        }
-        if (staff.getStaffFunction() != null)
-        {
-            staffDto.setFunction(staffFunctionService.mapToStaffFunctionDto(staff.getStaffFunction()));
-        }
+        staffDto.setDepartment(departmentService.mapToDepartmentDto(staff.getDepartment()));
+        staffDto.setContractType(contractTypeService.mapToContractTypeDto(staff.getContractType()));
+        staffDto.setFunction(staffFunctionService.mapToStaffFunctionDto(staff.getStaffFunction()));
+        staffDto.setCompanyDto(companyService.mapToCompanyDto(staff.getCompany()));
+
         if (staff.getEndDate() != null)
         {
             staffDto.setEndDate(staff.getEndDate());
         }
 
-        if(staff.getDaysOffWeek() != null)
+        if (staff.getDaysOffWeek() != null)
         {
             Set<DaysOffWeekDto> daysOffWeekDto = new HashSet<>();
             for(DaysOffWeek day : staff.getDaysOffWeek())
@@ -103,7 +101,6 @@ public class StaffServiceImpl implements StaffService{
             }
             staffDto.setFixedDaysOff(daysOffWeekDto);
         }
-
 
         return staffDto;
     }
@@ -121,22 +118,17 @@ public class StaffServiceImpl implements StaffService{
         staff.setStartDate(staffDto.getStartDate());
         staff.setBirthDate(staffDto.getBirthDate());
 
+        DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
+        ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
+        StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
+        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
+
+        staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
+        staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
+        staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
+        staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
+
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
-        if (staffDto.getDepartment() != null)
-        {
-            DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
-            staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
-        }
-        if (staffDto.getContractType() != null)
-        {
-            ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
-            staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
-        }
-        if (staffDto.getFunction() != null)
-        {
-            StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
-            staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
-        }
         if (staffDto.getStaffId() != 0)
         {
             Staff staff1 = new Staff();

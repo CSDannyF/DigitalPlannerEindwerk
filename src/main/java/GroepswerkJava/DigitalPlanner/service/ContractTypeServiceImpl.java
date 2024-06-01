@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 
 @Component
 @Service
-public class ContractTypeServiceImpl implements ContractTypeService {
+public class ContractTypeServiceImpl implements ContractTypeService
+{
 
     @Autowired
     private ContractTypeRepository contractTypeRepository;
@@ -28,12 +29,28 @@ public class ContractTypeServiceImpl implements ContractTypeService {
     }
 
     @Override
-    public void save(ContractTypeDto contract)
+    public void deleteContractTypeByName(String contractTypeName)
+    {
+        ContractType contractType = contractTypeRepository.findByContractTypeName(contractTypeName);
+        contractTypeRepository.delete(contractType);
+    }
+
+    @Override
+    public void save(ContractTypeDto contractTypeDto)
     {
         ContractType contractType = new ContractType();
-        contractType.setContractTypeName(contract.getContractTypeName());
-        contractType.setHoursPerWeek(contract.getHoursPerWeek());
-        contractTypeRepository.save(contractType);
+
+        //hier moet er nog nagekeken worden als het object wel uniek is, indien wel krijgt hij geen id, anders niet
+        if (contractTypeRepository.findByContractTypeName(contractTypeDto.getContractTypeName()) == null)
+        {
+            contractType = mapToContractTypeModel(contractTypeDto);
+            contractTypeRepository.save(contractType);
+        } else {
+            contractType = contractTypeRepository.findByContractTypeName(contractTypeDto.getContractTypeName());
+            contractType.setContractTypeName(contractTypeDto.getContractTypeName());
+            contractType.setHoursPerWeek(contractTypeDto.getHoursPerWeek());
+            contractTypeRepository.save(contractType);
+        }
     }
 
     @Override
@@ -53,19 +70,24 @@ public class ContractTypeServiceImpl implements ContractTypeService {
     }
 
     @Override
-    public ContractTypeDto getByName(String name)
+    public ContractTypeDto getByContractTypeName(String contractTypeName)
     {
-        return mapToContractTypeDto(contractTypeRepository.findByContractTypeName(name));
+        ContractType contractType = contractTypeRepository.findByContractTypeName(contractTypeName);
+        ContractTypeDto contractTypeDto = new ContractTypeDto();
+        if (contractType != null)
+        {
+            contractTypeDto = mapToContractTypeDto(contractType);
+        }
+        return contractTypeDto;
     }
 
     //protected gebruikt zodat ze enkel kunnen worder aangeroepen in de service klassen.
-
     protected ContractTypeDto mapToContractTypeDto(ContractType contractType)
     {
         ContractTypeDto contractTypeDto = new ContractTypeDto();
         contractTypeDto.setContractTypeId(contractType.getContractTypeId());
         contractTypeDto.setContractTypeName(contractType.getContractTypeName());
-        contractTypeDto.setHoursPerWeek(contractTypeDto.getHoursPerWeek());
+        contractTypeDto.setHoursPerWeek(contractType.getHoursPerWeek());
         return contractTypeDto;
     }
 

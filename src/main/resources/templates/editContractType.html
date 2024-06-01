@@ -15,18 +15,25 @@
 
       <div class="card" id="popupCard">
         <div class="card-header">
-          <h3>Edit ContractType</h3>
+          <h3>Edit Contract type</h3>
         </div>
         <div class="card-body">
 
-          <!-- Form for editing Department -->
+          <!-- Form for editing ContractType -->
           <form th:action="@{/editContractType/} + ${contractType.contractTypeName}" th:object="${contractType}" method="post">
             <div class="mb-5">
 
               <div>
-                <label class="form-label">Edit Contract type
-                  <input th:field="*{contractType}" type="text" placeholder="name" class="form-control">
+                <label class="form-label">Edit contract type
+                  <input th:field="*{contractTypeName}" type="text" placeholder="name" class="form-control">
                 </label>
+                <label class="form-label">Edit contract type
+                  <input th:field="*{hoursPerWeek}" type="text" placeholder="name" class="form-control">
+                </label>
+
+                <p class="text-danger" th:if="${#fields.hasErrors('contractTypeName')}" th:errors="*{contractTypeName}"></p>
+                <div class="invalid-feedback"></div>
+
               </div>
 
               <br>

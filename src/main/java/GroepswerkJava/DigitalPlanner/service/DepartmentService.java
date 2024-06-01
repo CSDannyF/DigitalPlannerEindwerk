@@ -7,7 +7,8 @@ import java.util.List;
 public interface DepartmentService
 {
     void save(DepartmentDto departmentDto);
-    DepartmentDto getByName(String departmentName);
+    DepartmentDto getByDepartmentName(String departmentName);
     DepartmentDto getById(long id);
     List<DepartmentDto> getAll();
+    void deleteDepartmentByName(String departmentName);
 }

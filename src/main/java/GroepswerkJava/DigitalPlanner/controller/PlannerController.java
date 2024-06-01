@@ -20,15 +20,14 @@ import java.util.*;
 @Controller
 public class PlannerController {
 
+    @Autowired
+    private PlanningService planningService;
 
     @Autowired
-    PlanningService planningService;
+    private WorkingDayService workingDayService;
 
     @Autowired
-    WorkingDayService workingDayService;
-
-    @Autowired
-    StaffService staffService;
+    private StaffService staffService;
 
     @Autowired
     private AvailabilityService availabilityService;
@@ -41,8 +40,8 @@ public class PlannerController {
 
     @GetMapping("/rangeWeek")
     public String weeksToPlan(Model model,
-                              Authentication authentication) {
-
+                              Authentication authentication)
+    {
         //checked als er een gebruiker is ingelogd, anders wordt hij naar het loginscherm gestuurd
         if (authentication == null) {
             return "redirect:/";
@@ -123,8 +122,8 @@ public class PlannerController {
 
     @GetMapping("/planningDetails/edit")
     public String getThymeleafTemplate(@RequestParam int year, @RequestParam int month, @RequestParam int day,
-                                       Model model) {
-
+                                       Model model)
+    {
         LocalDate date = LocalDate.of(year, month, day);
 
         PlanningDto planningDto = workingDayService.getByDate(date).getPlanningDto();
@@ -152,10 +151,9 @@ public class PlannerController {
     @PostMapping("/planningDetails/save")
     public String savePlanningDetails(@ModelAttribute PlanningDto planningDto,
                                       @ModelAttribute ListPlanningDetailDto listPlanningDetailDto,
-                                      Authentication authentication, Model model) {
-
+                                      Authentication authentication, Model model)
+    {
         WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
-
 
         try {
             planningService.savePlanningDetails(planningDto, listPlanningDetailDto, authentication.getName());

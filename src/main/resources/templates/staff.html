@@ -72,7 +72,7 @@
               <label class="form-label" th:object="${userLogin}" for="email">Email
                 <input th:field="*{email}" type="email" placeholder="email" class="form-control" id="email" required>
                 <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
-                <div class="invalid-feedback">Email address is required</div>
+                <div class="invalid-feedback"></div>
               </label>
 
               <label class="form-label" th:object="${departmentDto}">Department
@@ -130,6 +130,7 @@
               <br>
               <a class="btn btn-primary" type="button" th:href="@{/dashboard}">Go back</a>
               <button class="btn btn-primary" type="submit">Create</button>
+              <p class="text-danger" th:if="${error}" th:text="${error}"></p>
             </div>
           </form>
 

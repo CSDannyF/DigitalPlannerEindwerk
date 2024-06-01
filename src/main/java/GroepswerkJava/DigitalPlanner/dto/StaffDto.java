@@ -29,17 +29,14 @@ public class StaffDto
    @NotEmpty
    private String phoneNumber;
    private LocalDate birthDate;
-
    private StaffDto personResponsible;
    private DepartmentDto department;
    private StaffFunctionDto function;
    private LocalDate startDate;
    private LocalDate endDate;
    private ContractTypeDto contractType;
-   //private UserLoginDto userLoginDto;
    private Set<DaysOffWeekDto> fixedDaysOff;
-
-
+   private CompanyDto companyDto;
 
    @Override
    public boolean equals(Object obj) {
