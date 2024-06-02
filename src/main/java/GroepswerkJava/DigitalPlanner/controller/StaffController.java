@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Controller
 @Validated
-public class  NewStaffController {
+public class StaffController {
 
     @Autowired
     private StaffServiceImpl staffService;
@@ -45,12 +45,23 @@ public class  NewStaffController {
     @Autowired
     private CompanyRepository companyRepository;
 
-    @GetMapping("/staff")
+    @GetMapping("staffList")
+    public String showStaffList(Model model)
+    {
+        StaffDto staffDto = new StaffDto();
+        List<StaffDto> staffDtos = staffService.getAll();
+        model.addAttribute("staffDto", staffDto);
+        model.addAttribute("staffMembers", staffDtos);
+        return "/staffList";
+    }
+
+    @GetMapping("/newStaff")
     public String newStaff(Model model)
     {
         StaffDto staffDto = new StaffDto();
+        List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffDto", staffDto);
-        model.addAttribute("staffMembers", staffService.getAll()); //moet ik via dto doen
+        model.addAttribute("staffMembers", staffDtos);
 
         UserLoginDto userLoginDto = new UserLoginDto();
         model.addAttribute("userLogin", userLoginDto);
@@ -66,10 +77,10 @@ public class  NewStaffController {
 
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
-        return "staff";
+        return "newStaff";
     }
 
-    @PostMapping("/Staff")
+    @PostMapping("/newStaff")
     public String saveStaff(@Valid @ModelAttribute("staffDto") StaffDto staffDto,
                             @ModelAttribute("userLogin") UserLoginDto userLoginDto,
                             @RequestParam(value = "departmentId") long departmentId,
@@ -110,7 +121,7 @@ public class  NewStaffController {
         }
         if (result.hasErrors())
         {
-            return "staff";
+            return "newStaff";
         }
 
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
