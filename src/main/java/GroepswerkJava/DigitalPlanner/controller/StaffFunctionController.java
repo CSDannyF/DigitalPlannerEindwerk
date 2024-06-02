@@ -57,7 +57,7 @@ public class StaffFunctionController {
         return "redirect:/staffFunction";
     }
 
-    @GetMapping("deleteStaffFunction")
+    @GetMapping("/deleteStaffFunction")
     public String deleteStaffFunction(@RequestParam String functionName,
                                       Model model)
     {
@@ -93,7 +93,7 @@ public class StaffFunctionController {
         return "/editStaffFunction";
     }
 
-    @PostMapping("editStaffFunction/{functionName}")
+    @PostMapping("/editStaffFunction/{functionName}")
     public String saveEditedStaffFunction(@PathVariable String functionName,
                                           @ModelAttribute("staffFunction") StaffFunctionDto staffFunctionDto,
                                           BindingResult result)

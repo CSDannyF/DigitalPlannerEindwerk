@@ -58,7 +58,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/deleteDepartment")
-    public String deleteEmployee(@RequestParam String departmentName,
+    public String deleteDepartment(@RequestParam String departmentName,
                                  Model model)
     {
         List<DepartmentDto> departmentDtos = departmentService.getAll();

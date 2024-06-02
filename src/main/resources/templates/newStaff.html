@@ -25,19 +25,16 @@
 
               <label class="form-label" for="firstName">First name
                 <input th:field="*{firstName}" type="text" placeholder="first name" class="form-control" id="firstName" required>
-                <!--  <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p> --> <!-- in deze blokjes ga ik afvragen als mijn input veld null (error heeft) is en dit teruggeven aan de save in de controller -->
                 <div class="invalid-feedback">First name is required</div>
               </label>
 
               <label class="form-label float-right" for="lastName">Last name
                 <input th:field="*{lastName}" type="text" placeholder="last name" class="form-control" id="lastName" required>
-                <!--  <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p> -->
                 <div class="invalid-feedback">Last name is required</div>
               </label>
 
               <label class="form-label" for="addressLine1">Address line 1
                 <input th:field="*{addressLine1}" type="text" placeholder="addressline1" class="form-control" id="addressLine1" required>
-                <!--  <p class="text-danger" th:if="${#fields.hasErrors('addressLine1')}" th:errors="*{addressLine1}"></p> -->
                 <div class="invalid-feedback">Address line 1 is required</div>
               </label>
 
@@ -48,12 +45,10 @@
               <label class="form-label" for="zipcode">Zipcode
                 <input th:field="*{zipcode}" type="text" placeholder="zipcode" class="form-control" id="zipcode" required>
                 <div class="invalid-feedback">Zipcode is required</div>
-                <!--  <p class="text-danger" th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}"></p> -->
               </label>
 
               <label class="form-label" for="city">City
                 <input th:field="*{city}" type="text" placeholder="city" class="form-control" id="city" required>
-                <!-- <p class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></p> -->
                 <div class="invalid-feedback">City is required</div>
               </label>
 

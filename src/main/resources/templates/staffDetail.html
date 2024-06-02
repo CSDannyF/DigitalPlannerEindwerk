@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:background-color="http://www.w3.org/1999/xhtml">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <link th:href="@{css/stylesheet.css}" type="text/css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Digital Planner</title>
+</head>
+<body>
+
+<div class="container-flex">
+
+  <div class="row justify-content-center">
+    <div class="col-6">
+
+      <div class="card" id="popupCard">
+        <div class="card-header">
+          <h3>Staff details</h3>
+        </div>
+        <div class="card-body">
+
+            <div class="mb-5 staffDetail">
+
+              <div class="row">
+                <div class="col">
+                  <h6>First name</h6>
+                  <h5 th:text="${staff.firstName}"></h5>
+                </div>
+
+                <div class="col">
+                  <h6>Last name</h6>
+                  <h5 th:text="${staff.lastName}"></h5>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <h6>Address line 1</h6>
+                  <h5 th:text="${staff.addressLine1}"></h5>
+                </div>
+                <div class="col">
+                  <h6>Address line 2</h6>
+                  <h5 th:text="${staff.addressLine2}"></h5>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <h6>City</h6>
+                  <h5 th:text="${staff.city}"></h5>
+
+                  <h6>Phone number</h6>
+                  <h5 th:text="${staff.phoneNumber}"></h5>
+
+                  <h6>Department</h6>
+                  <h5 th:text="${staff.department.departmentName}"></h5>
+
+                  <h6>Start date</h6>
+                  <h5 th:text="${staff.startDate}"></h5>
+
+                  <h6>Contract type</h6>
+                  <h5 th:text="${staff.contractType.contractTypeName}"></h5>
+                </div>
+                <div class="col">
+                  <h6>Zipcode</h6>
+                  <h5 th:text="${staff.zipcode}"></h5>
+
+                  <h6>Person responsible</h6>
+                  <h5 th:text="${staff.personResponsible}"></h5>
+
+                  <h6>Function</h6>
+                  <h5 th:text="${staff.function.functionName}"></h5>
+
+                  <h6>End date</h6>
+                  <h5 th:text="${staff.endDate}"></h5>
+
+                  <label><h6>Fixed days off</h6>
+                    <ul>
+                      <li th:each="day: ${staff.fixedDaysOff}">
+                        <h5 th:text="${day.dayName}"></h5>
+                      </li>
+                    </ul>
+                  </label>
+
+                </div>
+              </div>
+
+            </div>
+
+          <br>
+          <a class="btn btn-primary" type="button" th:href="@{/staffList}">Go back</a>
+          <button class="btn btn-primary">edit</button>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" th:src="@{/js/validation.js}"></script>
+
+</body>
+</html>

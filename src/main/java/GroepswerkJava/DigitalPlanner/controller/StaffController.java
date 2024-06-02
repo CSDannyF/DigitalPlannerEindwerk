@@ -45,14 +45,22 @@ public class StaffController {
     @Autowired
     private CompanyRepository companyRepository;
 
-    @GetMapping("staffList")
+    @GetMapping("/staffList")
     public String showStaffList(Model model)
     {
-        StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
-        model.addAttribute("staffDto", staffDto);
         model.addAttribute("staffMembers", staffDtos);
-        return "/staffList";
+        return "staffList";
+    }
+
+    @GetMapping("/staffDetail/{staffId}")
+    public String staffDetail(@PathVariable long staffId,
+                              Model model)
+    {
+        StaffDto staffDto = new StaffDto();
+        staffDto = staffService.getById(staffId);
+        model.addAttribute("staff", staffDto);
+        return "/staffDetail";
     }
 
     @GetMapping("/newStaff")
