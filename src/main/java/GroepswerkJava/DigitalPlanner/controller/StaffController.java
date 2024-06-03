@@ -115,7 +115,7 @@ public class StaffController {
         if (departmentId == 0 || functionId == 0 || contractTypeId == 0)
         {
             model.addAttribute("error", "The fields department, contract type and staff function are required");
-            return "staff";
+            return "newStaff";
         }
 
         /*
@@ -180,6 +180,6 @@ public class StaffController {
         //staffDTO object zit in de userloginDTO object en wordt er samen mee opgeslagen.
         //Als de staff een aparte save doet staat die er 2x in
         userLoginService.saveUser(userLoginDto);
-        return "dashboard";
+        return "staffList";
     }
 }

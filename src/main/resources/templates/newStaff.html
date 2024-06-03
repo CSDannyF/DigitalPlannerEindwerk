@@ -20,7 +20,7 @@
         </div>
         <div class="card-body">
 
-          <form class="needs-validation" action="#" th:action="@{/Staff}" th:object="${staffDto}" method="post" novalidate>
+          <form class="needs-validation" action="#" th:action="@{/newStaff}" th:object="${staffDto}" method="post" novalidate>
             <div class="mb-5">
 
               <label class="form-label" for="firstName">First name
@@ -54,13 +54,11 @@
 
               <label class="form-label" for="phoneNumber">Phone number
                 <input th:field="*{phoneNumber}" type="text" placeholder="phonenumber" class="form-control" id="phoneNumber" required>
-                <!-- <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p> -->
                 <div class="invalid-feedback">Phone number is required</div>
               </label>
 
               <label class="form-label" for="birthDate">Birth date
                 <input th:field="*{birthDate}" type="date" class="form-control" id="birthDate" required>
-                <!-- <p class="text-danger" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></p> -->
                 <div class="invalid-feedback">Birth date is required</div>
               </label>
 
