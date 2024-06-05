@@ -3,6 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffFunctionDto;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
+import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffFunctionServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,21 @@ public class StaffFunctionController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private CompanyServiceImpl companyService;
+
     @GetMapping("/staffFunction")
     public String staffFunction(Model model)
     {
         StaffFunctionDto staffFunction = new StaffFunctionDto();
         List<StaffFunctionDto> staffFunctionDtos;
         staffFunctionDtos = staffFunctionService.getAll();
+
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isStaffFunctionEmpty = staffFunctionService.getAll().isEmpty();
+
+        model.addAttribute("isStaffFunctionEmpty", isStaffFunctionEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
 
         model.addAttribute("staffFunctions", staffFunctionDtos);
         model.addAttribute("staffFunction", staffFunction);

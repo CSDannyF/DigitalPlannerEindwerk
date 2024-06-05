@@ -253,6 +253,7 @@ public class PlanningServiceImpl implements PlanningService{
             planningDetail.setEndTime(planningDetailDto.getEndTime());
             planningDetail.setWorkMinutesPerDay(planningDetailDto.getWorkMinutesPerDay());
 
+            //TODO als er 2 personen met dezelfde naam zijn wordt de planning niet aangemaakt via email address
             Staff staff = staffRepository.findByStaffLastNameAndStaffFirstName(planningDetailDto.getStaff().getLastName(), planningDetailDto.getStaff().getFirstName());
             planningDetail.setStaff(staff);
 

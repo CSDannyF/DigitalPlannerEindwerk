@@ -3,6 +3,11 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.ContractTypeDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
+import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
+import GroepswerkJava.DigitalPlanner.repository.ContractTypeRepository;
+import GroepswerkJava.DigitalPlanner.repository.DepartmentRepository;
+import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
+import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.ContractTypeServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +28,21 @@ public class ContractTypeController {
     @Autowired
     private StaffService staffService;
 
+    @Autowired
+    private CompanyServiceImpl companyService;
+
     @GetMapping("/contractType")
     public String contractType(Model model)
     {
         ContractType contractType = new ContractType();
         List<ContractTypeDto> contractTypeDtos;
         contractTypeDtos = contractTypeService.getAll();
+
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
+
+        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
 
         model.addAttribute("contractTypes", contractTypeDtos);
         model.addAttribute("contractType", contractType);
@@ -121,4 +135,6 @@ public class ContractTypeController {
         contractTypeService.save(contractTypeDto);
         return "redirect:/contractType";
     }
+
+
 }

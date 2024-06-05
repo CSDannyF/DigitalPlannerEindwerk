@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -28,15 +29,21 @@ public class StaffDto
    private String city;
    @NotEmpty
    private String phoneNumber;
+   private String email;
+   @DateTimeFormat(pattern = "yyyy-MM-dd")
    private LocalDate birthDate;
    private StaffDto personResponsible;
    private DepartmentDto department;
    private StaffFunctionDto function;
+   @DateTimeFormat(pattern = "yyyy-MM-dd")
    private LocalDate startDate;
+   @DateTimeFormat(pattern = "yyyy-MM-dd")
    private LocalDate endDate;
    private ContractTypeDto contractType;
    private Set<DaysOffWeekDto> fixedDaysOff;
    private CompanyDto companyDto;
+
+   private UserLoginDto userLoginDto;
 
    @Override
    public boolean equals(Object obj) {

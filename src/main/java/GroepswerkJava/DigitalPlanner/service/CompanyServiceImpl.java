@@ -3,6 +3,9 @@ package GroepswerkJava.DigitalPlanner.service;
 import GroepswerkJava.DigitalPlanner.dto.CompanyDto;
 import GroepswerkJava.DigitalPlanner.model.Company;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
+import GroepswerkJava.DigitalPlanner.repository.ContractTypeRepository;
+import GroepswerkJava.DigitalPlanner.repository.DepartmentRepository;
+import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,15 @@ import java.util.Optional;
 public class CompanyServiceImpl implements CompanyService{
 
     private final CompanyRepository companyRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private StaffFunctionRepository staffFunctionRepository;
+
+    @Autowired
+    private ContractTypeRepository contractTypeRepository;
 
     @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository){
@@ -68,5 +80,15 @@ public class CompanyServiceImpl implements CompanyService{
         company.setName(companyDto.getName());
         company.setStaff(companyDto.getStaff());
         return company;
+    }
+
+    public boolean isSetupDone()
+    {
+        boolean isSetupDone = true;
+        if (getAll().isEmpty() || departmentRepository.findAll().isEmpty() || staffFunctionRepository.findAll().isEmpty() || contractTypeRepository.findAll().isEmpty())
+        {
+            isSetupDone = false;
+        }
+        return isSetupDone;
     }
 }

@@ -3,6 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.DepartmentDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.model.Department;
+import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.DepartmentServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class DepartmentController {
     private DepartmentServiceImpl departmentService;
 
     @Autowired
+    private CompanyServiceImpl companyService;
+
+    @Autowired
     private StaffService staffService;
 
     @GetMapping("/department")
@@ -29,6 +33,11 @@ public class DepartmentController {
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
 
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+
+        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
         model.addAttribute("departments" ,departmentDtos);
         model.addAttribute("department", department);
         return "department";
@@ -59,7 +68,7 @@ public class DepartmentController {
 
     @GetMapping("/deleteDepartment")
     public String deleteDepartment(@RequestParam String departmentName,
-                                 Model model)
+                                   Model model)
     {
         List<DepartmentDto> departmentDtos = departmentService.getAll();
         model.addAttribute("departments", departmentDtos);

@@ -2,11 +2,16 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
 import GroepswerkJava.DigitalPlanner.model.Staff;
+import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
+import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
+import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +30,15 @@ public class StaffServiceImpl implements StaffService{
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private UserLoginRepository userLoginRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public StaffServiceImpl(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
@@ -48,6 +62,74 @@ public class StaffServiceImpl implements StaffService{
         Staff staff = new Staff();
         staff = mapToStaffModel(staffDto);
         staffRepository.save(staff);
+    }
+
+    @Override
+    public void updateStaff(StaffDto staffDto)
+    {
+        staffRepository.save(mapToUpdate(staffDto));
+    }
+
+    private Staff mapToUpdate(StaffDto staffDto)
+    {
+        Staff staff = new Staff();
+
+        if (staffDto.getStaffId() != 0)
+        {
+            staff.setStaffId(staffDto.getStaffId());
+        }
+
+        staff.setStaffFirstName(staffDto.getFirstName());
+        staff.setStaffLastName(staffDto.getLastName());
+        staff.setAddressLine1(staffDto.getAddressLine1());
+        staff.setAddressLine2(staffDto.getAddressLine2());
+        staff.setZipCode(staffDto.getZipcode());
+        staff.setCity(staffDto.getCity());
+        staff.setPhoneNumber(staffDto.getPhoneNumber());
+        staff.setStartDate(staffDto.getStartDate());
+        staff.setBirthDate(staffDto.getBirthDate());
+
+        DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
+        ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
+        StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
+        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
+
+        staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
+        staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
+        staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
+        //staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
+
+        //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
+        if (staffDto.getStaffId() != 0)
+        {
+            Staff staff1 = new Staff();
+            staff1.setStaffId(getById(staffDto.getStaffId()).getStaffId());
+            //staff.setPersonResponsible(staff1);
+        }
+        if (staffDto.getEndDate() != null)
+        {
+            staff.setEndDate(staffDto.getEndDate());
+        }
+
+        if (staffDto.getFixedDaysOff() != null)
+        {
+            Set<DaysOffWeek> daysOffWeeks = new HashSet<>();
+            DaysOfWeekServiceImpl daysOfWeekService = new DaysOfWeekServiceImpl();
+
+            for (DaysOffWeekDto days: staffDto.getFixedDaysOff())
+            {
+                DaysOffWeek daysOffWeek = daysOfWeekService.mapToDaysOffWeekModel(days);
+                daysOffWeeks.add(daysOffWeek);
+            }
+            staff.setDaysOffWeek(daysOffWeeks);
+        }
+
+        UserLogin userLogin = new UserLogin();
+        UserLoginServiceImpl userLoginService = new UserLoginServiceImpl(userLoginRepository, roleRepository, passwordEncoder, staffRepository);
+        userLogin = userLoginService.mapToUserLoginModel(staffDto.getUserLoginDto());
+        staff.setUserLogin(userLogin);
+
+        return staff;
     }
 
     @Override
@@ -75,6 +157,8 @@ public class StaffServiceImpl implements StaffService{
         staffDto.setCity(staff.getCity());
         staffDto.setPhoneNumber(staff.getPhoneNumber());
         staffDto.setBirthDate(staff.getBirthDate());
+        staffDto.setStartDate(staff.getStartDate());
+        staffDto.setEmail(staff.getUserLogin().getEmail());
 
         DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
         ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
@@ -108,6 +192,12 @@ public class StaffServiceImpl implements StaffService{
     public Staff mapToStaffModel(StaffDto staffDto)  //tijdelijk op public gezet, moet protected zijn ofwel extra methode de lijst van staff trg geeft
     {
         Staff staff = new Staff();
+
+        if (staffDto.getStaffId() != 0)
+        {
+            staff.setStaffId(staffDto.getStaffId());
+        }
+
         staff.setStaffFirstName(staffDto.getFirstName());
         staff.setStaffLastName(staffDto.getLastName());
         staff.setAddressLine1(staffDto.getAddressLine1());
@@ -128,12 +218,13 @@ public class StaffServiceImpl implements StaffService{
         staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
         //staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
 
+        //verantwoordelijke aanduiden
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
         if (staffDto.getStaffId() != 0)
         {
             Staff staff1 = new Staff();
-            staff1.setStaffId(getById(staffDto.getStaffId()).getStaffId());
-            staff.setPersonResponsible(staff1);
+            //staff1.setStaffId(getById(staffDto.getPersonResponsible().getStaffId()).getStaffId());
+            //staff.setPersonResponsible(staff1);
         }
         if (staffDto.getEndDate() != null)
         {

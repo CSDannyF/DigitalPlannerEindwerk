@@ -58,8 +58,9 @@
                             </div>
 
                             <br>
-                            <a class="btn btn-primary" type="button" th:href="@{/dashboard}">Go back</a>
+                            <a th:if="${isSetupDone}" class="btn btn-primary" type="button" th:href="@{/dashboard}">Go to dashboard</a>
                             <button class="btn btn-primary" type="submit">Save</button>
+                            <a th:if="!${isSetupDone} and !${isDepartmentEmpty}" class="btn btn-primary" type="button" th:href="@{/contractType}">Create contract types</a>
                         </div>
                     </form>
                 </div>

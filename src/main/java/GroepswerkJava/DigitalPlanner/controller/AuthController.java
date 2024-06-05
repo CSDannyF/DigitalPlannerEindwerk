@@ -1,7 +1,7 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
+import GroepswerkJava.DigitalPlanner.service.CompanyService;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class AuthController {
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
                                Model model) {
-        UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
+        UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
 
         if (existing.getEmail() != null) {
             result.rejectValue("email", null, "There is already an account registered with that email");

@@ -8,9 +8,12 @@ import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.naming.Binding;
 
 
 @Controller
@@ -33,8 +36,20 @@ public class CompanyController {
     }
 
     @PostMapping("/company")
-    public String saveCompany(@ModelAttribute("company") CompanyDto companyDto, Model model) {
-        this.companyService.save(companyDto);
+    public String saveCompany(@ModelAttribute("company") CompanyDto companyDto,
+                              BindingResult result,
+                              Model model) {
+
+        if (companyDto.getName().equals(""))
+        {
+            result.rejectValue("name", null, "The company needs a name!");
+        }
+        if (result.hasErrors())
+        {
+            return "newCompany";
+        }
+
+        companyService.save(companyDto);
         model.addAttribute("form", getWeekDto());
         return "companyOpeningDays";
     }

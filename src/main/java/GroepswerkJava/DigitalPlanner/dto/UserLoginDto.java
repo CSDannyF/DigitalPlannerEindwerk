@@ -20,7 +20,7 @@ public class UserLoginDto {
     @NotEmpty(message = "Email should not be empty")
     @Email
     private String email;
-    @NotEmpty(message = "Password should not be empty")
+    //@NotEmpty(message = "Password should not be empty")
     private String password;
     private StaffDto staffDto;
     private Boolean changePassword;

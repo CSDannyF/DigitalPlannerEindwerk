@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name="userLogin")
 @Table(name = "userLogin")
 public class UserLogin {
 
@@ -24,10 +24,10 @@ public class UserLogin {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "changePassword", nullable = false)
+    @Column(name = "changePassword")
     private Boolean changePassword;
 
     @OneToOne(cascade = CascadeType.ALL)

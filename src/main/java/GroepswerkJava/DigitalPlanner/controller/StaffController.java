@@ -19,10 +19,11 @@ import java.util.Set;
 
 @Controller
 @Validated
+@RequestMapping("/staff")
 public class StaffController {
 
     @Autowired
-    private StaffServiceImpl staffService;
+    private StaffService staffService;
 
     @Autowired
     private UserLoginServiceImpl userLoginService;
@@ -48,8 +49,10 @@ public class StaffController {
     @GetMapping("/staffList")
     public String showStaffList(Model model)
     {
+        StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffMembers", staffDtos);
+        model.addAttribute("staffDto", staffDto);
         return "staffList";
     }
 
@@ -57,10 +60,90 @@ public class StaffController {
     public String staffDetail(@PathVariable long staffId,
                               Model model)
     {
-        StaffDto staffDto = new StaffDto();
-        staffDto = staffService.getById(staffId);
+        StaffDto staffDto = staffService.getById(staffId);
         model.addAttribute("staff", staffDto);
         return "/staffDetail";
+    }
+
+    @GetMapping("/editStaff/{staffId}")
+    public String editStaff(@PathVariable long staffId,
+                             Model model)
+    {
+
+        StaffDto staffDto = staffService.getById(staffId);
+
+
+        List<StaffDto> staffDtos = staffService.getAll();
+        model.addAttribute("staffDto", staffDto);
+        model.addAttribute("staffMembers", staffDtos);
+
+        UserLoginDto userLoginDto = userLoginService.getByEmail(staffDto.getEmail());
+        model.addAttribute("userLogin", userLoginDto);
+
+        model.addAttribute("departmentDto", new DepartmentDto());
+        model.addAttribute("departments", departmentService.getAll());
+
+        model.addAttribute("staffFunctionDto", new StaffFunctionDto());
+        model.addAttribute("staffFunctions", staffFunctionService.getAll());
+
+        model.addAttribute("contractTypeDto", new ContractTypeDto());
+        model.addAttribute("contractTypes", contractTypeService.getAll());
+
+        model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
+        model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+        return "editStaff";
+    }
+
+    @PostMapping("/editStaff/{staffId}")
+    public String saveEditedStaff(@PathVariable long staffId,
+                                  @ModelAttribute StaffDto staffDto,
+                                  @ModelAttribute UserLoginDto userLoginDto,
+                                  @RequestParam(value = "departmentId") long departmentId,
+                                  @RequestParam("functionId") long functionId,
+                                  @RequestParam("contractTypeId") long contractTypeId,
+                                  @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
+                                  BindingResult result,
+                                  Model model)
+    {
+        if (departmentId == 0 || functionId == 0 || contractTypeId == 0)
+        {
+            model.addAttribute("error", "The fields department, contract type and staff function are required");
+            return "newStaff";
+        }
+
+
+        DepartmentDto department = departmentService.getById(departmentId);
+        staffDto.setDepartment(department);
+
+        ContractTypeDto contractType = contractTypeService.getById(contractTypeId);
+        staffDto.setContractType(contractType);
+
+        StaffFunctionDto staffFunction = staffFunctionService.getById(functionId);
+        staffDto.setFunction(staffFunction);
+
+        if (staffId != 0)
+        {
+            StaffDto staffResponsible = staffService.getById(staffId);
+            staffDto.setPersonResponsible(staffResponsible);
+        }
+
+        if (daysOffWeekId != null) {
+            Set<DaysOffWeekDto> daysOff = new HashSet<>();
+            String days[] = daysOffWeekId.split(",");
+
+            for(String day: days)
+            {
+                DaysOffWeekDto day2 = daysOfWeekService.getById(Long.parseLong(day));
+                daysOff.add(day2);
+            }
+            staffDto.setFixedDaysOff(daysOff);
+        }
+
+        //save user gebruikt. saveStaff kreeg ik niet klaar met een flushing probleem
+        staffDto.setStaffId(staffId);
+        userLoginDto.setStaffDto(staffDto);
+        userLoginService.saveUser(userLoginDto);
+        return "redirect:/staff/staffList";
     }
 
     @GetMapping("/newStaff")
@@ -122,7 +205,7 @@ public class StaffController {
         hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
         uniek is of niet en reject doen ingeval van niet uniek
         */
-        UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
+        UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
         if (existing.getEmail() != null)
         {
             result.rejectValue("email", null, "There is already an account registered with that email");
@@ -132,29 +215,26 @@ public class StaffController {
             return "newStaff";
         }
 
+
+
+        DepartmentDto department = departmentService.getById(departmentId);
+        staffDto.setDepartment(department);
+
+        ContractTypeDto contractType = contractTypeService.getById(contractTypeId);
+        staffDto.setContractType(contractType);
+
+        StaffFunctionDto staffFunction = staffFunctionService.getById(functionId);
+        staffDto.setFunction(staffFunction);
+
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
-        //Als er een niks is aangeduid gaat de id 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
-        //Indien er wel iets aangeduidt is gaat dit 1 of meer zijn en wordt di gebonden aan het Staff object
-        if (departmentId != 0)
-        {
-            DepartmentDto department = departmentService.getById(departmentId);
-            staffDto.setDepartment(department);
-        }
-        if (contractTypeId != 0)
-        {
-            ContractTypeDto contractType = contractTypeService.getById(contractTypeId);
-            staffDto.setContractType(contractType);
-        }
+        //Als er een niks is aangeduid gaat de ID 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
+        //Indien er wel iets aangeduid wordt dit 1 of meer zijn en wordt dit gebonden aan het Staff object
         if (staffId != 0)
         {
             StaffDto staffResponsible = staffService.getById(staffId);
             staffDto.setPersonResponsible(staffResponsible);
         }
-        if (functionId != 0)
-        {
-            StaffFunctionDto staffFunction = staffFunctionService.getById(functionId);
-            staffDto.setFunction(staffFunction);
-        }
+
         if (daysOffWeekId != null) {
             Set<DaysOffWeekDto> daysOff = new HashSet<>();
             String days[] = daysOffWeekId.split(",");
