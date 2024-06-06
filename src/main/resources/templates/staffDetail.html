@@ -89,15 +89,12 @@
           <br>
           <a class="btn btn-primary" type="button" th:href="@{/staff/staffList}">Go back</a>
           <a class="btn btn-primary" th:href="@{/staff/editStaff/} + ${staff.staffId}">Edit</a>
-
+          <a class="btn btn-primary" th:href="@{/editUserLogin/} + ${userLogin.id}">Edit email and Password</a>
         </div>
 
       </div>
     </div>
   </div>
 </div>
-
-<script type="text/javascript" th:src="@{/js/validation.js}"></script>
-
 </body>
 </html>

@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.service;
 
-import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.Role;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
@@ -40,7 +39,6 @@ public class UserLoginServiceImpl implements UserLoginService {
         UserLogin user = new UserLogin();
         user.setEmail(userLoginDto.getEmail());
 
-
         if (userLoginDto.getStaffDto() != null)
         {
             StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
@@ -61,15 +59,15 @@ public class UserLoginServiceImpl implements UserLoginService {
             user.setChangePassword(true);
         }
 
-
+        //setChangePassword op false want Hier is de ADMIN de eerste geregistreerde en is het geen dummy wachtwoord
         Role role;
-        if(userLoginRepository.findAll().isEmpty()){
+        if (userLoginRepository.findAll().isEmpty())
+        {
             initiateRoles();
             role = roleRepository.findByRoleName("ROLE_ADMIN");
-
+            user.setChangePassword(false);
         } else {
             role = roleRepository.findByRoleName("ROLE_USER");
-
         }
 
         user.getRoles().add(role);
@@ -77,12 +75,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLoginRepository.save(user);
     }
 
-    public void updateUser(UserLoginDto userLoginDto)
-    {
-        UserLogin userLogin = mapToUserLoginModel(userLoginDto);
-        userLoginRepository.save(userLogin);
-    }
-
+    //deze enkel gebruiken bij het updaten van de email en het wachtwoord
     @Override
     public void updateEmailAndPassword(UserLoginDto userLoginDto)
     {
@@ -147,10 +140,6 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setChangePassword(userLoginDto.getChangePassword());
-
-
-        StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
-        //userLogin.setStaff(staffService.mapToStaffModel(userLoginDto.getStaffDto()));
 
         return userLogin;
     }

@@ -20,8 +20,8 @@ import java.util.Set;
 @Controller
 @Validated
 @RequestMapping("/staff")
-public class StaffController {
-
+public class StaffController
+{
     @Autowired
     private StaffService staffService;
 
@@ -61,7 +61,9 @@ public class StaffController {
                               Model model)
     {
         StaffDto staffDto = staffService.getById(staffId);
+        UserLoginDto userLoginDto = userLoginService.getByEmail(staffDto.getEmail());
         model.addAttribute("staff", staffDto);
+        model.addAttribute("userLogin", userLoginDto);
         return "/staffDetail";
     }
 
@@ -69,10 +71,7 @@ public class StaffController {
     public String editStaff(@PathVariable long staffId,
                              Model model)
     {
-
         StaffDto staffDto = staffService.getById(staffId);
-
-
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffDto", staffDto);
         model.addAttribute("staffMembers", staffDtos);
@@ -98,19 +97,47 @@ public class StaffController {
     public String saveEditedStaff(@PathVariable long staffId,
                                   @ModelAttribute StaffDto staffDto,
                                   @ModelAttribute UserLoginDto userLoginDto,
-                                  @RequestParam(value = "departmentId") long departmentId,
+                                  @RequestParam("departmentId") long departmentId,
                                   @RequestParam("functionId") long functionId,
                                   @RequestParam("contractTypeId") long contractTypeId,
                                   @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
                                   BindingResult result,
                                   Model model)
     {
+        StaffDto staffFromDb = staffService.getById(staffId);
+        model.addAttribute("userLogin",userLoginDto);
+        model.addAttribute("staffDto", staffFromDb);
+
+        model.addAttribute("departmentDto", new DepartmentDto());
+        model.addAttribute("departments", departmentService.getAll());
+
+        model.addAttribute("staffFunctionDto", new StaffFunctionDto());
+        model.addAttribute("staffFunctions", staffFunctionService.getAll());
+
+        model.addAttribute("contractTypeDto", new ContractTypeDto());
+        model.addAttribute("contractTypes", contractTypeService.getAll());
+
+        model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
+        model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+
+        //wordt niet gebruikt omdat person responsible nu niet gebruikt word
+        model.addAttribute("staffMembers", staffService.getAll());
+
         if (departmentId == 0 || functionId == 0 || contractTypeId == 0)
         {
             model.addAttribute("error", "The fields department, contract type and staff function are required");
-            return "newStaff";
+            return "editStaff";
         }
 
+        UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
+        if (existing.getEmail() != null &! staffFromDb.getEmail().equals(staffDto.getEmail()))
+        {
+            result.rejectValue("email", null, "There is already an account registered with that email");
+        }
+        if (result.hasErrors())
+        {
+            return "editStaff";
+        }
 
         DepartmentDto department = departmentService.getById(departmentId);
         staffDto.setDepartment(department);
@@ -127,7 +154,8 @@ public class StaffController {
             staffDto.setPersonResponsible(staffResponsible);
         }
 
-        if (daysOffWeekId != null) {
+        if (daysOffWeekId != null)
+        {
             Set<DaysOffWeekDto> daysOff = new HashSet<>();
             String days[] = daysOffWeekId.split(",");
 
@@ -176,7 +204,7 @@ public class StaffController {
                             @ModelAttribute("userLogin") UserLoginDto userLoginDto,
                             @RequestParam(value = "departmentId") long departmentId,
                             @RequestParam("functionId") long functionId,
-                            @RequestParam(value = "staffId", required = false)long staffId,
+                            //@RequestParam(value = "staffId")long staffId,
                             @RequestParam("contractTypeId") long contractTypeId,
                             @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
                             BindingResult result,
@@ -201,10 +229,8 @@ public class StaffController {
             return "newStaff";
         }
 
-        /*
-        hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
-        uniek is of niet en reject doen ingeval van niet uniek
-        */
+
+        //Check als email uniek is
         UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
         if (existing.getEmail() != null)
         {
@@ -214,8 +240,6 @@ public class StaffController {
         {
             return "newStaff";
         }
-
-
 
         DepartmentDto department = departmentService.getById(departmentId);
         staffDto.setDepartment(department);
@@ -229,13 +253,17 @@ public class StaffController {
         //Hier check ik als een model al dan niet ingevuld voor de staff via de dropdown menu's.
         //Als er een niks is aangeduid gaat de ID 0 of null zijn, dan gaat het specifieke model/object niet worden toegevoegd aan de Staff
         //Indien er wel iets aangeduid wordt dit 1 of meer zijn en wordt dit gebonden aan het Staff object
+        //TODO word op dit moment niet gebruikt
+        /*
         if (staffId != 0)
         {
             StaffDto staffResponsible = staffService.getById(staffId);
             staffDto.setPersonResponsible(staffResponsible);
         }
+         */
 
-        if (daysOffWeekId != null) {
+        if (daysOffWeekId != null)
+        {
             Set<DaysOffWeekDto> daysOff = new HashSet<>();
             String days[] = daysOffWeekId.split(",");
 
@@ -254,6 +282,7 @@ public class StaffController {
         staffDto.setCompanyDto(companyDtos.getFirst());
          */
 
+        //Het wachtwoord van een nieuwe staff member is samenvoeging van de firstName en lastName
         userLoginDto.setStaffDto(staffDto);
         userLoginDto.setPassword(staffDto.getFirstName()+staffDto.getLastName());
 

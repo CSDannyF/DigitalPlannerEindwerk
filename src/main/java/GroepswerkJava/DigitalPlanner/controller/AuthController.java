@@ -1,7 +1,6 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
-import GroepswerkJava.DigitalPlanner.service.CompanyService;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

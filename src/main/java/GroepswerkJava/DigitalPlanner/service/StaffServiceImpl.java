@@ -2,7 +2,6 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
-import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
 import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.UserLogin;
@@ -64,72 +63,11 @@ public class StaffServiceImpl implements StaffService{
         staffRepository.save(staff);
     }
 
+    //wordt niet gebruikt save en update wordt gedaan via userLogin
     @Override
     public void updateStaff(StaffDto staffDto)
     {
-        staffRepository.save(mapToUpdate(staffDto));
-    }
-
-    private Staff mapToUpdate(StaffDto staffDto)
-    {
-        Staff staff = new Staff();
-
-        if (staffDto.getStaffId() != 0)
-        {
-            staff.setStaffId(staffDto.getStaffId());
-        }
-
-        staff.setStaffFirstName(staffDto.getFirstName());
-        staff.setStaffLastName(staffDto.getLastName());
-        staff.setAddressLine1(staffDto.getAddressLine1());
-        staff.setAddressLine2(staffDto.getAddressLine2());
-        staff.setZipCode(staffDto.getZipcode());
-        staff.setCity(staffDto.getCity());
-        staff.setPhoneNumber(staffDto.getPhoneNumber());
-        staff.setStartDate(staffDto.getStartDate());
-        staff.setBirthDate(staffDto.getBirthDate());
-
-        DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
-        ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
-        StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
-        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
-
-        staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
-        staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
-        staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
-        //staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
-
-        //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
-        if (staffDto.getStaffId() != 0)
-        {
-            Staff staff1 = new Staff();
-            staff1.setStaffId(getById(staffDto.getStaffId()).getStaffId());
-            //staff.setPersonResponsible(staff1);
-        }
-        if (staffDto.getEndDate() != null)
-        {
-            staff.setEndDate(staffDto.getEndDate());
-        }
-
-        if (staffDto.getFixedDaysOff() != null)
-        {
-            Set<DaysOffWeek> daysOffWeeks = new HashSet<>();
-            DaysOfWeekServiceImpl daysOfWeekService = new DaysOfWeekServiceImpl();
-
-            for (DaysOffWeekDto days: staffDto.getFixedDaysOff())
-            {
-                DaysOffWeek daysOffWeek = daysOfWeekService.mapToDaysOffWeekModel(days);
-                daysOffWeeks.add(daysOffWeek);
-            }
-            staff.setDaysOffWeek(daysOffWeeks);
-        }
-
-        UserLogin userLogin = new UserLogin();
-        UserLoginServiceImpl userLoginService = new UserLoginServiceImpl(userLoginRepository, roleRepository, passwordEncoder, staffRepository);
-        userLogin = userLoginService.mapToUserLoginModel(staffDto.getUserLoginDto());
-        staff.setUserLogin(userLogin);
-
-        return staff;
+        //staffRepository.save(mapToUpdate(staffDto));
     }
 
     @Override
@@ -185,7 +123,6 @@ public class StaffServiceImpl implements StaffService{
             }
             staffDto.setFixedDaysOff(daysOffWeekDto);
         }
-
         return staffDto;
     }
 
@@ -208,20 +145,30 @@ public class StaffServiceImpl implements StaffService{
         staff.setStartDate(staffDto.getStartDate());
         staff.setBirthDate(staffDto.getBirthDate());
 
-        DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
-        ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
-        StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
-        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
+        if (staffDto.getDepartment() != null)
+        {
+            DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
+            staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
+        }
+        if (staffDto.getContractType() != null)
+        {
+            ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
+            staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
+        }
+        if (staffDto.getFunction() != null)
+        {
+            StaffFunctionServiceImpl staffFunctionService = new StaffFunctionServiceImpl();
+            staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
+        }
 
-        staff.setDepartment(departmentService.mapToDepartmentModel(staffDto.getDepartment()));
-        staff.setContractType(contractTypeService.mapToContractTypeModel(staffDto.getContractType()));
-        staff.setStaffFunction(staffFunctionService.mapToStaffFunctionModel(staffDto.getFunction()));
+        CompanyServiceImpl companyService = new CompanyServiceImpl(companyRepository);
         //staff.setCompany(companyService.mapToCompany(staffDto.getCompanyDto()));
 
         //verantwoordelijke aanduiden
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
         if (staffDto.getStaffId() != 0)
         {
+            //TODO in comments, er is ergens een fout in de controller
             Staff staff1 = new Staff();
             //staff1.setStaffId(getById(staffDto.getPersonResponsible().getStaffId()).getStaffId());
             //staff.setPersonResponsible(staff1);
@@ -231,6 +178,7 @@ public class StaffServiceImpl implements StaffService{
             staff.setEndDate(staffDto.getEndDate());
         }
 
+        //indien er geen vaste vrije dagen zijn doorgegeven gaat deze if blok niet worden uitgevoerd
         if (staffDto.getFixedDaysOff() != null)
         {
             Set<DaysOffWeek> daysOffWeeks = new HashSet<>();

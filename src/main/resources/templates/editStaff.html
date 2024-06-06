@@ -24,18 +24,14 @@
 
                             <label class="form-label">First name
                                 <input th:field="*{firstName}" type="text" placeholder="first name" class="form-control" id="firstName" required>
-                                <div class="invalid-feedback">First name is required</div>
                             </label>
-
 
                             <label class="form-label float-right" for="lastName">Last name
                                 <input th:field="*{lastName}" type="text" placeholder="last name" class="form-control" id="lastName" required>
-                                <div class="invalid-feedback">Last name is required</div>
                             </label>
 
                             <label class="form-label" for="addressLine1">Address line 1
                                 <input th:field="*{addressLine1}" type="text" placeholder="addressline1" class="form-control" id="addressLine1" required>
-                                <div class="invalid-feedback">Address line 1 is required</div>
                             </label>
 
                             <label class="form-label">Address line 2
@@ -44,29 +40,24 @@
 
                             <label class="form-label" for="zipcode">Zipcode
                                 <input th:field="*{zipcode}" type="text" placeholder="zipcode" class="form-control" id="zipcode" required>
-                                <div class="invalid-feedback">Zipcode is required</div>
                             </label>
 
                             <label class="form-label" for="city">City
                                 <input th:field="*{city}" type="text" placeholder="city" class="form-control" id="city" required>
-                                <div class="invalid-feedback">City is required</div>
                             </label>
 
                             <label class="form-label" for="phoneNumber">Phone number
                                 <input th:field="*{phoneNumber}" type="text" placeholder="phone number" class="form-control" id="phoneNumber" required>
-                                <div class="invalid-feedback">Phone number is required</div>
                             </label>
 
                             <label class="form-label" for="birthDate">Birth date
                                 <input th:field="*{birthDate}" type="date" class="form-control" id="birthDate" required>
-                                <div class="invalid-feedback">Birth date is required</div>
                             </label>
 
                             <label class="form-label" th:object="${userLogin}" for="email">Email
                                 <input th:field="*{email}" type="email" placeholder="email" class="form-control" id="email" required>
                                 <input th:field="*{id}" type="hidden">
                                 <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
-                                <div class="invalid-feedback"></div>
                             </label>
 
                             <label class="form-label" th:object="${departmentDto}">Department
@@ -93,7 +84,6 @@
 
                             <label class="form-label" for="startDate">Start date
                                 <input th:field="*{startDate}" type="date" class="form-control" id="startDate" required>
-                                <div class="invalid-feedback">Start date is required</div>
                             </label>
 
                             <label class="form-label">End date
