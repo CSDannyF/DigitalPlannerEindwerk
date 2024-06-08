@@ -32,6 +32,7 @@ public class StaffDto
    private String email;
    @DateTimeFormat(pattern = "yyyy-MM-dd")
    private LocalDate birthDate;
+
    private StaffDto personResponsible;
    private DepartmentDto department;
    private StaffFunctionDto function;
@@ -40,10 +41,19 @@ public class StaffDto
    @DateTimeFormat(pattern = "yyyy-MM-dd")
    private LocalDate endDate;
    private ContractTypeDto contractType;
+   //private UserLoginDto userLoginDto;
    private Set<DaysOffWeekDto> fixedDaysOff;
    private CompanyDto companyDto;
 
    private UserLoginDto userLoginDto;
+   private int hoursInDebt;
+
+
+//   private int weeklyHoursLeft;
+
+   // TODO always implement equals and hashcode together, not one and not the other
+
+
 
    @Override
    public boolean equals(Object obj) {

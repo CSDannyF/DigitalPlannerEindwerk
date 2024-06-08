@@ -12,4 +12,13 @@ public class ContractTypeDto {
     private long contractTypeId;
     private String contractTypeName;
     private int hoursPerWeek;
+
+    @Override
+    public String toString() {
+        return "ContractTypeDto{" +
+                "contractTypeId=" + contractTypeId +
+                ", contractTypeName='" + contractTypeName + '\'' +
+                ", hoursPerWeek=" + hoursPerWeek +
+                '}';
+    }
 }

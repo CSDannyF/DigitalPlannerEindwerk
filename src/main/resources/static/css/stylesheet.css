@@ -504,7 +504,7 @@ h1 {
 
 #popupCard label {
     font-family: 'Roboto';
-    margin-left: 20px;
+    margin-left: 200px;
 }
 /*_______________*/
 
@@ -531,6 +531,11 @@ h1 {
     font-family: Arial, sans-serif;
     font-size: 22px;
     line-height: 1.5;
+}
+
+/* Color red for open shifts */
+.openShift {
+    background-color: rgba(255, 0, 0, 0.75); /* Red background with opacity */
 }
 
 /* prints out the date of the day as a title*/
@@ -560,34 +565,60 @@ h1 {
 
 /* Calendar styles*/
 
+
+/*styling for open day */
+.calendar-day div.openDay {
+        color: var(--white);
+        border-radius: 15%;
+}
+
+/*styling for day that is fully planned */
+
+.calendar-day div.plannedOK {
+
+        color: var(--green);
+        border-radius:15%;
+}
+
+/*styling for day that is not fully planned */
+
+.calendar-day div.plannedNOK {
+    background-color:  rgba(255, 0, 0, 0.3) ;
+    color: white; /* Text color */
+    border-radius: 15%;
+
+}
+
+
 /* styling for closed day*/
 .calendar-day div.closedDay {
         background-color: var(--grey);
         color: var(--red);
-        border-radius: 50%;
+        border-radius: 15%;
 }
 
-/*styling for open day */
-.calendar-day div.openDay {
-        color: var(--green);
-        border-radius: 50%;
-}
+
+
 
 /* styling for current day when open*/
 .calendar-day div.currOpenDay {
     opacity: 0.2;
     background-color: var(--green);
     color: var(--white);
-    border-radius: 50%;
+    border-radius: 15%;
 }
+
+
 
 /* styling for current day when closed*/
 .calendar-day div.currClosedDay {
     opacity: 0.2;
     background-color: var(--green);
     color: var(--red);
-    border-radius: 50%;
+    border-radius: 15%;
 }
+
+
 
 
 #weekPlanningContainer {

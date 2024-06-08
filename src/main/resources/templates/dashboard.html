@@ -72,22 +72,10 @@
 <!-- <div class="clearfix"></div> -->
 
 
-
-<!--error message that fades out-->
-<style>
-    @keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-
-    .fade-out {
-        animation: fadeOut 3s forwards;
-        animation-delay: 6s;
-    }
-</style>
-<div th:if="${error}" class="alert alert-danger fade-out" role="alert">
-    <span th:text="${error}"></span>
-</div>
+    <!-- Error message that fades out -->
+    <div th:if="${error}" class="alert alert-danger fade-out mt-3" role="alert">
+        <span th:text="${error}"></span>
+    </div>
 
 
 
@@ -102,6 +90,19 @@
 
 <!--TODO trying stuff-->
 <div id="thymeleafContent"></div>
+
+<!--error message that fades out-->
+<style>
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    .fade-out {
+        animation: fadeOut 3s forwards;
+        animation-delay: 6s;
+    }
+</style>
 
 
 <!-- Background container -->

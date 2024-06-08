@@ -2,15 +2,20 @@ package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
-import GroepswerkJava.DigitalPlanner.model.Planning;
-import GroepswerkJava.DigitalPlanner.model.Staff;
-import GroepswerkJava.DigitalPlanner.model.WorkingDay;
+import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.AvailabilityService;
 import GroepswerkJava.DigitalPlanner.service.LogDetailService;
 import GroepswerkJava.DigitalPlanner.service.PlanningStatusService;
+import GroepswerkJava.DigitalPlanner.service.StaffService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface PlanningGenerator {
-    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService, LogDetailService logDetailService);
+    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays,
+                              AvailabilityService availabilityService, PlanningStatusService planningStatusService,
+                              LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService);
+
+//    Response generatePlanningV2(int weekNumber);
 }

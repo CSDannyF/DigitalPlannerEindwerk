@@ -5,13 +5,12 @@
 
     <script th:src="@{/js/scriptCalendar.js}" ></script>
 
+<!--    TODO edit shift is weggelaten omdat dit voor problemen zorgde, Mss gewoon shift kunnen deleten en adden is genoeg? -->
 </head>
 <body>
 
 <div class="card w-50 mx-auto" id="editShifts">
-    <h3 align="center">Shifts for <span th:text="${date}"></span></h3>
-
-
+    <h3 align="center">New shifts for <span th:text="${date}"></span></h3>
 
     <form id="editShiftsForm" action="/planningDetails/save" method="post" th:object="${ListPlanningDetailsDTO}">
         <div th:each="planning : ${planning}">
@@ -20,34 +19,41 @@
 
             <!-- Existing Planning Details -->
             <div th:each="detail, detailIndex : ${planning.planningDetails}">
-                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].planningDetailId"
-                       th:value="${detail.planningDetailId}">
-                <label>Start Time:</label>
-                <input type="time" th:name="planningDetails[__${detailIndex.index}__].startTime"
-                       th:value="${detail.startTime}">
-                <label>End Time:</label>
-                <input type="time" th:name="planningDetails[__${detailIndex.index}__].endTime"
-                       th:value="${detail.endTime}">
-                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].staffId"
-                       th:value="${detail.staff.staffId}">
+<!--                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].planningDetailId"-->
+<!--                       th:value="${detail.planningDetailId}">-->
+<!--                <label>Start Time:</label>-->
+<!--                <input type="time" th:name="planningDetails[__${detailIndex.index}__].startTime"-->
+<!--                       th:value="${detail.startTime}">-->
+<!--                <label>End Time:</label>-->
+<!--                <input type="time" th:name="planningDetails[__${detailIndex.index}__].endTime"-->
+<!--                       th:value="${detail.endTime}">-->
+                <!--                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].staffId"-->
+                <!--                       th:value="${detail.staff.staffId}">-->
 
-                <!-- Change Staff Dropdown TODO not working yet as should -->
-                <label class="form-label">Change Staff
-                    <select class="form-select change-staff-dropdown"
-                            data-planning-detail-index="${detailIndex.index}">
-                        <option th:each="staffDto : ${staffMembers}" th:value="${staffDto.staffId}"
-                                th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"
-                                th:selected="${staffDto.staffId} == ${detail.staff.staffId}"></option>
-                    </select>
-                </label>
-                <br>
+<!--                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].staffId"-->
+<!--                       th:if="${detail.staff != null}" th:value="${detail.staff.staffId}">-->
+
+
+
+<!--                <label class="form-label">Change Staff-->
+<!--                    <select class="form-select change-staff-dropdown"-->
+<!--                            data-planning-detail-index="${detailIndex.index}">-->
+
+
+<!--                        <option th:each="staffDto : ${staffMembers}"-->
+<!--                                th:value="${staffDto.staffId}"-->
+<!--                                th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"-->
+<!--                                th:selected="${detail.staff != null && staffDto.staffId == detail.staff.staffId}">-->
+<!--                        </option>-->
+<!--                    </select>-->
+<!--                </label>-->
             </div>
 
         </div>
 
         <!-- New Planning Detail Section -->
         <div id="newDetailsSection">
-            <h4>Add New Planning Detail</h4>
+<!--            <h4>Add New Planning Detail</h4>-->
             <div th:each="i : ${#numbers.sequence(0, 4)}">
                 <label>Start Time:</label>
                 <input type="time" th:name="newPlanningDetails[__${i}__].startTime">

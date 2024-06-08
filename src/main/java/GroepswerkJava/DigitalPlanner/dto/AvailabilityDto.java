@@ -10,4 +10,11 @@ import lombok.Setter;
 public class AvailabilityDto {
     private long availabilityId;
     private String availabilityType;
+
+    @Override
+    public String toString() {
+        return "Availability{" +
+                "Type='" + availabilityType + '\'' +
+                '}';
+    }
 }

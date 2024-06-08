@@ -2,6 +2,7 @@ package GroepswerkJava.DigitalPlanner.PlanningGenerator;
 
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.*;
+import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,7 +37,9 @@ public class Planner implements PlanningGenerator {
     private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
     @Override
-    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService, PlanningStatusService planningStatusService, LogDetailService logDetailService)
+    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService,
+                                     PlanningStatusService planningStatusService,
+                                     LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService)
     {
         List<LogDetailDto> logging = new ArrayList<>();
         List<PlanningDto> planningList = new ArrayList<>();
@@ -109,7 +112,7 @@ public class Planner implements PlanningGenerator {
                             detail.setEndTime(endTime);
                             detail.setStaff(staff1);
                             detail.setWorkMinutesPerDay(openingsHours*60); //todo moet worden veranderd naar uur?
-                            detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+                            detail.setAvailability(availabilityService.getByAvailabilityType("planned"));
 
                             totalWorkHours -= openingsHours;               //subtract openingshours/workinghours of totalWorkHours
                             minOccupation -= 1;                            //subtract employee of minOccupation
@@ -121,7 +124,12 @@ public class Planner implements PlanningGenerator {
                             detail.setWorkMinutesPerDay(0);
                             detail.setStaff(staff1);
                             planning.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
-                            detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
+
+
+//                            detail.setAvailability(availabilityService.getByAvailabilityType("Absence"));
+
+                            detail.setAvailability(availabilityService.getByAvailabilityType("Available"));
+
                         }
 
                         //add planningDetail to planning
@@ -141,6 +149,7 @@ public class Planner implements PlanningGenerator {
         response.saveLogsToDatabase(logDetailService);
         return response;
     }
+
 
     //check if day is planned
     private boolean isDayPlannedAndOpen(PlanningDto planning)

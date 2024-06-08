@@ -6,16 +6,17 @@ import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Component
-@Service
+//@Service
 public class PlanningServiceImpl implements PlanningService{
 
     @Autowired
@@ -46,10 +47,10 @@ public class PlanningServiceImpl implements PlanningService{
     public void save(PlanningDto planningDto)
     {
         Planning planning =  mapToPlanningModel(planningDto);
-        System.out.println(planning);
         planningRepository.save(planning);
         //TODO nog geimplementeerd worden
     }
+
 
 
 
@@ -58,46 +59,74 @@ public class PlanningServiceImpl implements PlanningService{
     public void savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy) {
         WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
         planningDto.setWorkingDayDto(workingDayService.mapToDto(workingDay));
-        planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned manually"));
+
+        PlanningDto exising = getByWorkingDay(workingDayService.mapToDto(workingDay));
+        if(exising.getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned OK")){
+            planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
+        } else {
+            planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned NOK"));
+        }
         planningDto.setPlannedByStaff(plannedBy);
         planningDto.setPlannedDate(LocalDate.now());
 
         if (planningDto.getPlanningDetails() != null) {
             for (PlanningDetailDto detail : planningDto.getPlanningDetails()) {
-                StaffDto staff = staffService.getById(detail.getStaffId());
-                detail.setStaff(staff);
+                if (detail.getStaff() != null) {
+                    StaffDto staff = staffService.getById(detail.getStaff().getStaffId());
+                    detail.setStaff(staff);
+                }
             }
         } else {
             planningDto.setPlanningDetails(new ArrayList<>());
         }
 
+        List<PlanningDetailDto> newPlanningDetails = new ArrayList<>();
         if (listPlanningDetailDto != null) {
             for (PlanningDetailDto newDetail : listPlanningDetailDto.getNewPlanningDetails()) {
                 if (newDetail.getStartTime() != null && newDetail.getEndTime() != null) {
                     long staffId = newDetail.getStaffId();
-                    if(staffId != 0){
-                        StaffDto staff = staffService.getById(staffId);
-                        PlanningDetailDto newPlanningDetail = new PlanningDetailDto();
-                        newPlanningDetail.setStartTime(newDetail.getStartTime());
-                        newPlanningDetail.setEndTime(newDetail.getEndTime());
-                        newPlanningDetail.setStaff(staff);
-                        planningDto.getPlanningDetails().add(newPlanningDetail);
+                    if (staffId != 0) {
+                        PlanningDetailDto newPlanningDetail = createShift(staffId, newDetail.getStartTime(), newDetail.getEndTime());
+                        newPlanningDetails.add(newPlanningDetail);
                     }
                 }
             }
         }
-        // Check for duplicate staff in planning details
-        if (hasDuplicateStaff(planningDto.getPlanningDetails())) {
-            System.out.println("ERRRRRORRRR");
-            throw new DuplicateStaffException("Failed planning edit: It is not possible to plan the same staff more than once per day");
 
+        // Combine old and new planning details
+        List<PlanningDetailDto> allPlanningDetails = new ArrayList<>(planningDto.getPlanningDetails());
+        allPlanningDetails.addAll(newPlanningDetails);
+
+        // Check for duplicate staff in combined planning details
+        if (hasDuplicateStaff(allPlanningDetails)) {
+            throw new DuplicateStaffException("Failed planning edit: It is not possible to plan the same staff more than once per day");
         }
 
-        // Save the planningDto
+        // If no duplicates, update hoursInDebt and add new planning details to the planningDto
+        for (PlanningDetailDto newDetail : newPlanningDetails) {
+            updateStaffHoursInDebt(newDetail);
+            planningDto.getPlanningDetails().add(newDetail);
+        }
+
         planningRepository.save(mapToPlanningModel(planningDto));
     }
 
+    private PlanningDetailDto createShift(long staffId, LocalTime startTime, LocalTime endTime) {
+        StaffDto staff = staffService.getById(staffId);
+        PlanningDetailDto newPlanningDetail = new PlanningDetailDto();
+        newPlanningDetail.setStartTime(startTime);
+        newPlanningDetail.setEndTime(endTime);
+        newPlanningDetail.setStaff(staff);
+        newPlanningDetail.setAvailability(availabilityService.getByAvailabilityType("Planned"));
+        return newPlanningDetail;
+    }
 
+    private void updateStaffHoursInDebt(PlanningDetailDto planningDetail) {
+        StaffDto staff = planningDetail.getStaff();
+        Duration duration = Duration.between(planningDetail.getStartTime(), planningDetail.getEndTime());
+        staff.setHoursInDebt((int) (staff.getHoursInDebt() - duration.toHours()));
+        staffService.saveOrUpdateStaff(staffService.mapToStaffModel(staff));
+    }
 
 
     /*
@@ -124,17 +153,17 @@ public class PlanningServiceImpl implements PlanningService{
     // check if no duplicate staff is planned in same planning
     @Override
     public boolean hasDuplicateStaff(List<PlanningDetailDto> planningDetails) {
-        System.out.println("duplicate?");
         Set<String> staffNames = new HashSet<>();
         for (PlanningDetailDto detail : planningDetails) {
-            if (!staffNames.add(detail.getStaff().getFirstName() + ", " + detail.getStaff().getLastName())) {
-                System.out.println("TRUE");
-                return true;
+            if(detail.getStaff() != null){
+                if (!staffNames.add(detail.getStaff().getFirstName() + ", " + detail.getStaff().getLastName())) {
+                    return true;
+                }
             }
         }
-        System.out.println("FALSE");
         return false;
     }
+
 
     //Dto mappers
 
@@ -185,8 +214,14 @@ public class PlanningServiceImpl implements PlanningService{
         planningDetailDto.setWorkMinutesPerDay(planningDetail.getWorkMinutesPerDay());
 
         StaffServiceImpl service = new StaffServiceImpl(staffRepository);
-        StaffDto staffDto = service.mapToStaffDto(planningDetail.getStaff());
-        planningDetailDto.setStaff(staffDto);
+
+        if(planningDetail.getStaff() != null){
+            StaffDto staffDto = service.mapToStaffDto(planningDetail.getStaff());
+            planningDetailDto.setStaff(staffDto);
+        } else {
+            planningDetailDto.setStaff(null);
+
+        }
 
         if(planningDetail.getAvailability() != null){
             AvailabilityServiceImpl availabilityService1 = new AvailabilityServiceImpl();
@@ -254,8 +289,13 @@ public class PlanningServiceImpl implements PlanningService{
             planningDetail.setWorkMinutesPerDay(planningDetailDto.getWorkMinutesPerDay());
 
             //TODO als er 2 personen met dezelfde naam zijn wordt de planning niet aangemaakt via email address
-            Staff staff = staffRepository.findByStaffLastNameAndStaffFirstName(planningDetailDto.getStaff().getLastName(), planningDetailDto.getStaff().getFirstName());
-            planningDetail.setStaff(staff);
+
+            if(planningDetailDto.getStaff() != null){
+                Staff staff = staffRepository.findByStaffLastNameAndStaffFirstName(planningDetailDto.getStaff().getLastName(), planningDetailDto.getStaff().getFirstName());
+                planningDetail.setStaff(staff);
+            } else {
+                planningDetail.setStaff(null);
+            }
 
             if(planningDetailDto.getAvailability() != null)
             {

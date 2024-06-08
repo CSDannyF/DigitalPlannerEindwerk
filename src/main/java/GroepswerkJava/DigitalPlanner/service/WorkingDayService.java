@@ -4,10 +4,12 @@ import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public interface WorkingDayService {
 
     @Transactional
@@ -30,6 +32,7 @@ public interface WorkingDayService {
     List<WorkingDayDto> getByWeekNumber(int weekNumber);
 
     WorkingDayDto mapToDto(WorkingDay workingDay);
+
 }
 
 

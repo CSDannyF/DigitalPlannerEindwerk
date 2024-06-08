@@ -93,6 +93,9 @@ public class Staff {
     @Column(name = "userImageData")
     private byte[] userImageData;
 
+    @Column(name = "hoursInDebt")
+    private int hoursInDebt;
+
     @Override
     public String toString() {
         return "Staff{" +
