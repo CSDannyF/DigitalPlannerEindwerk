@@ -17,5 +17,5 @@ public interface PlanningGenerator {
                               AvailabilityService availabilityService, PlanningStatusService planningStatusService,
                               LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService);
 
-//    Response generatePlanningV2(int weekNumber);
+    Response generatePlanningV2(List<StaffDto> staff, List<WorkingDayDto> workingDays);
 }

@@ -124,30 +124,13 @@ public class PlannerController {
         List<WorkingDayDto> workingDaysWeek = workingDayService.getByWeekNumber(weekNumber1);
         List<StaffDto> staffDtos = staffService.getAll();
 
-
-
         Response response = null;
 
         if ("planner".equals(plannerType)) {
-            System.out.println("planner v 1");
-            // Use planner implementation
             response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
         } else if ("plannerV2".equals(plannerType)) {
-            System.out.println("planner v 222222222222");
-
-            // Use plannerV2 implementation
-            response = plannerV2.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
+            response = plannerV2.generatePlanningV2(staffDtos, workingDaysWeek);
         }
-        
-
-//
-//
-//        PlanningGenerator plannerV2 = new PlannerV2();
-//
-//
-//        Response response = plannerV2.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
-//
-        
 
         //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
         for (PlanningDto planning : response.getPlanningList()) {

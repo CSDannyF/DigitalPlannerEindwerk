@@ -13,7 +13,7 @@
 <div class="card w-50 mx-auto" id="rangeWeekCard"> <!-- titel moet nog gecenterd worden -->
   <div class="card-body py-5 px-md-5">
 
-    <h2>Week Planner</h2>
+    <h2 align="center">Week Planner</h2>
     <div class="row justify-content-md-center">
       <div class="col-3 align-self-center">
         <form action="#" th:action="@{/RangeWeek}" method="POST">
@@ -44,21 +44,18 @@
 
 
           <form action="#" th:action="@{/generatePlanning}" method="POST">
-            <label class="form-label">Select Planner Type:</label>
+            <label class="form-label">Select Planner Algorithm:</label>
             <select class="form-select" name="plannerType">
               <option value="planner">Planner</option>
               <option value="plannerV2">Planner V2</option>
             </select>
+
             <br>
-            <!-- Other form elements for generating planning -->
-            <button class="btn btn-primary" type="submit">Generate</button>
-          <a class="btn btn-primary" type="button" th:href="@{/dashboard}">Go back</a>
+            <div class="d-flex">
+              <button class="btn btn-success me-auto" type="submit">Generate</button>
+              <a class="btn btn-primary ms-auto" type="button" th:href="@{/dashboard}">Go back</a>
+            </div>
           </form>
-
-
-
-          <!--          <button class="btn btn-primary"  type="submit">Generate</button>-->
-
         </form>
       </div>
     </div>

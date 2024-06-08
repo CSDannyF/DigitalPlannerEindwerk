@@ -5,6 +5,7 @@ import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
 import GroepswerkJava.DigitalPlanner.model.LogType;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -12,20 +13,29 @@ import java.util.*;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 
-//@Service("fre-zijne")
+@Service("plannerV2")
 public class PlannerV2 implements PlanningGenerator {
 
-//    @Autowired
-//    private AvailabilityService availabilityService;
-//
-//    @Autowired
-//    private WorkingDayService workingDayService;
-//
-//    @Autowired
-//    private PlanningService planningService;
-//
-//    @Autowired
-//    private StaffService staffService;
+    @Autowired
+    private AvailabilityService availabilityService;
+
+    @Autowired
+    private WorkingDayService workingDayService;
+
+    @Autowired
+    private PlanningService planningService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private LogDetailService logDetailService;
+
+    @Autowired
+    DaysOfWeekRepository daysOfWeekRepository;
+
+    @Autowired
+    PlanningStatusService planningStatusService;
 
 
     //for keeping track what day it is, used to determine shift time
@@ -292,5 +302,31 @@ public class PlannerV2 implements PlanningGenerator {
                 }
             }
         }
+    }
+
+
+
+    @Override
+    public Response generatePlanningV2(List<StaffDto> staff, List<WorkingDayDto> workingDays) {
+        Response response = new Response();
+        List<LogDetailDto> logging = new ArrayList<>();
+
+        if (workingDays.size() != 7) {
+            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
+            return response;
+        } else {
+            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
+
+            List<PlanningDto> planningList;
+            List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays, daysOfWeekRepository);
+
+            checkIfWeekAlreadyPlanned(workingDays, staff);
+
+            planningList = populateShifts(workingDays, daysOffWeekList, staff, availabilityService, planningStatusService);
+            response.setPlanningList(planningList);
+        }
+        staffService.saveAllStaff(staff);
+
+        return response;
     }
 }

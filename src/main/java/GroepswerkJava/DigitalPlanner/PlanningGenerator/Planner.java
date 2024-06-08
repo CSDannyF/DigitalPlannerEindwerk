@@ -151,6 +151,8 @@ public class Planner implements PlanningGenerator {
     }
 
 
+
+
     //check if day is planned
     private boolean isDayPlannedAndOpen(PlanningDto planning)
     {
@@ -268,4 +270,11 @@ public class Planner implements PlanningGenerator {
         return plannings;
     }
      */
+
+
+    @Override
+    public Response generatePlanningV2(List<StaffDto> staff, List<WorkingDayDto> workingDays) {
+        return null;
+    }
+
 }
