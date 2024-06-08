@@ -149,7 +149,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
                     WorkingDay workingDay = workingDayRepository.findByDate(startDate);
                     if (workingDay == null) {
-                        System.out.println("WORKING DAY IS NULL");
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
