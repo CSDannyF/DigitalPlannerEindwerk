@@ -83,12 +83,15 @@ public class DepartmentServiceImpl implements DepartmentService {
     protected DepartmentDto mapToDepartmentDto(Department department)
     {
         DepartmentDto departmentDto = new DepartmentDto();
-        departmentDto.setDepartmentName(department.getDepartmentName());
+        if(department != null){
 
-        if (department.getDepartmentId() != 0)
-        {
-            departmentDto.setDepartmentId(department.getDepartmentId());
+            departmentDto.setDepartmentName(department.getDepartmentName());
+            if (department.getDepartmentId() != 0)
+            {
+                departmentDto.setDepartmentId(department.getDepartmentId());
+            }
         }
+
 
         return departmentDto;
     }

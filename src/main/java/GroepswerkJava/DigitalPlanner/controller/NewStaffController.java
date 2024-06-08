@@ -90,7 +90,7 @@ public class  NewStaffController {
         /*hier moet ik de userlogin ophalen via de ingegeven emailadres en dan in een if statement checken als die
         uniek is of niet en reject doen ingeval van niet uniek
         */
-        UserLoginDto existing = userLoginService.findByEmail(userLoginDto.getEmail());
+        UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
 
         if(existing.getEmail() != null) {
             result.rejectValue("email", null, "There is already an account registered with that email");
