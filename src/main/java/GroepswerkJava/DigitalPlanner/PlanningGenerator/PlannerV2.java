@@ -12,7 +12,7 @@ import java.util.*;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 
-@Service
+//@Service("fre-zijne")
 public class PlannerV2 implements PlanningGenerator {
 
 //    @Autowired
@@ -66,12 +66,13 @@ public class PlannerV2 implements PlanningGenerator {
         List<PlanningDto> planningList = new ArrayList<>();
 
         for (DaysOffWeek dayOffWeek : daysOffWeekList) {
+            // TODO NEVER store state (=class vars) in service/controller/repository, geef hem door via parameter
             dayCounter++;
 
             //sorted on most complex days first, so easiest days are planned last
             WorkingDayDto day = getWorkingDayByDayOfWeek(workingDays, dayOffWeek);
 
-            String planningStatus = "Planned Ok";
+            String planningStatus = "Planned OK";
             List<PlanningDetailDto> shifts = new ArrayList<>();
 
             String currentStatus = day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName();
@@ -99,7 +100,7 @@ public class PlannerV2 implements PlanningGenerator {
                         assignedStaff  = availableStaff.getFirst();
                         planningStatus = "Planned OK";
 
-                        assignedStaff .setHoursInDebt(assignedStaff .getHoursInDebt() - getShiftTime(assignedStaff , openHours));
+                        assignedStaff.setHoursInDebt(assignedStaff .getHoursInDebt() - getShiftTime(assignedStaff , openHours));
                     } else {
                         planningStatus = "Planned NOK";
                     }

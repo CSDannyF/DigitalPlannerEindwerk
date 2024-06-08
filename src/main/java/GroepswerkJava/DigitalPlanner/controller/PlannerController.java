@@ -10,6 +10,7 @@ import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,10 @@ import java.util.*;
 
 @Controller
 public class PlannerController {
+//
+//    @Autowired
+//    @Qualifier("fre-zijne")
+//    PlanningGenerator planningGenerator;
 
 
     @Autowired

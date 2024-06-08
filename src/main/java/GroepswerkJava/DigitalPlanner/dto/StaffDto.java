@@ -44,6 +44,8 @@ public class StaffDto
 
 //   private int weeklyHoursLeft;
 
+   // TODO always implement equals and hashcode together, not one and not the other
+
 
 
    @Override
