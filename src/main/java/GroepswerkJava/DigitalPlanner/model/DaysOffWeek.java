@@ -22,4 +22,13 @@ public class DaysOffWeek {
 
     @ManyToMany(mappedBy = "daysOffWeek")
     private Set<Staff> staff;
+
+    @Override
+    public String toString() {
+        return "DaysOffWeek{" +
+                "daysOfWeekId=" + daysOfWeekId +
+                ", dayName='" + dayName + '\'' +
+                ", staff=" + staff +
+                '}';
+    }
 }

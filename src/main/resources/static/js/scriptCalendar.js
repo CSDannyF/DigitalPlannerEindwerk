@@ -27,6 +27,7 @@ monthPicker.onclick = () => {
 
 
 let workingDayData = {};
+let status;
 
 // Fetch workingDays data from API and use handleWorkingDays() to generate calendar based on workingDays (mark closed days,...)
 fetch('/workingDay')
@@ -45,12 +46,59 @@ fetch('/workingDay')
     });
 
 
-//Generate calendar based on workingDays
+////Generate calendar based on workingDays
+//const handleWorkingDays = (workingDays) => {
+//    workingDays.forEach(workingDay => {
+//
+//        console.log(workingDay);
+//        const { date, open, planning } = workingDay; // Destructure date and Open properties from WorkingDayDto
+//
+//        const dateKey = date;
+//        workingDayData[dateKey] = open;
+//
+//    });
+//
+//    // After processing workingDays data, generate the calendar
+//    generateCalendar(currMonth.value, currYear.value);
+//};
+
+
+//const handleWorkingDays = (workingDays) => {
+//    workingDays.forEach(workingDay => {
+//        const { date, open, planning } = workingDay; // Destructure date, open, and planning properties from WorkingDayDto
+//
+//        const dateKey = date;
+//        workingDayData[dateKey] = {
+//
+//            open: open,
+//
+//            status: planning && planning.planningStatusDto ? planning.planningStatusDto.planningStatusName : null
+//        };
+//        console.log(open);
+//        console.log(status);
+//
+//    });
+//
+//    // After processing workingDays data, generate the calendar
+//    generateCalendar(currMonth.value, currYear.value);
+//};
+
+
 const handleWorkingDays = (workingDays) => {
     workingDays.forEach(workingDay => {
-        const { date, open } = workingDay; // Destructure date and Open properties from WorkingDayDto
+//        console.log(workingDay.planningDto);
+        const { date, open, planningDto } = workingDay; // Destructure date, open, and planning properties from WorkingDayDto
+
         const dateKey = date;
-        workingDayData[dateKey] = open;
+        const status = planningDto && planningDto.planningStatusDto ? planningDto.planningStatusDto.planningStatusName : null;
+
+        workingDayData[dateKey] = {
+            open: open,
+            status: status
+        };
+
+//        console.log(open);
+        console.log(status); // Now this will log the correct status
     });
 
     // After processing workingDays data, generate the calendar
@@ -58,7 +106,7 @@ const handleWorkingDays = (workingDays) => {
 };
 
 
-// generates a calendar using a month and a year as parameters
+
 generateCalendar = (month, year) => {
     let calendarDay = document.querySelector('.calendar-day');
     calendarDay.innerHTML = '';
@@ -72,7 +120,6 @@ generateCalendar = (month, year) => {
 
     let firstDay = new Date(year, month, 1);
 
-
     for (let i = 0; i < daysOfMonth[month] + firstDay.getDay(); i++) {
         let day = document.createElement('div');
 
@@ -81,11 +128,17 @@ generateCalendar = (month, year) => {
             day.textContent = dayNumber;
 
             // Ensure consistent dateKey format (YYYY-MM-DD) for comparison
-            const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed(02-04-2024 instead of 2-4-2024)
+            const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed (e.g., 02 for February)
             const formattedDay = dayNumber.toString().padStart(2, '0'); // Add leading zero if needed
             const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
 
-            const isOpen = workingDayData[dateKey] || false; // Default to false if key not found
+            const dayData = workingDayData[dateKey] || {}; // Get the day data
+
+            const isOpen = dayData.open; // Check if the day is open based on the open property
+            const status = dayData.status; // Get the status from the day data
+            const isPlannedNOK = status === "Planned NOK"; // Check if the day is "Planned NOK" based on the status property
+            const isPlannedOK = status === "Planned OK"; // Check if the day is "Planned NOK" based on the status property
+
 
             // Add a click event listener to each day element
             day.addEventListener('click', () => {
@@ -93,17 +146,26 @@ generateCalendar = (month, year) => {
             });
 
             // Add styles to the days in the calendar
-            if (!isOpen) {
-                day.classList.add('closedDay');
-            } else {
+            if (isOpen) {
                 day.classList.add('openDay');
+            } else {
+                day.classList.add('closedDay');
+            }
+
+            if (isPlannedNOK) {
+                day.classList.add('plannedNOK'); // Add Planned NOK styling
+            }
+
+            if (isPlannedOK) {
+                console.log('Applying plannedNOK styling');
+                day.classList.add('plannedOK'); // Add Planned NOK styling
             }
 
             if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
-                if (!isOpen) {
-                    day.classList.add('currClosedDay');
-                } else {
+                if (isOpen) {
                     day.classList.add('currOpenDay');
+                } else {
+                    day.classList.add('currClosedDay');
                 }
             }
         }
@@ -111,6 +173,138 @@ generateCalendar = (month, year) => {
         calendarDay.appendChild(day);
     }
 };
+
+
+
+//generateCalendar = (month, year) => {
+//    let calendarDay = document.querySelector('.calendar-day');
+//    calendarDay.innerHTML = '';
+//
+//    let calendarHeaderYear = document.querySelector('#year');
+//    let daysOfMonth = [31, getFebDays(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+//    let currDate = new Date();
+//
+//    monthPicker.innerHTML = monthNames[month];
+//    calendarHeaderYear.innerHTML = year;
+//
+//    let firstDay = new Date(year, month, 1);
+//
+//    for (let i = 0; i < daysOfMonth[month] + firstDay.getDay(); i++) {
+//        let day = document.createElement('div');
+//
+//
+//
+//        if (i >= firstDay.getDay()) {
+//            let dayNumber = i - firstDay.getDay() + 1;
+//            day.textContent = dayNumber;
+//
+//            // Ensure consistent dateKey format (YYYY-MM-DD) for comparison
+//            const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed(02-04-2024 instead of 2-4-2024)
+//            const formattedDay = dayNumber.toString().padStart(2, '0'); // Add leading zero if needed
+//            const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+//
+//            const dayData = workingDayData[dateKey] || {}; // Get the day data
+//
+//            const isOpen = dayData.open; // Check if the day is open based on the open property
+//            const isPlannedNOK = status === "Planned NOK"; // Check if the day is "Planned NOK" based on the status property
+//
+//
+//
+//            // Add a click event listener to each day element
+//            day.addEventListener('click', () => {
+//                handleDayClick(dayNumber, month, year, isOpen);
+//            });
+//
+//            // Add styles to the days in the calendar
+//            if (isOpen) {
+//                day.classList.add('openDay');
+//            } else {
+//                day.classList.add('closedDay');
+//            }
+//
+//
+//            if (isPlannedNOK) {
+////            if(status === "planned NOK"){
+//                console.log('Applying plannedNOK styling');
+//                day.classList.add('plannedNOK'); // Add Planned NOK styling
+//            }
+//
+//            if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
+//                if (isOpen) {
+//                    day.classList.add('currOpenDay');
+//                } else {
+//                    day.classList.add('currClosedDay');
+//                }
+//            }
+//        }
+//
+//        calendarDay.appendChild(day);
+//    }
+//};
+
+//// generates a calendar using a month and a year as parameters
+//generateCalendar = (month, year) => {
+//    let calendarDay = document.querySelector('.calendar-day');
+//    calendarDay.innerHTML = '';
+//
+//    let calendarHeaderYear = document.querySelector('#year');
+//    let daysOfMonth = [31, getFebDays(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+//    let currDate = new Date();
+//
+//    monthPicker.innerHTML = monthNames[month];
+//    calendarHeaderYear.innerHTML = year;
+//
+//    let firstDay = new Date(year, month, 1);
+//
+//
+//    for (let i = 0; i < daysOfMonth[month] + firstDay.getDay(); i++) {
+//        let day = document.createElement('div');
+//
+//        if (i >= firstDay.getDay()) {
+//            let dayNumber = i - firstDay.getDay() + 1;
+//            day.textContent = dayNumber;
+//
+//            // Ensure consistent dateKey format (YYYY-MM-DD) for comparison
+//            const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed(02-04-2024 instead of 2-4-2024)
+//            const formattedDay = dayNumber.toString().padStart(2, '0'); // Add leading zero if needed
+//            const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+//
+//            const dayData = workingDayData[dateKey] || {}; // Get the day data
+//
+//            const isOpen = dayData.open; // Check if the day is open based on the open property
+//            const isPlannedNOK = dayData.status === "Planned NOK";
+//
+//
+////            const isOpen = workingDayData[dateKey] || false; // Default to false if key not found
+//
+//            // Add a click event listener to each day element
+//            day.addEventListener('click', () => {
+//                handleDayClick(dayNumber, month, year, isOpen);
+//            });
+//
+//            // Add styles to the days in the calendar
+//            if (!isOpen) {
+//                day.classList.add('closedDay');
+//            } else {
+//                day.classList.add('openDay');
+//            }
+//
+//            if (isPlannedNOK) {
+//                            day.classList.add('plannedNOK'); // Add Planned NOK styling
+//                        }
+//
+//            if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
+//                if (!isOpen) {
+//                    day.classList.add('currClosedDay');
+//                } else {
+//                    day.classList.add('currOpenDay');
+//                }
+//            }
+//        }
+//
+//        calendarDay.appendChild(day);
+//    }
+//};
 
 
 // show months list when clicked
@@ -207,22 +401,39 @@ updateDayTitle = (day, month, year, isOpen) => {
     shiftsContainer.appendChild(detailDiv);
 }
 
-
-// shows the planningDetails of a certain date in planningDetails
+//Show planning details when clicked on a day
 updateUIWithData = (data) => {
     const shiftsContainer = document.getElementById('shiftsContainer');
 
-    if(data.planningDetails != null){
+    if (data.planningDetails != null) {
         data.planningDetails.forEach(detail => {
             const detailDiv = document.createElement('div');
-            detailDiv.classList.add('shiftDetail');
+            detailDiv.classList.add('shiftDetail', 'mb-3', 'p-3', 'border', 'rounded', 'd-flex', 'justify-content-between', 'align-items-center');
 
-            //\xa0 = spacing, probably better way?
-            const shiftString = `${detail.startTime || 'FREE'} - ${detail.endTime || 'Not planned'}
-            \xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0
-            ${detail.staff.firstName} , ${detail.staff.lastName}`;
-            detailDiv.textContent = shiftString;
+            const nameDiv = document.createElement('div');
+            nameDiv.textContent = detail.staff ? `${detail.staff.firstName} , ${detail.staff.lastName}` : 'OPEN SHIFT';
+            nameDiv.classList.add('shiftName');
 
+            const timeDiv = document.createElement('div');
+            timeDiv.textContent = `${detail.startTime || 'FREE'} - ${detail.endTime || 'Not planned'}`;
+            timeDiv.classList.add('shiftTime');
+
+            // Check if it's an open shift to color it red
+            if (!detail.staff) {
+                detailDiv.classList.add('openShift');
+                const button = document.createElement('button');
+                                button.textContent = 'Assign';
+                                button.classList.add('btn', 'btn-primary', 'ms-2');
+                                button.addEventListener('click', () => {
+                                    // TODO Handle button click
+                                    alert('Assigning staff...');
+                                });
+
+                                detailDiv.appendChild(button);
+            }
+
+            detailDiv.appendChild(nameDiv);
+            detailDiv.appendChild(timeDiv);
             shiftsContainer.appendChild(detailDiv);
         });
     }

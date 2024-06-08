@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.PlanningStatusDto;
+import GroepswerkJava.DigitalPlanner.model.PlanningStatus;
 
 import java.util.List;
 
@@ -10,4 +11,7 @@ public interface PlanningStatusService {
     PlanningStatusDto findByPlanningStatusName(String planningStatusName);
     PlanningStatusDto findByPlanningStatusId(long planningStatusId);
 
+    PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus);
+
+    PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto);
 }

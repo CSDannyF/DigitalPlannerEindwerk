@@ -16,9 +16,10 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
-@Service
+//@Service
 public class WorkingDayServiceImpl implements WorkingDayService {
 
     private final WorkingDayRepository workingDayRepository;
@@ -95,25 +96,77 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         for (int i = 0; i < daysBetween; i++) {
             for (WeeklyOpeningDay weeklyOpeningDay : weeklyOpeningDays) {
                 if (startDate.getDayOfWeek().toString().equalsIgnoreCase(weeklyOpeningDay.getDay())) {
+
+                    Optional<WorkingDay> existingWorkingDayOpt = Optional.ofNullable(workingDayRepository.findByDate(startDate));
+                    if(existingWorkingDayOpt.isPresent()){
+                        WorkingDay existingWorkingDay = existingWorkingDayOpt.get();
+                        existingWorkingDay.setOpen(weeklyOpeningDay.isOpen());
+                        existingWorkingDay.setStartTime(weeklyOpeningDay.getStartTime());
+                        existingWorkingDay.setEndTime(weeklyOpeningDay.getEndTime());
+                        existingWorkingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+                        existingWorkingDay.setWeekNumber(existingWorkingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
+
+                        workingDays.add(existingWorkingDay);
+//                        Planning planning = new Planning();
+//                        planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
+//
+//                        planning.setWorkingDay(existingWorkingDay);
+//                        existingWorkingDay.setPlanning(planning);
+//
+//                        workingDays.add(existingWorkingDay);
+//                        plannings.add(planning);
+                    } else {
+                        WorkingDay workingDay = new WorkingDay();
+                        workingDay.setDate(startDate);
+                        workingDay.setOpen(weeklyOpeningDay.isOpen());
+                        workingDay.setStartTime(weeklyOpeningDay.getStartTime());
+                        workingDay.setEndTime(weeklyOpeningDay.getEndTime());
+                        workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+                        workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
+
+                        Planning planning = new Planning();
+                        if(workingDay.isOpen()){
+                            planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
+                        } else {
+                            planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Closed"));
+
+                        }
+
+                        planning.setWorkingDay(workingDay);
+                        workingDay.setPlanning(planning);
+
+                        workingDays.add(workingDay);
+                        plannings.add(planning);
+                    }
+
+
+
+
+
+
+
+
+
                     WorkingDay workingDay = workingDayRepository.findByDate(startDate);
                     if (workingDay == null) {
+                        System.out.println("WORKING DAY IS NULL");
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
-                    workingDay.setOpen(weeklyOpeningDay.isOpen());
-                    workingDay.setStartTime(weeklyOpeningDay.getStartTime());
-                    workingDay.setEndTime(weeklyOpeningDay.getEndTime());
-                    workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
-                    workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
-
-                    Planning planning = new Planning();
-                    planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
-
-                    planning.setWorkingDay(workingDay);
-                    workingDay.setPlanning(planning);
-
-                    workingDays.add(workingDay);
-                    plannings.add(planning);
+//                    workingDay.setOpen(weeklyOpeningDay.isOpen());
+//                    workingDay.setStartTime(weeklyOpeningDay.getStartTime());
+//                    workingDay.setEndTime(weeklyOpeningDay.getEndTime());
+//                    workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
+//                    workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
+//
+//                    Planning planning = new Planning();
+//                    planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
+//
+//                    planning.setWorkingDay(workingDay);
+//                    workingDay.setPlanning(planning);
+//
+//                    workingDays.add(workingDay);
+//                    plannings.add(planning);
                     break;
                 }
             }
@@ -154,6 +207,8 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         return workingDayDto;
     }
 
+
+
     protected WorkingDay mapToWorkingDayModel(WorkingDayDto workingDayDto)
     {
         WorkingDay workingDay = new WorkingDay();
@@ -176,6 +231,11 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         }
         return workingDayDtos;
     }
+
+
+
+
+
 
 
 }

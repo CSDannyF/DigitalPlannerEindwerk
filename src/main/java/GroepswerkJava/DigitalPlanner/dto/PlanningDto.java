@@ -1,9 +1,6 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,11 +27,13 @@ public class PlanningDto {
     public String toString() {
         return "PlanningDto{" +
                 "planningId=" + planningId +
-                ", planningDetails=" + planningDetails +
                 ", planningStatusId=" + planningStatusId +
-                ", plannedByStaff='" + plannedByStaff + '\'' +
-                ", plannedDate=" + plannedDate +
-                ", workingDayDtoId=" + workingDayDtoId +
+                ", planningStatus=" + planningStatusDto +
+
+                ", planningDetails=" + planningDetails +
+//                ", plannedByStaff='" + plannedByStaff + '\'' +
+//                ", plannedDate=" + plannedDate +
+//                ", workingDayDto=" + workingDayDto +
 
                 '}';
     }

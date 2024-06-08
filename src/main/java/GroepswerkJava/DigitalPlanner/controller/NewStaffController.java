@@ -3,7 +3,6 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
-import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +169,8 @@ public class  NewStaffController {
             }
             staffDto.setFixedDaysOff(daysOff);
         }
+
+        staffDto.setHoursInDebt(0);
 
         userLoginDto.setStaffDto(staffDto);
         userLoginDto.setPassword(staffDto.getFirstName()+staffDto.getLastName());

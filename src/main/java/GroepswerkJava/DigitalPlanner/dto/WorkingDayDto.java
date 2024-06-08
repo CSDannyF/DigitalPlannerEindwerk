@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,8 @@ public class WorkingDayDto {
                 ", startTime=" + startTime +
                 ", minimalOccupation=" + minimalOccupation +
                 ", endTime=" + endTime +
+                ", PLANNING=" + planningDto +
+
                 '}';
     }
 }

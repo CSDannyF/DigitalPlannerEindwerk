@@ -65,7 +65,7 @@ public class ContractTypeServiceImpl implements ContractTypeService {
         ContractTypeDto contractTypeDto = new ContractTypeDto();
         contractTypeDto.setContractTypeId(contractType.getContractTypeId());
         contractTypeDto.setContractTypeName(contractType.getContractTypeName());
-        contractTypeDto.setHoursPerWeek(contractTypeDto.getHoursPerWeek());
+        contractTypeDto.setHoursPerWeek(contractType.getHoursPerWeek());
         return contractTypeDto;
     }
 

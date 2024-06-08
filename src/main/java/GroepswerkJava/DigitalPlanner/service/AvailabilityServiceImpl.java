@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Service
+//@Service
 public class AvailabilityServiceImpl implements AvailabilityService, CommandLineRunner {
 
     @Autowired
     private AvailabilityRepository availabilityRepository;
 
-    private static final List<String> AVAILABILITIES = Arrays.asList("Available", "Sick", "Absence");
+    private static final List<String> AVAILABILITIES = Arrays.asList("Available", "Sick", "Absence", "Planned", "OPEN SHIFT");
 
     @Override
     public List<AvailabilityDto> getAll() {

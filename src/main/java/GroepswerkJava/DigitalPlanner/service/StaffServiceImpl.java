@@ -7,16 +7,13 @@ import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@Service
+//@Service
 public class StaffServiceImpl implements StaffService{
 
     @Autowired
@@ -46,6 +43,55 @@ public class StaffServiceImpl implements StaffService{
         staffRepository.save(staff);
     }
 
+    @Transactional
+    @Override
+    public void saveOrUpdateStaff(Staff staff) {
+        System.out.println(staff.getStaffId() + " ID, STAFF; " + staff);
+
+        Staff existingStaff = staffRepository.findByStaffLastNameAndStaffFirstName(staff.getStaffLastName(), staff.getStaffFirstName());
+        System.out.println("EXISITING STAFF / " + existingStaff);
+        if (existingStaff != null) {
+            existingStaff.setHoursInDebt(staff.getHoursInDebt());
+            // Update other fields as needed
+            staffRepository.save(existingStaff);
+        } else {
+            staffRepository.save(staff);
+        }
+    }
+
+//    @Override
+//    public void saveAllStaff(List<StaffDto> staffDtoList) {
+//        List<Staff> staffList = new ArrayList<>();
+//        for(StaffDto staffDto: staffDtoList){
+//            Staff staff = mapToStaffModel(staffDto);
+//            staffList.add(staff);
+//        }
+//        staffRepository.saveAll(staffList);
+//    }
+
+    @Override
+    public void saveAllStaff(List<StaffDto> staffDtoList) {
+        for(StaffDto staffDto: staffDtoList){
+            Staff existingStaff = staffRepository.findById(staffDto.getStaffId()).orElse(null);
+
+            if(existingStaff != null) {
+                // Update existing staff
+                Staff updatedStaff = mapToStaffModel(staffDto);
+                existingStaff.setHoursInDebt(updatedStaff.getHoursInDebt());
+//                existingStaff.setName(updatedStaff.getName());
+//                existingStaff.setEmail(updatedStaff.getEmail());
+                // Update other fields
+
+                staffRepository.save(existingStaff);
+            } else {
+                // Create and save new staff
+                Staff newStaff = mapToStaffModel(staffDto);
+                staffRepository.save(newStaff);
+            }
+        }
+    }
+
+
     @Override
     public StaffDto getById(long id)
     {
@@ -71,6 +117,12 @@ public class StaffServiceImpl implements StaffService{
         staffDto.setCity(staff.getCity());
         staffDto.setPhoneNumber(staff.getPhoneNumber());
         staffDto.setBirthDate(staff.getBirthDate());
+        staffDto.setStartDate(staff.getStartDate());
+        if(staff.getEndDate() != null){
+            staffDto.setEndDate(staff.getEndDate());
+        }
+
+        staffDto.setHoursInDebt(staff.getHoursInDebt());
 
         DepartmentServiceImpl departmentService = new DepartmentServiceImpl();
         ContractTypeServiceImpl contractTypeService = new ContractTypeServiceImpl();
@@ -120,6 +172,7 @@ public class StaffServiceImpl implements StaffService{
         staff.setPhoneNumber(staffDto.getPhoneNumber());
         staff.setStartDate(staffDto.getStartDate());
         staff.setBirthDate(staffDto.getBirthDate());
+        staff.setHoursInDebt(staffDto.getHoursInDebt());
 
         //validaties indien null, als ze null zijn sla ik ze over en voeg ik ze niet toe
         if (staffDto.getDepartment() != null)

@@ -1,10 +1,13 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
+import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlannerV2;
+import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
+import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -39,14 +42,17 @@ public class PlannerController {
     @Autowired
     private LogDetailService logDetailService;
 
+    @Autowired
+    private DaysOfWeekRepository daysOfWeekRepository;
+
     @GetMapping("/rangeWeek")
     public String weeksToPlan(Model model,
                               Authentication authentication) {
 
         //checked als er een gebruiker is ingelogd, anders wordt hij naar het loginscherm gestuurd
-        if (authentication == null) {
-            return "redirect:/";
-        }
+//        if (authentication == null) {
+//            return "redirect:/";
+//        }
 
         List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
         Map<Integer, String> workingDayDtoMap = new HashMap<>();
@@ -104,7 +110,23 @@ public class PlannerController {
         List<StaffDto> staffDtos = staffService.getAll();
         Planner planner = new Planner();
 
-        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService);
+
+
+        //TODO FRE EDIT
+        PlanningGenerator plannerV2 = new PlannerV2();
+
+
+        Response response = plannerV2.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
+
+
+//        Response response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository);
+
+
+
+        //Response response = planner.generatePlanningV2(weekNumber1);
+
+
+
 
         //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam
         for (PlanningDto planning : response.getPlanningList()) {
@@ -112,6 +134,8 @@ public class PlannerController {
             planning.setPlannedDate(LocalDate.now());               //Hier zou misschien nog het tijdstip kunnen bijkomen
         }
         planningService.saveAll(response.getPlanningList());
+
+        System.out.println(response.getPlanningList());
 
         model.addAttribute("weekWrapper", response.getPlanningList());
 
@@ -144,6 +168,10 @@ public class PlannerController {
         model.addAttribute("availableStaff", staffList);
 
         model.addAttribute("staffMembers", staffService.getAll());
+
+        List<StaffDto> staffs = staffService.getAll();
+
+        System.out.println("STAFFMEMBERS; " +   staffs);
 
         return "editShifts";
     }

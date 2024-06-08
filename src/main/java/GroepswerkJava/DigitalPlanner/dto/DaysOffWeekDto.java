@@ -10,4 +10,12 @@ import lombok.Setter;
 public class DaysOffWeekDto {
     private long daysOffWeekId;
     private String dayName;
+
+    @Override
+    public String toString() {
+        return "DaysOffWeekDto{" +
+                "Id=" + daysOffWeekId +
+                ", dayName='" + dayName + '\'' +
+                '}';
+    }
 }

@@ -39,6 +39,11 @@ public class StaffDto
    //private UserLoginDto userLoginDto;
    private Set<DaysOffWeekDto> fixedDaysOff;
 
+   private int hoursInDebt;
+
+
+//   private int weeklyHoursLeft;
+
 
 
    @Override
@@ -58,9 +63,12 @@ public class StaffDto
    @Override
    public String toString() {
       return "StaffDto{" +
-              "id='" + staffId + '\'' +
-              "firstName='" + firstName + '\'' +
+              "staffId=" + staffId +
+              ", firstName='" + firstName + '\'' +
               ", lastName='" + lastName + '\'' +
+              ", fixedDaysOff=" + fixedDaysOff +
+              ", minPlusHours=" + hoursInDebt +
+
               '}';
    }
 }

@@ -10,4 +10,12 @@ import lombok.Setter;
 public class PlanningStatusDto {
     private long planningStatusId;
     private String planningStatusName;
+
+    @Override
+    public String toString() {
+        return "PlanningStatusDto{" +
+                "planningStatusId=" + planningStatusId +
+                ", planningStatusName='" + planningStatusName + '\'' +
+                '}';
+    }
 }
