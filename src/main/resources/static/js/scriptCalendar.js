@@ -232,7 +232,22 @@ updateDayTitle = (day, month, year, isOpen) => {
     shiftsContainer.appendChild(detailDiv);
 }
 
-//Show planning details when clicked on a day
+
+// Create a context menu when right clicking on a shift div to delete or make open shift
+const contextMenu = document.createElement('div');
+contextMenu.id = 'contextMenu';
+contextMenu.style.position = 'absolute';
+contextMenu.style.display = 'none';
+
+contextMenu.innerHTML = `
+    <button class="context-menu-btn" id="removeShift">Remove Shift</button><br>
+    <button class="context-menu-btn" id="removeStaff">Make open shift</button>
+`;
+document.body.appendChild(contextMenu);
+
+
+
+// show shifts on the day that is clicked
 updateUIWithData = (data) => {
     const shiftsContainer = document.getElementById('shiftsContainer');
 
@@ -253,15 +268,48 @@ updateUIWithData = (data) => {
             if (!detail.staff) {
                 detailDiv.classList.add('openShift');
                 const button = document.createElement('button');
-                                button.textContent = 'Assign';
-                                button.classList.add('btn', 'btn-primary', 'ms-2');
-                                button.addEventListener('click', () => {
-                                    // TODO Handle button click
-                                    alert('Assigning staff...');
-                                });
+                button.textContent = 'Assign';
+                button.classList.add('btn', 'btn-primary', 'ms-2');
+                button.addEventListener('click', () => {
+                    // TODO Handle button click
+                    alert('Functionality not yet available');
+                });
 
-                                detailDiv.appendChild(button);
+                detailDiv.appendChild(button);
             }
+
+            // Add event listener for right-click
+            detailDiv.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                contextMenu.style.display = 'block';
+
+
+                // Add click events for context menu buttons
+                document.getElementById('removeShift').onclick = () => {
+                    alert('DELETE SHIFT: Functionality not yet available');
+                    shiftsContainer.removeChild(detailDiv);
+                    contextMenu.style.display = 'none';
+                };
+
+                document.getElementById('removeStaff').onclick = () => {
+                    if (detail.staff) {
+                        detail.staff = null; // Remove the staff from the shift
+                        nameDiv.textContent = 'OPEN SHIFT';
+                        detailDiv.classList.add('openShift');
+
+                        const button = document.createElement('button');
+                        button.textContent = 'Assign';
+                        button.classList.add('btn', 'btn-primary', 'ms-2');
+                        button.addEventListener('click', () => {
+                            // TODO Handle button click
+                            alert('Functionality not yet available');
+                        });
+
+                        detailDiv.appendChild(button);
+                    }
+                    contextMenu.style.display = 'none';
+                };
+            });
 
             detailDiv.appendChild(nameDiv);
             detailDiv.appendChild(timeDiv);
@@ -269,6 +317,12 @@ updateUIWithData = (data) => {
         });
     }
 };
+
+// Hide context menu when clicking elsewhere
+document.addEventListener('click', () => {
+    contextMenu.style.display = 'none';
+});
+
 
 
 // Function to load Thymeleaf fragment to edit or add planning details
