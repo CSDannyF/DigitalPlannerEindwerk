@@ -1,16 +1,16 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
-import GroepswerkJava.DigitalPlanner.PlanningGenerator.Planner;
-import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlannerV2;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
+import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
+import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -38,6 +39,9 @@ public class PlannerController {
     private StaffService staffService;
 
     @Autowired
+    private UserLoginService userLoginService;
+
+    @Autowired
     private AvailabilityService availabilityService;
 
     @Autowired
@@ -49,6 +53,9 @@ public class PlannerController {
     @Autowired
     private DaysOfWeekRepository daysOfWeekRepository;
 
+    @Autowired
+    PlanningDetailService planningDetailService;
+
     private final PlanningGenerator planner;
     private final PlanningGenerator plannerV2;
 
@@ -56,6 +63,7 @@ public class PlannerController {
         this.planner = planner;
         this.plannerV2 = plannerV2;
     }
+
 
     @GetMapping("/rangeWeek")
     public String weeksToPlan(Model model,
@@ -194,5 +202,34 @@ public class PlannerController {
             return "dashboard";
         }
         return "redirect:/dashboard";
+    }
+
+
+    @GetMapping("/workSchedule")
+    public String showPersonalWorkSchedule(Model model, Authentication authentication) {
+        Map<Integer, List<ShiftDto>> shiftsByWeek = userLoginService.getUserPlanningDetails(authentication.getName());
+        model.addAttribute("shiftsByWeek", shiftsByWeek);
+        return "personalSchedule";
+    }
+
+
+
+    //TODO HIER VERDER FIXEN
+
+    @PostMapping("/assignShift")
+    public ResponseEntity<Map<String, String>> assignShift(@RequestBody Map<String, Long> request, Authentication authentication) {
+        Long shiftId = request.get("shiftId");
+
+        PlanningDetail planningDetail = planningDetailService.get(shiftId);
+        Staff staff = userLoginService.getStaffByUserEmail(authentication.getName());
+        planningDetail.setStaff(staff);
+        planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("Planned")));
+        int hours = (int) Duration.between(planningDetail.getStartTime(), planningDetail.getEndTime()).toHours();
+        staff.setHoursInDebt(staff.getHoursInDebt() - hours);
+        planningDetailService.save(planningDetail);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Shift assigned successfully");
+        return ResponseEntity.ok(response);
     }
 }

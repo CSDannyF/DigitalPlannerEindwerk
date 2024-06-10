@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,14 +35,14 @@ public class DashboardController {
         List<StaffDto> staffList = staffService.getAll();
         List<WeeklyOpeningDay> openingDays = weeklyOpeningDaysService.getAll();
 
+        //TODO fix staffAvailable, if enDate != null && is before today || startDate is after today
+        LocalDate today = LocalDate.now();
+
         // Calculate total staff contract hours
         int totalStaffContractHours = staffList.stream()
                 .mapToInt(staff -> staff.getContractType().getHoursPerWeek())
                 .sum();
-
-
-        System.out.println("totalStaffContractHours" + totalStaffContractHours);
-
+        
         // Calculate total working hours needed
         int totalWorkingHoursNeeded = openingDays.stream()
                 .filter(day -> day.getStartTime() != null && day.getEndTime() != null)
@@ -50,15 +52,10 @@ public class DashboardController {
                 })
                 .sum();
 
-        System.out.println("totalWorkingHoursNeeded" +  totalWorkingHoursNeeded);
 
         // Calculate the percentage
         double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
         int roundedPercentage = (int) percentage; // Cast to int to remove decimal places
-
-
-
-        System.out.println("percentage; " + percentage);
 
         model.addAttribute("totalStaffContractHours", totalStaffContractHours);
         model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);

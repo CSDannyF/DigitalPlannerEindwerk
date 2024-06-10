@@ -38,40 +38,41 @@ public class PlannerV2 implements PlanningGenerator {
     PlanningStatusService planningStatusService;
 
 
-    //for keeping track what day it is, used to determine shift time
-    int dayCounter = -1;
+//    //for keeping track what day it is, used to determine shift time
+//    int dayCounter = -1;
 
     @Override
     public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays,
                                      AvailabilityService availabilityService, PlanningStatusService planningStatusService,
                                      LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService) {
+//        //for keeping track what day it is, used to determine shift time
+//        int dayCounter = -1;
+//
+//        Response response = new Response();
+//        List<LogDetailDto> logging = new ArrayList<>();
+//
+//        if (workingDays.size() != 7) {
+//            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
+//            return response;
+//        } else {
+//            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
+//
+//            List<PlanningDto> planningList;
+//            List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays, daysOfWeekRepository);
+//
+//            checkIfWeekAlreadyPlanned(workingDays, staff);
+//
+//            planningList = populateShifts(workingDays, daysOffWeekList, staff, availabilityService, planningStatusService, dayCounter);
+//            response.setPlanningList(planningList);
+//        }
+//        staffService.saveAllStaff(staff);
 
-        Response response = new Response();
-        List<LogDetailDto> logging = new ArrayList<>();
-
-        if (workingDays.size() != 7) {
-            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
-            return response;
-        } else {
-            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
-
-            List<PlanningDto> planningList;
-            List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays, daysOfWeekRepository);
-
-            checkIfWeekAlreadyPlanned(workingDays, staff);
-
-            planningList = populateShifts(workingDays, daysOffWeekList, staff, availabilityService, planningStatusService);
-            response.setPlanningList(planningList);
-        }
-        staffService.saveAllStaff(staff);
-
-        return response;
+        return null;
     }
 
 
     private List<PlanningDto> populateShifts(List<WorkingDayDto> workingDays, List<DaysOffWeek> daysOffWeekList,
-                                             List<StaffDto> staff, AvailabilityService availabilityService,
-                                             PlanningStatusService planningStatusService) {
+                                             List<StaffDto> staff, int dayCounter) {
 
         List<PlanningDto> planningList = new ArrayList<>();
 
@@ -110,14 +111,14 @@ public class PlannerV2 implements PlanningGenerator {
                         assignedStaff  = availableStaff.getFirst();
                         planningStatus = "Planned OK";
 
-                        assignedStaff.setHoursInDebt(assignedStaff .getHoursInDebt() - getShiftTime(assignedStaff , openHours));
+                        assignedStaff.setHoursInDebt(assignedStaff .getHoursInDebt() - getShiftTime(assignedStaff , openHours, dayCounter));
                     } else {
                         planningStatus = "Planned NOK";
                     }
 
                     planningDetailDto.setStaff(assignedStaff );
 
-                    setStartAndEndTimeShift(planningDetailDto, assignedStaff , day, i, openHours);
+                    setStartAndEndTimeShift(planningDetailDto, assignedStaff , day, i, openHours, dayCounter);
 
                     //if a staff is assigned, the shift is planned, if staff is null, the shift is an open shift
                     if (planningDetailDto.getStaff() != null) {
@@ -141,13 +142,12 @@ public class PlannerV2 implements PlanningGenerator {
 
         planningList.sort(Comparator.comparingLong(PlanningDto::getPlanningId));
 
-        dayCounter = -1;
 
         return planningList;
     }
 
-    private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day, int i, int dayHours) {
-        int shiftTime = getShiftTime(planStaff, dayHours);
+    private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day, int i, int dayHours, int dayCounter) {
+        int shiftTime = getShiftTime(planStaff, dayHours , dayCounter);
 
         // if total openHours this day is more as 16h, a midday shift is created, else there is just opening and closing shifts
         if (dayHours > 16) {
@@ -177,7 +177,7 @@ public class PlannerV2 implements PlanningGenerator {
     }
 
     // calculates length of a shift, if too many hoursInDebt, set shift to 9 instead of 8 hours
-    private int getShiftTime(StaffDto planStaff, int dayHours) {
+    private int getShiftTime(StaffDto planStaff, int dayHours, int dayCounter) {
         int hoursPerShift = 8;
 
         if (planStaff != null) {
@@ -196,7 +196,7 @@ public class PlannerV2 implements PlanningGenerator {
 
 
     //Sort list of workingDays so that most complex days (with most unavailable staff) are planned first
-    private List<DaysOffWeek> sortWorkingDaysForComplexity(List<WorkingDayDto> workingDays, DaysOfWeekRepository daysOfWeekRepository) {
+    private List<DaysOffWeek> sortWorkingDaysForComplexity(List<WorkingDayDto> workingDays) {
         List<DaysOffWeek> daysOffWeekList = new ArrayList<>();
 
         for (WorkingDayDto dayDto : workingDays) {
@@ -311,6 +311,9 @@ public class PlannerV2 implements PlanningGenerator {
         Response response = new Response();
         List<LogDetailDto> logging = new ArrayList<>();
 
+        //    //for keeping track what day it is, used to determine shift time
+        int dayCounter = -1;
+
         if (workingDays.size() != 7) {
             logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
             return response;
@@ -318,11 +321,11 @@ public class PlannerV2 implements PlanningGenerator {
             logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
 
             List<PlanningDto> planningList;
-            List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays, daysOfWeekRepository);
+            List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays);
 
             checkIfWeekAlreadyPlanned(workingDays, staff);
 
-            planningList = populateShifts(workingDays, daysOffWeekList, staff, availabilityService, planningStatusService);
+            planningList = populateShifts(workingDays, daysOffWeekList, staff, dayCounter);
             response.setPlanningList(planningList);
         }
         staffService.saveAllStaff(staff);

@@ -4,8 +4,6 @@
     <title>Details</title>
 
     <script th:src="@{/js/scriptCalendar.js}" ></script>
-
-<!--    TODO edit shift is weggelaten omdat dit voor problemen zorgde, Mss gewoon shift kunnen deleten en adden is genoeg? -->
 </head>
 <body>
 
@@ -17,8 +15,10 @@
             <input type="hidden" name="planningId" th:value="${planning.planningId}">
             <input type="hidden" name="workingDayDtoId" th:value="${planning.workingDayDtoId}">
 
-            <!-- Existing Planning Details -->
-            <div th:each="detail, detailIndex : ${planning.planningDetails}">
+<!--    TODO edit shift is weggelaten omdat dit voor problemen zorgde, Mss gewoon shift kunnen deleten en adden is genoeg? -->
+
+                        <!-- Existing Planning Details -->
+<!--            <div th:each="detail, detailIndex : ${planning.planningDetails}">-->
 <!--                <input type="hidden" th:name="planningDetails[__${detailIndex.index}__].planningDetailId"-->
 <!--                       th:value="${detail.planningDetailId}">-->
 <!--                <label>Start Time:</label>-->
@@ -47,7 +47,7 @@
 <!--                        </option>-->
 <!--                    </select>-->
 <!--                </label>-->
-            </div>
+<!--            </div>-->
 
         </div>
 

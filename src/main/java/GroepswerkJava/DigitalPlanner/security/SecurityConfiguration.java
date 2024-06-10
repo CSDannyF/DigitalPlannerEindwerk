@@ -31,9 +31,9 @@ public class SecurityConfiguration {
                         // access for everyone
                         .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**", "/newUserPassword", "/editUserLogin/**", "/staff/staffDetail").permitAll()
                         // access only for ADMIN role
-                        .requestMatchers("/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**", "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve", "/rangeWeek").hasRole("ADMIN")
+                        .requestMatchers( "/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**", "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve", "/rangeWeek").hasRole("ADMIN")
                         // access only if user has USER or ADMIN role (user has to be logged in)
-                        .requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/dashboard", "/workSchedule").hasAnyRole("ADMIN", "USER")
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
