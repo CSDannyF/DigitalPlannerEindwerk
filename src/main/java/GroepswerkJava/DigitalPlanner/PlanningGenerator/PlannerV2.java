@@ -102,7 +102,7 @@ public class PlannerV2 implements PlanningGenerator {
                     requiredShifts  -= day.getPlanningDto().getPlanningDetails().size();
                 }
 
-                for (int i = 0; i < requiredShifts ; i++) {
+                for (int shiftCounter = 0; shiftCounter < requiredShifts ; shiftCounter++) {
                     PlanningDetailDto planningDetailDto = new PlanningDetailDto();
                     StaffDto assignedStaff = null;
 
@@ -116,9 +116,9 @@ public class PlannerV2 implements PlanningGenerator {
                         planningStatus = "Planned NOK";
                     }
 
-                    planningDetailDto.setStaff(assignedStaff );
+                    planningDetailDto.setStaff(assignedStaff);
 
-                    setStartAndEndTimeShift(planningDetailDto, assignedStaff , day, i, openHours, dayCounter);
+                    setStartAndEndTimeShift(planningDetailDto, assignedStaff , day, shiftCounter, openHours, dayCounter);
 
                     //if a staff is assigned, the shift is planned, if staff is null, the shift is an open shift
                     if (planningDetailDto.getStaff() != null) {
@@ -146,21 +146,22 @@ public class PlannerV2 implements PlanningGenerator {
         return planningList;
     }
 
-    private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day, int i, int dayHours, int dayCounter) {
+    private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day,
+                                         int shiftCounter, int dayHours, int dayCounter) {
         int shiftTime = getShiftTime(planStaff, dayHours , dayCounter);
 
         // if total openHours this day is more as 16h, a midday shift is created, else there is just opening and closing shifts
         if (dayHours > 16) {
-            if ((i + 1) % 3 == 0) {
+            if ((shiftCounter + 1) % 3 == 0) {
                 // Midday shift
                 LocalTime startMiddayShift = day.getStartTime().plusHours(dayHours - 16);
                 planningDetailDto.setStartTime(startMiddayShift);
                 planningDetailDto.setEndTime(startMiddayShift.plusHours(shiftTime));
             } else {
-                setOpeningAndClosingShift(i, planningDetailDto, day, shiftTime);
+                setOpeningAndClosingShift(shiftCounter, planningDetailDto, day, shiftTime);
             }
         } else {
-            setOpeningAndClosingShift(i, planningDetailDto, day, shiftTime);
+            setOpeningAndClosingShift(shiftCounter, planningDetailDto, day, shiftTime);
         }
     }
 
