@@ -4,6 +4,7 @@ import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
@@ -147,8 +148,6 @@ public class PlannerController {
         }
         planningService.saveAll(response.getPlanningList());
 
-        System.out.println(response.getPlanningList());
-
         model.addAttribute("weekWrapper", response.getPlanningList());
 
 
@@ -213,23 +212,19 @@ public class PlannerController {
     }
 
 
-
-    //TODO HIER VERDER FIXEN
-
     @PostMapping("/assignShift")
     public ResponseEntity<Map<String, String>> assignShift(@RequestBody Map<String, Long> request, Authentication authentication) {
         Long shiftId = request.get("shiftId");
-
-        PlanningDetail planningDetail = planningDetailService.get(shiftId);
-        Staff staff = userLoginService.getStaffByUserEmail(authentication.getName());
-        planningDetail.setStaff(staff);
-        planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("Planned")));
-        int hours = (int) Duration.between(planningDetail.getStartTime(), planningDetail.getEndTime()).toHours();
-        staff.setHoursInDebt(staff.getHoursInDebt() - hours);
-        planningDetailService.save(planningDetail);
+        boolean isAssigned = planningDetailService.assignOpenShift(shiftId, authentication.getName());
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Shift assigned successfully");
+        if(isAssigned){
+            response.put("message", "Shift assigned successfully");
+        } else {
+            response.put("message", "assigning shift failed");
+        }
+
+
         return ResponseEntity.ok(response);
     }
 }

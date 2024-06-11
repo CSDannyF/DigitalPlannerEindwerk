@@ -20,4 +20,7 @@ public interface StaffService {
     List<StaffDto> getAll();
     Staff mapToStaffModel(StaffDto staffDto);
     void updateStaff(StaffDto staffDto);
+    int getTotalStaffContractHours();
+
+
 }

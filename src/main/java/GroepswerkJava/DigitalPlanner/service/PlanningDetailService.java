@@ -8,4 +8,6 @@ public interface PlanningDetailService {
     void save(PlanningDetail planningDetail);
 
     PlanningDetail get(long id);
+
+    boolean assignOpenShift(Long shiftId, String email);
 }

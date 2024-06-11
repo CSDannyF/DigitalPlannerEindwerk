@@ -62,6 +62,12 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
+    public PlanningStatus findByStatusName(String statusName) {
+
+        return planningStatusRepository.findByPlanningStatusName(statusName);
+    }
+
+    @Override
     public PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus)
     {
         PlanningStatusDto planningStatusDto = new PlanningStatusDto();

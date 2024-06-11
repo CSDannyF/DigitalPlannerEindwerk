@@ -4,7 +4,6 @@ import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
 import GroepswerkJava.DigitalPlanner.model.Staff;
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,6 +100,33 @@ public class StaffServiceImpl implements StaffService{
     public void updateStaff(StaffDto staffDto)
     {
         //staffRepository.save(mapToUpdate(staffDto));
+    }
+
+    public List<StaffDto> getActiveStaff() {
+        LocalDate today = LocalDate.now();
+        List<StaffDto> activeStaff = getAll();
+        List<StaffDto> notActiveStaff = new ArrayList<>();
+
+        for(StaffDto staffDto: activeStaff){
+            if(staffDto.getStartDate().isAfter(today)){
+                notActiveStaff.add(staffDto);
+            } else if (staffDto.getEndDate() != null && staffDto.getEndDate().isBefore(today)){
+                notActiveStaff.add(staffDto);
+            }
+        }
+
+        activeStaff.removeAll(notActiveStaff);
+
+        return activeStaff;
+    }
+
+    @Override
+    public int getTotalStaffContractHours() {
+        List<StaffDto> activeStaffDtoList = getActiveStaff();
+
+        return  activeStaffDtoList.stream()
+                .mapToInt(staff -> staff.getContractType().getHoursPerWeek())
+                .sum();
     }
 
     @Override

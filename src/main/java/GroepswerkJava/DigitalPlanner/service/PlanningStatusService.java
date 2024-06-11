@@ -11,6 +11,8 @@ public interface PlanningStatusService {
     PlanningStatusDto findByPlanningStatusName(String planningStatusName);
     PlanningStatusDto findByPlanningStatusId(long planningStatusId);
 
+    PlanningStatus findByStatusName(String statusName);
+
     PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus);
 
     PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto);

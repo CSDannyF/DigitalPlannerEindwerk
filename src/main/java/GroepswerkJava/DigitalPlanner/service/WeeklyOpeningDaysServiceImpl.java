@@ -52,5 +52,16 @@ public class WeeklyOpeningDaysServiceImpl implements WeeklyOpeningDaysService {
         saveAll(weeklyOpeningDaysList);
     }
 
+    @Override
+    public int getTotalShiftHoursPerWeek() {
+        List<WeeklyOpeningDay> openingDays = getAll();
 
+        return openingDays.stream()
+                .filter(day -> day.getStartTime() != null && day.getEndTime() != null)
+                .mapToInt(day -> {
+                    int hours = day.getEndTime().getHour() - day.getStartTime().getHour();
+                    return hours * day.getMinOccupation();
+                })
+                .sum();
+    }
 }

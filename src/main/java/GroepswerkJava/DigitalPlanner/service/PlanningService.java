@@ -4,6 +4,7 @@ import GroepswerkJava.DigitalPlanner.dto.ListPlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @Service
 public interface PlanningService {
     void save(PlanningDto planningDto);
+    void update(Planning planning);
 
     void savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy);
 
