@@ -64,10 +64,7 @@ public class StaffServiceImpl implements StaffService{
     @Transactional
     @Override
     public void saveOrUpdateStaff(Staff staff) {
-        System.out.println(staff.getStaffId() + " ID, STAFF; " + staff);
-
         Staff existingStaff = staffRepository.findByStaffLastNameAndStaffFirstName(staff.getStaffLastName(), staff.getStaffFirstName());
-        System.out.println("EXISITING STAFF / " + existingStaff);
         if (existingStaff != null) {
             existingStaff.setHoursInDebt(staff.getHoursInDebt());
             // Update other fields as needed
@@ -77,15 +74,6 @@ public class StaffServiceImpl implements StaffService{
         }
     }
 
-//    @Override
-//    public void saveAllStaff(List<StaffDto> staffDtoList) {
-//        List<Staff> staffList = new ArrayList<>();
-//        for(StaffDto staffDto: staffDtoList){
-//            Staff staff = mapToStaffModel(staffDto);
-//            staffList.add(staff);
-//        }
-//        staffRepository.saveAll(staffList);
-//    }
 
     @Override
     public void saveAllStaff(List<StaffDto> staffDtoList) {
@@ -96,9 +84,6 @@ public class StaffServiceImpl implements StaffService{
                 // Update existing staff
                 Staff updatedStaff = mapToStaffModel(staffDto);
                 existingStaff.setHoursInDebt(updatedStaff.getHoursInDebt());
-//                existingStaff.setName(updatedStaff.getName());
-//                existingStaff.setEmail(updatedStaff.getEmail());
-                // Update other fields
 
                 staffRepository.save(existingStaff);
             } else {
