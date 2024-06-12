@@ -6,7 +6,6 @@ import GroepswerkJava.DigitalPlanner.repository.AvailabilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +63,8 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
         return availabilityDto;
     }
 
-    protected Availability mapToAvailabilityModel(AvailabilityDto availabilityDto)
+    @Override
+    public Availability mapToAvailabilityModel(AvailabilityDto availabilityDto)
     {
         Availability availability = new Availability();
         availability.setAvailabilityId(availabilityDto.getAvailabilityId());

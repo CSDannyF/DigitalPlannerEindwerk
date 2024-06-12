@@ -42,7 +42,7 @@ public class Planning {
                 "planningId=" + planningId +
                 "planningDetails=" + planningDetails +
 
-                ", planningStatus=" + planningStatus +
+                ", planningStatus=" + planningStatus.getPlanningStatusName() +
                 ", plannedByStaff='" + plannedByStaff + '\'' +
                 ", plannedDate=" + plannedDate +
                 '}';

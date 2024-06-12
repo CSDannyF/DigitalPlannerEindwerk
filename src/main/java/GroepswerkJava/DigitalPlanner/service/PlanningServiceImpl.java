@@ -51,8 +51,10 @@ public class PlanningServiceImpl implements PlanningService{
         //TODO nog geimplementeerd worden
     }
 
-
-
+    @Override
+    public void update(Planning planning) {
+        planningRepository.save(planning);
+    }
 
 
     @Override

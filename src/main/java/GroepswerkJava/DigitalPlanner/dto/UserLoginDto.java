@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
 import GroepswerkJava.DigitalPlanner.model.Role;
+import GroepswerkJava.DigitalPlanner.model.Staff;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

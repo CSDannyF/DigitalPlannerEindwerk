@@ -64,12 +64,19 @@
 
 
 
-
-
-<!-- Insert calendar fragment -->
-<div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>
-
-<!-- <div class="clearfix"></div> -->
+    <div class="container bg-transparent">
+        <div class="row">
+            <div class="col">
+                <div th:replace="~{fragments/calendarMonth_fragment :: calendarMonthContent}"></div>
+            </div>
+            <div class="col">
+                <div id="shiftsContainer"></div>
+            </div>
+            <div class="col">
+                <div id="thymeleafContent"></div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Error message that fades out -->
@@ -78,18 +85,6 @@
     </div>
 
 
-
-<!-- Place shiftsContainer below calendarMonthContent -->
-<div id="shiftsContainer"></div>
-
-
-
-
-
-
-
-<!--TODO trying stuff-->
-<div id="thymeleafContent"></div>
 
 <!--error message that fades out-->
 <style>
@@ -109,10 +104,11 @@
 
 
 
+    <img th:src="@{/images/dashboard/logo.png}" alt="Wu-Tang Clan" width="400" height="256"
+         class="logo">
 
-
-<!-- Background container -->
-<div class="background-image"></div>
+<!--&lt;!&ndash; Background container &ndash;&gt;-->
+<!--<div class="background-image"></div>-->
 
 </div>
 </body>

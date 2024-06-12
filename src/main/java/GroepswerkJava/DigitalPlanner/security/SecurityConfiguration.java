@@ -29,11 +29,14 @@ public class SecurityConfiguration {
         http.csrf().disable()
                 .authorizeRequests(authorize -> authorize
                         // access for everyone
-                        .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**", "/newUserPassword", "/editUserLogin/**", "/staff/staffDetail", "/staff/myProfile").permitAll()
+                        .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**",
+                                "/newUserPassword", "/editUserLogin/**", "/staff/staffDetail", "/staff/myProfile").permitAll()
                         // access only for ADMIN role
-                        .requestMatchers("/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**", "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve", "/rangeWeek").hasRole("ADMIN")
+                        .requestMatchers( "/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**",
+                                "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve", "/rangeWeek",
+                                "/planningDetails/**").hasRole("ADMIN")
                         // access only if user has USER or ADMIN role (user has to be logged in)
-                        .requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/dashboard", "/workSchedule", "/assignShift").hasAnyRole("ADMIN", "USER")
                 )
                 .formLogin(login -> login
                         .loginPage("/login")

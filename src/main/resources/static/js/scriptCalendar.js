@@ -253,10 +253,12 @@ updateUIWithData = (data) => {
 
     if (data.planningDetails != null) {
         data.planningDetails.forEach(detail => {
+
             const detailDiv = document.createElement('div');
             detailDiv.classList.add('shiftDetail', 'mb-3', 'p-3', 'border', 'rounded', 'd-flex', 'justify-content-between', 'align-items-center');
 
             const nameDiv = document.createElement('div');
+            // show staff name, if staff is null, show OPEN SHIFT
             nameDiv.textContent = detail.staff ? `${detail.staff.firstName} , ${detail.staff.lastName}` : 'OPEN SHIFT';
             nameDiv.classList.add('shiftName');
 
@@ -271,45 +273,13 @@ updateUIWithData = (data) => {
                 button.textContent = 'Assign';
                 button.classList.add('btn', 'btn-primary', 'ms-2');
                 button.addEventListener('click', () => {
-                    // TODO Handle button click
-                    alert('Functionality not yet available');
+                    assignShift(detail.planningDetailId);
                 });
 
                 detailDiv.appendChild(button);
             }
 
-            // Add event listener for right-click
-            detailDiv.addEventListener('contextmenu', (event) => {
-                event.preventDefault();
-                contextMenu.style.display = 'block';
 
-
-                // Add click events for context menu buttons
-                document.getElementById('removeShift').onclick = () => {
-                    alert('DELETE SHIFT: Functionality not yet available');
-                    shiftsContainer.removeChild(detailDiv);
-                    contextMenu.style.display = 'none';
-                };
-
-                document.getElementById('removeStaff').onclick = () => {
-                    if (detail.staff) {
-                        detail.staff = null; // Remove the staff from the shift
-                        nameDiv.textContent = 'OPEN SHIFT';
-                        detailDiv.classList.add('openShift');
-
-                        const button = document.createElement('button');
-                        button.textContent = 'Assign';
-                        button.classList.add('btn', 'btn-primary', 'ms-2');
-                        button.addEventListener('click', () => {
-                            // TODO Handle button click
-                            alert('Functionality not yet available');
-                        });
-
-                        detailDiv.appendChild(button);
-                    }
-                    contextMenu.style.display = 'none';
-                };
-            });
 
             detailDiv.appendChild(nameDiv);
             detailDiv.appendChild(timeDiv);
@@ -347,3 +317,32 @@ loadThymeleafTemplate = (year, month, day) => {
             thymeleafContent.style.display = 'block';
         });
 };
+
+
+
+// TODO FIX ASIGN USER TO OPEN SHIFT
+function assignShift(shiftId) {
+    fetch('/assignShift', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ shiftId: shiftId })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json(); // Ensure this is JSON.parse
+        } else {
+            throw new Error('Failed to assign shift');
+        }
+    })
+    .then(data => {
+        alert(data.message); // Display the message from the server
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error assigning shift');
+    });
+}
+
+

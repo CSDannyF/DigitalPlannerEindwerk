@@ -2,9 +2,7 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
-import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
-import GroepswerkJava.DigitalPlanner.model.Staff;
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
+import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,10 +63,7 @@ public class StaffServiceImpl implements StaffService{
     @Transactional
     @Override
     public void saveOrUpdateStaff(Staff staff) {
-        System.out.println(staff.getStaffId() + " ID, STAFF; " + staff);
-
         Staff existingStaff = staffRepository.findByStaffLastNameAndStaffFirstName(staff.getStaffLastName(), staff.getStaffFirstName());
-        System.out.println("EXISITING STAFF / " + existingStaff);
         if (existingStaff != null) {
             existingStaff.setHoursInDebt(staff.getHoursInDebt());
             // Update other fields as needed
@@ -77,15 +73,6 @@ public class StaffServiceImpl implements StaffService{
         }
     }
 
-//    @Override
-//    public void saveAllStaff(List<StaffDto> staffDtoList) {
-//        List<Staff> staffList = new ArrayList<>();
-//        for(StaffDto staffDto: staffDtoList){
-//            Staff staff = mapToStaffModel(staffDto);
-//            staffList.add(staff);
-//        }
-//        staffRepository.saveAll(staffList);
-//    }
 
     @Override
     public void saveAllStaff(List<StaffDto> staffDtoList) {
@@ -96,9 +83,6 @@ public class StaffServiceImpl implements StaffService{
                 // Update existing staff
                 Staff updatedStaff = mapToStaffModel(staffDto);
                 existingStaff.setHoursInDebt(updatedStaff.getHoursInDebt());
-//                existingStaff.setName(updatedStaff.getName());
-//                existingStaff.setEmail(updatedStaff.getEmail());
-                // Update other fields
 
                 staffRepository.save(existingStaff);
             } else {
@@ -115,6 +99,33 @@ public class StaffServiceImpl implements StaffService{
     public void updateStaff(StaffDto staffDto)
     {
         //staffRepository.save(mapToUpdate(staffDto));
+    }
+
+    public List<StaffDto> getActiveStaff() {
+        LocalDate today = LocalDate.now();
+        List<StaffDto> activeStaff = getAll();
+        List<StaffDto> notActiveStaff = new ArrayList<>();
+
+        for(StaffDto staffDto: activeStaff){
+            if(staffDto.getStartDate().isAfter(today)){
+                notActiveStaff.add(staffDto);
+            } else if (staffDto.getEndDate() != null && staffDto.getEndDate().isBefore(today)){
+                notActiveStaff.add(staffDto);
+            }
+        }
+
+        activeStaff.removeAll(notActiveStaff);
+
+        return activeStaff;
+    }
+
+    @Override
+    public int getTotalStaffContractHours() {
+        List<StaffDto> activeStaffDtoList = getActiveStaff();
+
+        return  activeStaffDtoList.stream()
+                .mapToInt(staff -> staff.getContractType().getHoursPerWeek())
+                .sum();
     }
 
     @Override

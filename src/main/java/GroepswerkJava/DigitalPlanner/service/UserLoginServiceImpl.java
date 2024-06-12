@@ -1,8 +1,8 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.ShiftDto;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
-import GroepswerkJava.DigitalPlanner.model.Role;
-import GroepswerkJava.DigitalPlanner.model.UserLogin;
+import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;
 import GroepswerkJava.DigitalPlanner.repository.UserLoginRepository;
@@ -10,7 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +114,40 @@ public class UserLoginServiceImpl implements UserLoginService {
         List<UserLogin> users = userLoginRepository.findAll();
         return users.stream().map((userLogin) -> mapToDtoWithId(userLogin))
                 .collect(Collectors.toList());
+    }
+
+
+
+
+    //returns list of shiftDtos, ordered by weeknumber, to show personal schedule to staff
+    @Override
+    public Map<Integer, List<ShiftDto>> getUserPlanningDetails(String email) {
+        UserLogin userLogin = userLoginRepository.findByEmail(email);
+        Staff staff = userLogin.getStaff();
+        Map<Integer, List<ShiftDto>> shiftsByWeek = new HashMap<>();
+
+        for (PlanningDetail planningDetail : staff.getPlanningDetails()) {
+            ShiftDto shiftDto = new ShiftDto();
+            LocalDate date = planningDetail.getPlanning().getWorkingDay().getDate();
+            shiftDto.setDate(date);
+            shiftDto.setStartTime(planningDetail.getStartTime());
+            shiftDto.setEndTime(planningDetail.getEndTime());
+            shiftDto.setDay(String.valueOf(date.getDayOfWeek()));
+
+            int weekNumber = date.get(WeekFields.ISO.weekOfWeekBasedYear());
+            shiftsByWeek.computeIfAbsent(weekNumber, k -> new ArrayList<>()).add(shiftDto);
+        }
+
+        return shiftsByWeek;
+    }
+
+    @Override
+    public Staff getStaffByUserEmail(String email) {
+        UserLogin userLogin = userLoginRepository.findByEmail(email);
+        System.out.println(userLogin);
+        Staff staff = userLogin.getStaff();
+        System.out.println(staff);
+        return staff;
     }
 
 
