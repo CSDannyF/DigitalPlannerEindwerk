@@ -27,7 +27,6 @@ import java.util.*;
 public class PlannerController {
 //
 //    @Autowired
-//    @Qualifier("fre-zijne")
 //    PlanningGenerator planningGenerator;
 
     @Autowired
@@ -136,9 +135,11 @@ public class PlannerController {
         Response response = null;
 
         if ("planner".equals(plannerType)) {
-            response = planner.generatePlanning(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
+            response = planner.generatePlanning(staffDtos, workingDaysWeek);
+
+//            response = planner.generatePlanningV2(staffDtos, workingDaysWeek, availabilityService, planningStatusService, logDetailService, daysOfWeekRepository, staffService);
         } else if ("plannerV2".equals(plannerType)) {
-            response = plannerV2.generatePlanningV2(staffDtos, workingDaysWeek);
+            response = plannerV2.generatePlanning(staffDtos, workingDaysWeek);
         }
 
         //planned by staff kan ik op deze manier doen ofwel de email adres eruit halen en in de db zoeken op email adres en dan naar de staffnaam

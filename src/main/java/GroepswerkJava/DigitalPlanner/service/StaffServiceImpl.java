@@ -2,8 +2,7 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.DaysOffWeekDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
-import GroepswerkJava.DigitalPlanner.model.DaysOffWeek;
-import GroepswerkJava.DigitalPlanner.model.Staff;
+import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.RoleRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffRepository;

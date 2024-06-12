@@ -13,9 +13,9 @@ import java.util.List;
 
 @Service
 public interface PlanningGenerator {
-    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays,
-                              AvailabilityService availabilityService, PlanningStatusService planningStatusService,
-                              LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService);
+//    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays,
+//                              AvailabilityService availabilityService, PlanningStatusService planningStatusService,
+//                              LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService);
 
-    Response generatePlanningV2(List<StaffDto> staff, List<WorkingDayDto> workingDays);
+    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays);
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,7 +17,8 @@ import java.util.List;
 
 @Getter
 @Setter
-@Component
+//@Component
+@Service("planner")
 public class Planner implements PlanningGenerator {
 
     @Autowired
@@ -34,12 +36,19 @@ public class Planner implements PlanningGenerator {
     @Autowired
     private LogDetailService logDetailService;
 
+    @Autowired PlanningStatusService planningStatusService;
+
     private List<WorkingDay> workingDays = new ArrayList<>();  //voor de dummy data
 
+//    @Override
+//    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService,
+//                                     PlanningStatusService planningStatusService,
+//                                     LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService)
+//    {
+
+
     @Override
-    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays, AvailabilityService availabilityService,
-                                     PlanningStatusService planningStatusService,
-                                     LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService)
+    public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays)
     {
         List<LogDetailDto> logging = new ArrayList<>();
         List<PlanningDto> planningList = new ArrayList<>();
@@ -243,38 +252,6 @@ public class Planner implements PlanningGenerator {
         workingDays.add(workingDay6);
         workingDays.add(workingDay7);
         return workingDays;
-    }
-
-    //Method to check if there is already a Planning linked to the workingDay, if not: the workingDay wil be set to an
-    //new planning object corresponding to the workingDay object
-
-    //de datum van het planning object en workingday object moeten hier nog hetzelfde gemaakt worden
-    /*
-    public List<PlanningDto> setWorkingDayToPlanning(List<WorkingDayDto> workingDays)
-    {
-        planningStatusServiceImpl.getAll();
-        PlanningStatusDto planningStatus = planningStatusServiceImpl.findByPlanningStatusName("Not planned");
-
-        for(WorkingDayDto workingDay: workingDays)
-        {
-            if(workingDay.getPlanningDto() == null)
-            {
-                PlanningDto planning = new PlanningDto();
-                planning.setWorkingDayDto(workingDay);
-                planning.setPlanningStatusDto(planningStatus);
-                plannings.add(planning);
-            } else {
-                plannings.add(workingDay.getPlanningDto());
-            }
-        }
-        return plannings;
-    }
-     */
-
-
-    @Override
-    public Response generatePlanningV2(List<StaffDto> staff, List<WorkingDayDto> workingDays) {
-        return null;
     }
 
 }
