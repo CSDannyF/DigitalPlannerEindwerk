@@ -7,6 +7,7 @@ import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -56,6 +57,7 @@ public class StaffController
         return "staffList";
     }
 
+
     @GetMapping("/staffDetail/{staffId}")
     public String staffDetail(@PathVariable long staffId,
                               Model model)
@@ -65,6 +67,19 @@ public class StaffController
         model.addAttribute("staff", staffDto);
         model.addAttribute("userLogin", userLoginDto);
         return "/staffDetail";
+    }
+
+    @GetMapping("/myProfile")
+    public String showLoggedInStaff(Authentication authentication,
+                            Model model)
+    {
+        UserLoginDto userLoginDto = userLoginService.getByEmail(authentication.getName());
+        StaffDto staffDto = userLoginDto.getStaffDto();
+
+        model.addAttribute("staff", staffDto);
+        model.addAttribute("userLogin", userLoginDto);
+
+        return "myProfile";
     }
 
     @GetMapping("/editStaff/{staffId}")
