@@ -47,10 +47,10 @@ public class PlannerV2 implements PlanningGenerator {
         int dayCounter = -1;
 
         if (workingDays.size() != 7) {
-            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
+            logDetailService.addLog(logging, "Week of WorkingDays not completely configured.", LogType.INFO);
             return response;
         } else {
-            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
+            logDetailService.addLog(logging, "Week of WorkingDays is complete.", LogType.INFO);
 
             List<PlanningDto> planningList;
             List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays);
