@@ -10,6 +10,14 @@
 
 <div class="container-flex">
 
+    <!-- Insert sidebar fragment based on user role -->
+    <div th:if="${isAdmin}">
+        <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+    </div>
+    <div th:unless="${isAdmin}">
+        <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    </div>
+
     <div class="row justify-content-center">
         <div class="col-6">
 

@@ -10,6 +10,15 @@
 <div>
 
   <div class="row justify-content-center">
+
+    <!-- Insert sidebar fragment based on user role -->
+    <div th:if="${isAdmin}">
+      <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+    </div>
+    <div th:unless="${isAdmin}">
+      <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    </div>
+
     <div class="col-6">
 
       <div class="card" id="popupCard">

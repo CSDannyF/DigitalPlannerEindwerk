@@ -6,6 +6,7 @@ import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,10 +29,32 @@ public class CompanyController {
     @Autowired
     private WorkingDayService workingDayService;
 
+    @Autowired StaffService staffService;
+
     @GetMapping("/company")
-    public String showNewCompanyForm(Model model) {
+    public String showNewCompanyForm(Model model, Authentication authentication) {
         CompanyDto companyDto = new CompanyDto();
         model.addAttribute("company", companyDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
         return "newCompany";
     }
 
@@ -55,7 +78,28 @@ public class CompanyController {
     }
 
     @GetMapping("company/openingdays")
-    public String openingDayForm(Model model){
+    public String openingDayForm(Model model, Authentication authentication){
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         model.addAttribute("form", getWeekDto());
         return "companyOpeningDays";
     }
@@ -70,7 +114,25 @@ public class CompanyController {
     }
 
     @GetMapping("company/exception")
-    public String exceptionForm(Model model){
+    public String exceptionForm(Model model, Authentication authentication){
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
         model.addAttribute("exceptionDay", new WorkingDay());
         return "yearlyExceptions";
     }

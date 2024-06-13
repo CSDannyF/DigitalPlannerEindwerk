@@ -38,7 +38,6 @@ public class PlannerV2 implements PlanningGenerator {
     PlanningStatusService planningStatusService;
 
 
-
     @Override
     public Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays) {
         Response response = new Response();
@@ -69,7 +68,7 @@ public class PlannerV2 implements PlanningGenerator {
 
     private List<PlanningDto> populateShifts(List<WorkingDayDto> workingDays, List<DaysOffWeek> daysOffWeekList,
                                              List<StaffDto> staff, int dayCounter) {
-        
+
         int totalShiftTime = 8;
         List<PlanningDto> planningList = new ArrayList<>();
 
@@ -83,52 +82,58 @@ public class PlannerV2 implements PlanningGenerator {
             List<PlanningDetailDto> shifts = new ArrayList<>();
 
             String currentStatus = day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName();
-            if (day.isOpen() &&
-                    (currentStatus.equalsIgnoreCase("Not planned")
-                            || currentStatus.equalsIgnoreCase("Planned NOK"))) {
-                List<StaffDto> availableStaff = getAvailableStaff(day, new ArrayList<>(staff));
+//            if (day.isOpen() &&
 
-                //Get amount of shifts that needs to be planned
-                int requiredShifts  = day.getMinimalOccupation();
+            if (day.isOpen()) {
+                if (currentStatus.equalsIgnoreCase("Not planned")
+                        || currentStatus.equalsIgnoreCase("Planned NOK")){
+                    List<StaffDto> availableStaff = getAvailableStaff(day, new ArrayList<>(staff));
 
-                int openHours = (int) HOURS.between(day.getStartTime(), day.getEndTime());
+                    //Get amount of shifts that needs to be planned
+                    int requiredShifts = day.getMinimalOccupation();
 
-                // if planned (manually) but not ok, get amount of shifts that still needs to be planned
-                if (day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned NOK")) {
-                    requiredShifts  -= day.getPlanningDto().getPlanningDetails().size();
-                }
+                    int openHours = (int) HOURS.between(day.getStartTime(), day.getEndTime());
 
-                for (int shiftCounter = 0; shiftCounter < requiredShifts ; shiftCounter++) {
-                    PlanningDetailDto planningDetailDto = new PlanningDetailDto();
-                    StaffDto assignedStaff = null;
-
-                    //if not empty
-                    if (!availableStaff.isEmpty()) {
-                        assignedStaff  = availableStaff.getFirst();
-                        planningStatus = "Planned OK";
-
-                        totalShiftTime = getShiftTime(assignedStaff , openHours, dayCounter);
-                        assignedStaff.setHoursInDebt(assignedStaff .getHoursInDebt() - totalShiftTime);
-                        
-                    } else {
-                        planningStatus = "Planned NOK";
+                    // if planned (manually) but not ok, get amount of shifts that still needs to be planned
+                    if (day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned NOK")) {
+                        requiredShifts -= day.getPlanningDto().getPlanningDetails().size();
                     }
 
-                    planningDetailDto.setStaff(assignedStaff);
-                    setStartAndEndTimeShift(planningDetailDto, assignedStaff , day, shiftCounter, openHours, dayCounter);
+                    for (int shiftCounter = 0; shiftCounter < requiredShifts; shiftCounter++) {
+                        PlanningDetailDto planningDetailDto = new PlanningDetailDto();
+                        StaffDto assignedStaff = null;
 
-                    //if a staff is assigned, the shift is planned, if staff is null, the shift is an open shift
-                    if (planningDetailDto.getStaff() != null) {
-                        planningDetailDto.setAvailability(availabilityService.getByAvailabilityType("Planned"));
-                    } else {
-                        planningDetailDto.setAvailability(availabilityService.getByAvailabilityType("OPEN SHIFT"));
+                        //if not empty
+                        if (!availableStaff.isEmpty()) {
+                            assignedStaff = availableStaff.getFirst();
+                            planningStatus = "Planned OK";
+
+                            totalShiftTime = getShiftTime(assignedStaff, openHours, dayCounter);
+                            assignedStaff.setHoursInDebt(assignedStaff.getHoursInDebt() - totalShiftTime);
+
+                        } else {
+                            planningStatus = "Planned NOK";
+                        }
+
+                        planningDetailDto.setStaff(assignedStaff);
+                        setStartAndEndTimeShift(planningDetailDto, assignedStaff, day, shiftCounter, openHours, dayCounter);
+
+                        //if a staff is assigned, the shift is planned, if staff is null, the shift is an open shift
+                        if (planningDetailDto.getStaff() != null) {
+                            planningDetailDto.setAvailability(availabilityService.getByAvailabilityType("Planned"));
+                        } else {
+                            planningDetailDto.setAvailability(availabilityService.getByAvailabilityType("OPEN SHIFT"));
+                        }
+                        availableStaff.remove(assignedStaff);
+
+                        planningDetailDto.setWorkMinutesPerDay(totalShiftTime * 60);
+
+                        shifts.add(planningDetailDto);
                     }
-                    availableStaff.remove(assignedStaff );
-                    
-                    planningDetailDto.setWorkMinutesPerDay(totalShiftTime * 60);
-                    
-                    shifts.add(planningDetailDto);
                 }
+            } else {
+                planningStatus = "Closed";
+
             }
 
             //Sort shifts based on startTime
@@ -147,7 +152,7 @@ public class PlannerV2 implements PlanningGenerator {
 
     private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day,
                                          int shiftCounter, int dayHours, int dayCounter) {
-        int shiftTime = getShiftTime(planStaff, dayHours , dayCounter);
+        int shiftTime = getShiftTime(planStaff, dayHours, dayCounter);
 
         // if total openHours this day is more as 16h, a midday shift is created, else there is just opening and closing shifts
         if (dayHours > 16) {
@@ -200,15 +205,35 @@ public class PlannerV2 implements PlanningGenerator {
     private List<DaysOffWeek> sortWorkingDaysForComplexity(List<WorkingDayDto> workingDays) {
         List<DaysOffWeek> daysOffWeekList = new ArrayList<>();
 
+        Map<DaysOffWeek, WorkingDayDto> daysOffWeekToDtoMap = new HashMap<>();
         for (WorkingDayDto dayDto : workingDays) {
             DaysOffWeek daysOffWeek = daysOfWeekRepository.findByDayName(dayDto.getDate().getDayOfWeek().toString());
             daysOffWeekList.add(daysOffWeek);
+            daysOffWeekToDtoMap.put(daysOffWeek, dayDto);
         }
 
-        //sort daysOfWeekList on amount of staff unavailable, then reverse to set days with most unavailable staff first
-        daysOffWeekList.sort(Comparator.comparingInt(o -> o.getStaff().size()));
+        // Sort daysOffWeekList based on combined complexity score s(staff absence + staff fixedDaysOff)
+        daysOffWeekList.sort(Comparator.comparingInt(o -> {
+            int staffCount = o.getStaff().size();
+            int planningDetailsCount = countSpecificPlanningDetails(daysOffWeekToDtoMap.get(o));
+            return staffCount + planningDetailsCount;
+        }));
+
         Collections.reverse(daysOffWeekList);
         return daysOffWeekList;
+    }
+
+    //  count "Sick" or "Absence" planning details on a certain day
+    private int countSpecificPlanningDetails(WorkingDayDto workingDayDto) {
+        if (workingDayDto.getPlanningDto().getPlanningDetails() == null) {
+            return 0;
+        }
+        return (int) workingDayDto.getPlanningDto().getPlanningDetails().stream()
+                .filter(detail -> {
+                    String availabilityType = detail.getAvailability().getAvailabilityType();
+                    return "Sick".equals(availabilityType) || "Absence".equals(availabilityType);
+                })
+                .count();
     }
 
 
@@ -251,7 +276,7 @@ public class PlannerV2 implements PlanningGenerator {
 
             // check if there is already a planningDetail with this staff on this day, and checks the availabilityType
             for (PlanningDetailDto planningDetailDto : day.getPlanningDto().getPlanningDetails()) {
-                if(planningDetailDto.getStaff() != null){
+                if (planningDetailDto.getStaff() != null) {
                     if (staffDto.getStaffId() == planningDetailDto.getStaff().getStaffId()
                             && planningDetailDto.getAvailability().getAvailabilityId() == 4) {
 

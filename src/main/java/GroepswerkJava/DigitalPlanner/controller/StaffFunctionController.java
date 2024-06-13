@@ -6,7 +6,9 @@ import GroepswerkJava.DigitalPlanner.model.StaffFunction;
 import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffFunctionServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffService;
+import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,8 +28,11 @@ public class StaffFunctionController {
     @Autowired
     private CompanyServiceImpl companyService;
 
+    @Autowired
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
+
     @GetMapping("/staffFunction")
-    public String staffFunction(Model model)
+    public String staffFunction(Model model, Authentication authentication)
     {
         StaffFunctionDto staffFunction = new StaffFunctionDto();
         List<StaffFunctionDto> staffFunctionDtos;
@@ -35,6 +40,26 @@ public class StaffFunctionController {
 
         boolean isSetupDone = companyService.isSetupDone();
         boolean isStaffFunctionEmpty = staffFunctionService.getAll().isEmpty();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
 
         model.addAttribute("isStaffFunctionEmpty", isStaffFunctionEmpty);
         model.addAttribute("isSetupDone", isSetupDone);
@@ -69,11 +94,31 @@ public class StaffFunctionController {
 
     @GetMapping("/deleteStaffFunction")
     public String deleteStaffFunction(@RequestParam String functionName,
-                                      Model model)
+                                      Model model, Authentication authentication)
     {
         List<StaffFunctionDto> staffFunctionDtos = staffFunctionService.getAll();
         model.addAttribute("staffFunctions", staffFunctionDtos);
         model.addAttribute("staffFunction", new StaffFunction());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
 
         List<StaffDto> staffDtos = staffService.getAll();
         boolean stillLinked = false;
@@ -96,10 +141,31 @@ public class StaffFunctionController {
 
     @GetMapping("/editStaffFunction/{functionName}")
     public  String editStaffFunction(@PathVariable String functionName,
-                                     Model model)
+                                     Model model, Authentication authentication)
     {
         StaffFunctionDto staffFunctionDto = staffFunctionService.getByStaffFunctionName(functionName);
         model.addAttribute("staffFunction", staffFunctionDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "/editStaffFunction";
     }
 
