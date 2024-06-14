@@ -15,13 +15,14 @@
 <body class="bg-light text-dark">
 
 <!-- Insert sidebar fragment based on user role -->
-<div th:if="${isAdmin}">
-    <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+<div th:if="!${isSetupDone} and !${isCompanyEmpty}">
+    <div th:if="${isAdmin}">
+        <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+    </div>
+    <div th:unless="${isAdmin}">
+        <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    </div>
 </div>
-<div th:unless="${isAdmin}">
-    <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
-</div>
-
 
 <section class="text-center">
 

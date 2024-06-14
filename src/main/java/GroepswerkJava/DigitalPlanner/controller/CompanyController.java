@@ -22,7 +22,7 @@ import javax.naming.Binding;
 public class CompanyController {
 
     @Autowired
-    private CompanyService companyService;
+    private CompanyServiceImpl companyService;
 
     @Autowired
     private WeeklyOpeningDaysService weeklyOpeningDaysService;
@@ -36,6 +36,12 @@ public class CompanyController {
     public String showNewCompanyForm(Model model, Authentication authentication) {
         CompanyDto companyDto = new CompanyDto();
         model.addAttribute("company", companyDto);
+
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isCompanyEmpty = companyService.getAll().isEmpty();
+
+        model.addAttribute("isCompanyEmpty", isCompanyEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -97,7 +103,11 @@ public class CompanyController {
     }
 
     @GetMapping("company/exception")
-    public String exceptionForm(Model model, Authentication authentication){
+    public String exceptionForm(Model model, Authentication authentication)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        model.addAttribute("isSetupDone", isSetupDone);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
