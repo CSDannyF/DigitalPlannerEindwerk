@@ -82,7 +82,6 @@ public class PlannerV2 implements PlanningGenerator {
             List<PlanningDetailDto> shifts = new ArrayList<>();
 
             String currentStatus = day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName();
-//            if (day.isOpen() &&
 
             if (day.isOpen()) {
                 if (currentStatus.equalsIgnoreCase("Not planned")
@@ -215,7 +214,9 @@ public class PlannerV2 implements PlanningGenerator {
         // Sort daysOffWeekList based on combined complexity score s(staff absence + staff fixedDaysOff)
         daysOffWeekList.sort(Comparator.comparingInt(o -> {
             int staffCount = o.getStaff().size();
-            int planningDetailsCount = countSpecificPlanningDetails(daysOffWeekToDtoMap.get(o));
+
+            int planningDetailsCount = unavailabilitiesPerPlanning(daysOffWeekToDtoMap.get(o));
+
             return staffCount + planningDetailsCount;
         }));
 
@@ -224,7 +225,7 @@ public class PlannerV2 implements PlanningGenerator {
     }
 
     //  count "Sick" or "Absence" planning details on a certain day
-    private int countSpecificPlanningDetails(WorkingDayDto workingDayDto) {
+    private int unavailabilitiesPerPlanning(WorkingDayDto workingDayDto) {
         if (workingDayDto.getPlanningDto().getPlanningDetails() == null) {
             return 0;
         }

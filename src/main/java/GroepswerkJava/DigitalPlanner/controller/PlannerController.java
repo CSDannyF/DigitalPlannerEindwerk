@@ -227,9 +227,6 @@ public class PlannerController {
         model.addAttribute("staffDto", staffDto);
         model.addAttribute("availableStaff", staffList);
 
-        model.addAttribute("staffMembers", staffService.getAll());
-
-        List<StaffDto> staffs = staffService.getAll();
 
         return "editShifts";
     }

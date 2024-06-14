@@ -296,7 +296,7 @@ public class StaffController
                             @RequestParam("contractTypeId") long contractTypeId,
                             @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
                             BindingResult result,
-                            Model model)
+                            Model model, Authentication authentication)
     {
         //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
         model.addAttribute("departmentDto", new DepartmentDto());
@@ -309,6 +309,27 @@ public class StaffController
         model.addAttribute("staffFunctions", staffFunctionService.getAll());
         model.addAttribute("contractTypes", contractTypeService.getAll());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
 
         //check/validatie als departement, contract type en functie niet null zijn
         if (departmentId == 0 || functionId == 0 || contractTypeId == 0)
