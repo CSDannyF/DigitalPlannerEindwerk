@@ -46,7 +46,6 @@ public class ContractTypeController {
         boolean isSetupDone = companyService.isSetupDone();
         boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
 
-
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -84,6 +83,12 @@ public class ContractTypeController {
         contractTypeDtos = contractTypeService.getAll();
         model.addAttribute("contractTypes", contractTypeDtos);
 
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
+
+        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
+
         //Check als niet 2x hetzelfde type wordt aangemaakt
         ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
         if (existing.getContractTypeName() != null)
@@ -100,16 +105,23 @@ public class ContractTypeController {
     }
 
     @GetMapping("deleteContractType")
-    public String deleteContractType(@RequestParam String contractTypeName,
-                                     Model model, Authentication authentication)
+    public String deleteContractType(@ModelAttribute("contractType") ContractTypeDto contractTypeDto,
+                                     Model model)
     {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
 
-        //hier vergelijken als het een staff member niet afhankelijk is van referentiële integriteit (anders fout op de referentie bij delete)
+        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
+
+        List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
+        model.addAttribute("contractTypes", contractTypeDtos);
+
         List<StaffDto> staffDtos = staffService.getAll();
         boolean stillLinked = false;
         for(StaffDto staffDto: staffDtos)
         {
-            if (staffDto.getContractType().getContractTypeName().equals(contractTypeName)) {
+            if (staffDto.getContractType().getContractTypeName().equals(contractTypeDto.getContractTypeName())) {
                 stillLinked = true;
                 break;
             }
@@ -120,13 +132,14 @@ public class ContractTypeController {
             return "/contractType";
         }
 
-        contractTypeService.deleteContractTypeByName(contractTypeName);
+        contractTypeService.deleteContractTypeByName(contractTypeDto.getContractTypeName());
         return "redirect:/contractType";
     }
 
     @GetMapping("/editContractType/{contractTypeName}")
     public String editContractType(@PathVariable String contractTypeName,
-                                   Model model, Authentication authentication)
+                                   Model model,
+                                   Authentication authentication)
     {
         ContractTypeDto contractTypeDto = contractTypeService.getByContractTypeName(contractTypeName);
         model.addAttribute("contractType", contractTypeDto);
@@ -162,16 +175,13 @@ public class ContractTypeController {
     {
         //bestaande type wijzigen en checken als deze al dan niet bestaat (moet uniek zijn)
         ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
-        if (existing.getContractTypeName() != null)
+        if (existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()) && !contractTypeDto.getContractTypeName().equals(contractTypeName))
         {
-            if (contractTypeName.equals(contractTypeDto.getContractTypeName()) || existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()))
-            {
-                result.rejectValue("contractTypeName", null, "The contracttype name name has to be unique");
-            }
-            if (result.hasErrors())
-            {
-                return "/editContractType";
-            }
+            result.rejectValue("contractTypeName", null, "The contracttype name has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/editContractType";
         }
 
         ContractTypeDto contractTypeDto1 = contractTypeService.getByContractTypeName(contractTypeName);

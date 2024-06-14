@@ -175,16 +175,13 @@ public class StaffFunctionController {
                                           BindingResult result)
     {
         StaffFunctionDto existing = staffFunctionService.getByStaffFunctionName(staffFunctionDto.getFunctionName());
-        if(existing.getFunctionName() != null)
+        if (existing.getFunctionName().equals(staffFunctionDto.getFunctionName()) && !staffFunctionDto.getFunctionName().equals(functionName))
         {
-            if (functionName.equals(staffFunctionDto.getFunctionName()) || existing.getFunctionName().equals(staffFunctionDto.getFunctionName()))
-            {
-                result.rejectValue("functionName", null, "The Staff function has to be unique");
-            }
-            if (result.hasErrors())
-            {
-                return "/editStaffFunction";
-            }
+            result.rejectValue("functionName", null, "The Staff function has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/editStaffFunction";
         }
 
         StaffFunctionDto staffFunctionDto1 = staffFunctionService.getByStaffFunctionName(functionName);

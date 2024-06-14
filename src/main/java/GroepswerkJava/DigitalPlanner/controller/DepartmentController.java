@@ -78,6 +78,12 @@ public class DepartmentController {
         departmentDtos = departmentService.getAll();
         model.addAttribute("departments" ,departmentDtos);
 
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+
+        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -116,6 +122,12 @@ public class DepartmentController {
     public String deleteDepartment(@RequestParam String departmentName,
                                    Model model)
     {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+
+        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
+
         List<DepartmentDto> departmentDtos = departmentService.getAll();
         model.addAttribute("departments", departmentDtos);
         model.addAttribute("department", new DepartmentDto());
@@ -175,15 +187,13 @@ public class DepartmentController {
                                        BindingResult result)
     {
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
-        if (existing.getDepartmentName() != null) {
-            if (departmentName.equals(departmentDto.getDepartmentName()) || existing.getDepartmentName().equals(departmentDto.getDepartmentName()))
-            {
-                result.rejectValue("departmentName", null, "The department name has to be unique");
-            }
-            if (result.hasErrors())
-            {
-                return "/editDepartment";
-            }
+        if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName))
+        {
+            result.rejectValue("departmentName", null, "The department name has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/editDepartment";
         }
 
         DepartmentDto departmentDto1 = departmentService.getByDepartmentName(departmentName);
