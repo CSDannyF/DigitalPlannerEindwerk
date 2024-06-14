@@ -31,11 +31,17 @@
         My profile
       </a>
     </li>
-    <li>
-      <a href="#" class="nav-link text-white">
-        My schedule
+
+    <li class="nav-item">
+      <a th:href="@{/workSchedule}" class="nav-link text-white">
+        My personal schedule
       </a>
     </li>
+<!--    <li>-->
+<!--      <a href="#" class="nav-link text-white">-->
+<!--        My schedule-->
+<!--      </a>-->
+<!--    </li>-->
   </ul>
   <hr>
 
@@ -43,7 +49,8 @@
   <div class="dropdown">
     <a href="#" class="dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
       <img th:src="@{/images/dashboard/Wutang.png}" alt="Wu-Tang Clan" width="32" height="32" class="rounded-circle me-2">
-      <strong>Soner</strong>
+
+      <strong th:text="${firstName}"></strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
       <li><a class="dropdown-item" href="#">Instellingen</a></li>

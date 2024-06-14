@@ -10,7 +10,9 @@ import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
 import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.ContractTypeServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.StaffService;
+import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,8 +33,11 @@ public class ContractTypeController {
     @Autowired
     private CompanyServiceImpl companyService;
 
+    @Autowired
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
+
     @GetMapping("/contractType")
-    public String contractType(Model model)
+    public String contractType(Model model, Authentication authentication)
     {
         ContractType contractType = new ContractType();
         List<ContractTypeDto> contractTypeDtos;
@@ -40,6 +45,27 @@ public class ContractTypeController {
 
         boolean isSetupDone = companyService.isSetupDone();
         boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
+
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
 
         model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
         model.addAttribute("isSetupDone", isSetupDone);
@@ -75,11 +101,8 @@ public class ContractTypeController {
 
     @GetMapping("deleteContractType")
     public String deleteContractType(@RequestParam String contractTypeName,
-                                     Model model)
+                                     Model model, Authentication authentication)
     {
-        List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
-        model.addAttribute("contractTypes", contractTypeDtos);
-        model.addAttribute("contractType", new ContractTypeDto());
 
         //hier vergelijken als het een staff member niet afhankelijk is van referentiële integriteit (anders fout op de referentie bij delete)
         List<StaffDto> staffDtos = staffService.getAll();
@@ -103,10 +126,31 @@ public class ContractTypeController {
 
     @GetMapping("/editContractType/{contractTypeName}")
     public String editContractType(@PathVariable String contractTypeName,
-                                   Model model)
+                                   Model model, Authentication authentication)
     {
         ContractTypeDto contractTypeDto = contractTypeService.getByContractTypeName(contractTypeName);
         model.addAttribute("contractType", contractTypeDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "/editContractType";
     }
 

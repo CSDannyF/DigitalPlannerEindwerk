@@ -10,6 +10,14 @@
 
 <body class="bg-light text-dark">
 
+<!-- Insert sidebar fragment based on user role -->
+<div th:if="${isAdmin}">
+  <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+</div>
+<div th:unless="${isAdmin}">
+  <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+</div>
+
 <div class="card w-50 mx-auto" id="rangeWeekCard"> <!-- titel moet nog gecenterd worden -->
   <div class="card-body py-5 px-md-5">
 

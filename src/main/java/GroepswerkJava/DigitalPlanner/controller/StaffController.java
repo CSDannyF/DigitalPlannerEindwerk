@@ -47,25 +47,70 @@ public class StaffController
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
+
     @GetMapping("/staffList")
-    public String showStaffList(Model model)
+    public String showStaffList(Model model, Authentication authentication)
     {
         StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffMembers", staffDtos);
         model.addAttribute("staffDto", staffDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "staffList";
     }
 
 
     @GetMapping("/staffDetail/{staffId}")
     public String staffDetail(@PathVariable long staffId,
-                              Model model)
+                              Model model, Authentication authentication)
     {
         StaffDto staffDto = staffService.getById(staffId);
         UserLoginDto userLoginDto = userLoginService.getByEmail(staffDto.getEmail());
         model.addAttribute("staff", staffDto);
         model.addAttribute("userLogin", userLoginDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "/staffDetail";
     }
 
@@ -84,7 +129,7 @@ public class StaffController
 
     @GetMapping("/editStaff/{staffId}")
     public String editStaff(@PathVariable long staffId,
-                             Model model)
+                             Model model, Authentication authentication)
     {
         StaffDto staffDto = staffService.getById(staffId);
         List<StaffDto> staffDtos = staffService.getAll();
@@ -105,6 +150,27 @@ public class StaffController
 
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "editStaff";
     }
 
@@ -190,7 +256,7 @@ public class StaffController
     }
 
     @GetMapping("/newStaff")
-    public String newStaff(Model model)
+    public String newStaff(Model model, Authentication authentication)
     {
         StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
@@ -211,6 +277,27 @@ public class StaffController
 
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
         return "newStaff";
     }
 

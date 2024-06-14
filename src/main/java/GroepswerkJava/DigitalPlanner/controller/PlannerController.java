@@ -56,6 +56,9 @@ public class PlannerController {
     @Autowired
     PlanningDetailService planningDetailService;
 
+    @Autowired
+    WeeklyOpeningDaysService weeklyOpeningDaysService;
+
     private final PlanningGenerator planner;
     private final PlanningGenerator plannerV2;
 
@@ -84,6 +87,26 @@ public class PlannerController {
                 workingDayDtoMap.put(weekNumber, workingDay.getDate() + " - " + workingDay.getDate().plusDays(6).toString());
             }
         }
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
 
         model.addAttribute("weekNumber1", new WorkingDayDto());
         //model.addAttribute("weekNumber2", new WorkingDayDto());
@@ -149,7 +172,30 @@ public class PlannerController {
         }
         planningService.saveAll(response.getPlanningList());
 
-        model.addAttribute("weekWrapper", response.getPlanningList());
+        List<PlanningDto> openDays =response.getPlanningList();
+        openDays.removeIf(planningDto -> planningDto.getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Closed"));
+
+        model.addAttribute("weekWrapper", openDays);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
 
 
         return "generatedWeek";
@@ -169,7 +215,9 @@ public class PlannerController {
 
         //removing staff that is already planned on this day, staffList is for dropDown select
         for(PlanningDetailDto planningDetailDto: planningDto.getPlanningDetails()){
-            staffList.remove(planningDetailDto.getStaff());
+            if(planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")){
+                staffList.remove(planningDetailDto.getStaff());
+            }
         }
 
         model.addAttribute("date", date);
@@ -208,6 +256,28 @@ public class PlannerController {
     @GetMapping("/workSchedule")
     public String showPersonalWorkSchedule(Model model, Authentication authentication) {
         Map<Integer, List<ShiftDto>> shiftsByWeek = userLoginService.getUserPlanningDetails(authentication.getName());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+
+        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
+        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
+        model.addAttribute("percentage", roundedPercentage);
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+
         model.addAttribute("shiftsByWeek", shiftsByWeek);
         return "personalSchedule";
     }

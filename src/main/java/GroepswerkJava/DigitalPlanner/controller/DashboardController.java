@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,12 +28,21 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String getDashboardEmployee(Authentication authentication, Model model) {
 
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String email = authentication.getName();
+        String firstName = email.split("@")[0];
+
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
         int totalStaffContractHours = staffService.getTotalStaffContractHours();
         int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
 
         // Calculate percentage
         double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage; // Cast to int to remove decimal places
+        int roundedPercentage = (int) percentage;
 
         model.addAttribute("totalStaffContractHours", totalStaffContractHours);
         model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);

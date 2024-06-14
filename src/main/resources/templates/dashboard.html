@@ -59,9 +59,13 @@
 
 <div class="dashboard-container">
 
-<!-- Insert sidebar fragment -->
-<div th:replace="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
-
+<!-- Insert sidebar fragment based on user role -->
+    <div th:if="${isAdmin}">
+        <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+    </div>
+    <div th:unless="${isAdmin}">
+        <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    </div>
 
 
     <div class="container bg-transparent">
