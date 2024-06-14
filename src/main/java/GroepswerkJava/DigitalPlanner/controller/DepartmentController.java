@@ -2,6 +2,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.DepartmentDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
+import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
 import GroepswerkJava.DigitalPlanner.model.Department;
 import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
 import GroepswerkJava.DigitalPlanner.service.DepartmentServiceImpl;
@@ -49,22 +50,13 @@ public class DepartmentController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         return "department";
     }
@@ -81,22 +73,13 @@ public class DepartmentController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
         if (existing.getDepartmentName() != null)
@@ -114,8 +97,19 @@ public class DepartmentController {
 
     @GetMapping("/deleteDepartment")
     public String deleteDepartment(@RequestParam String departmentName,
-                                   Model model)
+                                   Model model, Authentication authentication)
     {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
         List<DepartmentDto> departmentDtos = departmentService.getAll();
         model.addAttribute("departments", departmentDtos);
         model.addAttribute("department", new DepartmentDto());
@@ -148,22 +142,13 @@ public class DepartmentController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         model.addAttribute("department",departmentDto);
         return "/editDepartment";
@@ -172,8 +157,19 @@ public class DepartmentController {
     @PostMapping("/editDepartment/{departmentName}")
     public String saveEditedDepartment(@PathVariable String departmentName,
                                        @ModelAttribute("department") DepartmentDto departmentDto,
-                                       BindingResult result)
+                                       BindingResult result, Authentication authentication, Model model)
     {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
         if (existing.getDepartmentName() != null) {
             if (departmentName.equals(departmentDto.getDepartmentName()) || existing.getDepartmentName().equals(departmentDto.getDepartmentName()))

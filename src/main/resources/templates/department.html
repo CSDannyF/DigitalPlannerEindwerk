@@ -11,11 +11,14 @@
 <div class="container-flex">
 
     <!-- Insert sidebar fragment based on user role -->
-    <div th:if="${isAdmin}">
-        <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
-    </div>
-    <div th:unless="${isAdmin}">
-        <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    <div th:if="${isSetupDone}">
+
+        <div th:if="${isAdmin}">
+            <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+        </div>
+        <div th:unless="${isAdmin}">
+            <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+        </div>
     </div>
 
     <div class="row justify-content-center">
@@ -66,7 +69,6 @@
                             </div>
 
                             <br>
-                            <a th:if="${isSetupDone}" class="btn btn-primary" type="button" th:href="@{/dashboard}">Go to dashboard</a>
                             <button class="btn btn-primary" type="submit">Save</button>
                             <a th:if="!${isSetupDone} and !${isDepartmentEmpty}" class="btn btn-primary" type="button" th:href="@{/contractType}">Create contract types</a>
                         </div>

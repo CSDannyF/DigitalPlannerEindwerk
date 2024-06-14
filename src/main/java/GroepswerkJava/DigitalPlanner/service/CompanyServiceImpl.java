@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.CompanyDto;
+import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
 import GroepswerkJava.DigitalPlanner.model.Company;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.ContractTypeRepository;
@@ -30,6 +31,12 @@ public class CompanyServiceImpl implements CompanyService{
     private ContractTypeRepository contractTypeRepository;
 
     @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
+
+    @Autowired
     public CompanyServiceImpl(CompanyRepository companyRepository){
         this.companyRepository = companyRepository;
     }
@@ -49,6 +56,21 @@ public class CompanyServiceImpl implements CompanyService{
     @Override
     public void save(CompanyDto companyDto) {
         companyRepository.save(mapToCompany(companyDto));
+    }
+
+    @Override
+    public StatisticsDto getStatistics(){
+        StatisticsDto statisticsDto = new StatisticsDto();
+        int totalStaffContractHours = staffService.getTotalStaffContractHours();
+        statisticsDto.setTotalStaffContractHours(totalStaffContractHours);
+        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+        statisticsDto.setTotalWorkingHoursNeeded(totalWorkingHoursNeeded);
+
+        // Calculate percentage
+        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
+        int roundedPercentage = (int) percentage;
+        statisticsDto.setPercentage(roundedPercentage);
+        return statisticsDto;
     }
 
     @Override

@@ -255,7 +255,7 @@ updateUIWithData = (data) => {
         data.planningDetails.forEach(detail => {
 
             const detailDiv = document.createElement('div');
-            detailDiv.classList.add('shiftDetail', 'mb-3', 'p-3', 'border', 'rounded', 'd-flex', 'justify-content-between', 'align-items-center');
+            detailDiv.classList.add('shiftDetail', 'mb-1', 'p-1', 'border', 'rounded', 'd-flex', 'justify-content-between', 'align-items-center');
 
             const nameDiv = document.createElement('div');
             // show staff name, if staff is null, show OPEN SHIFT

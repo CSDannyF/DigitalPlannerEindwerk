@@ -23,6 +23,7 @@ public class UserLoginController
     {
         String email = authentication.getName();
         UserLoginDto loggedInUser = userLoginService.getByEmail(email); //wordt nog niet gebruikt
+
         UserLoginDto userLoginDto = userLoginService.getById(id);
 
         model.addAttribute("userLogin", userLoginDto);

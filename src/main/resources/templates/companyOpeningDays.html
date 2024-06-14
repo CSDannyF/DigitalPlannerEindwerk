@@ -13,11 +13,13 @@
 <body class="bg-light">
 
 <!-- Insert sidebar fragment based on user role -->
-<div th:if="${isAdmin}">
-    <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
-</div>
-<div th:unless="${isAdmin}">
-    <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+<div th:if="${isSetupDone}">
+    <div th:if="${isAdmin}">
+        <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+    </div>
+    <div th:unless="${isAdmin}">
+        <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+    </div>
 </div>
 
 <section class="text-center">
@@ -67,7 +69,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </fieldset>
                 </form>
             </div>

@@ -59,6 +59,9 @@ public class PlannerController {
     @Autowired
     WeeklyOpeningDaysService weeklyOpeningDaysService;
 
+    @Autowired
+    CompanyService companyService;
+
     private final PlanningGenerator planner;
     private final PlanningGenerator plannerV2;
 
@@ -91,20 +94,11 @@ public class PlannerController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+        StatisticsDto statisticsDto = companyService.getStatistics();
 
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
-
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
@@ -180,20 +174,11 @@ public class PlannerController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+        StatisticsDto statisticsDto = companyService.getStatistics();
 
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
-
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
@@ -227,9 +212,6 @@ public class PlannerController {
         model.addAttribute("staffDto", staffDto);
         model.addAttribute("availableStaff", staffList);
 
-        model.addAttribute("staffMembers", staffService.getAll());
-
-        List<StaffDto> staffs = staffService.getAll();
 
         return "editShifts";
     }

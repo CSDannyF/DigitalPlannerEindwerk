@@ -205,6 +205,16 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setRoles(user.getRoles());
         userLoginDto.setChangePassword(user.getChangePassword());
+
+        StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
+        /*
+        TODO Als admin inlogd in komt hij in de DashboardController hier wordt gekeken indien het ww veranderd moet worden,
+         hier word een getByEmail gedaan voor de user en deze wordt gemapt,
+         hier in deze mapper kan de staff null zijn omdat de admin niet gelinkt is aan een staff
+         */
+        if (user.getStaff() != null){
+            userLoginDto.setStaffDto(staffService.mapToStaffDto(user.getStaff()));
+        }
         if (user.getUserImageData() != null) {
             userLoginDto.setUserImageData(user.getUserImageData());
         }
