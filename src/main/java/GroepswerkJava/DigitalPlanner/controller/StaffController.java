@@ -50,6 +50,9 @@ public class StaffController
     @Autowired
     private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
+    @Autowired
+    private CompanyService companyService;
+
     @GetMapping("/staffList")
     public String showStaffList(Model model, Authentication authentication)
     {
@@ -61,22 +64,13 @@ public class StaffController
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         return "staffList";
     }
@@ -94,22 +88,13 @@ public class StaffController
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         return "/staffDetail";
     }
@@ -120,6 +105,17 @@ public class StaffController
     {
         UserLoginDto userLoginDto = userLoginService.getByEmail(authentication.getName());
         StaffDto staffDto = userLoginDto.getStaffDto();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
 
         model.addAttribute("staff", staffDto);
         model.addAttribute("userLogin", userLoginDto);
@@ -154,22 +150,13 @@ public class StaffController
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         return "editStaff";
     }
@@ -281,22 +268,13 @@ public class StaffController
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
-
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
 
         return "newStaff";
     }
@@ -310,7 +288,7 @@ public class StaffController
                             @RequestParam("contractTypeId") long contractTypeId,
                             @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
                             BindingResult result,
-                            Model model)
+                            Model model, Authentication authentication)
     {
         //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
         model.addAttribute("departmentDto", new DepartmentDto());
@@ -323,6 +301,18 @@ public class StaffController
         model.addAttribute("staffFunctions", staffFunctionService.getAll());
         model.addAttribute("contractTypes", contractTypeService.getAll());
         model.addAttribute("daysOffWeek", daysOfWeekService.getAll());
+
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
 
         //check/validatie als departement, contract type en functie niet null zijn
         if (departmentId == 0 || functionId == 0 || contractTypeId == 0)

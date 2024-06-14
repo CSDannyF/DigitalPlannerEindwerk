@@ -117,6 +117,7 @@ _______________*/
 _______________*/
 #sidebarContent {
   width: 250px;
+  max-width: 15%;
   height: 100vh;
   position: fixed;
   top: 0;
@@ -228,13 +229,13 @@ _______________*/
     min-height: 75vh;
     width: 70%;
     box-sizing: border-box;
-    margin-left: 250px;
+    margin-left: 240px;
     margin-right: 20px;
 }
 
 .calendar {
     height: max-content;
-    width: 100%;
+    width: 90%;
     min-width: 400px;
     max-width: 600px;
     background-color: #141529;
@@ -533,8 +534,8 @@ h1 {
 /*_______________*/
 
 
-
-/*  show day shifts when clicked on a day in the calendar */
+/*
+*//*  show day shifts when clicked on a day in the calendar *//*
 #shiftsContainer {
     display: block;
     font-family: Arial, sans-serif;
@@ -543,21 +544,18 @@ h1 {
     width: 100%;
     min-width: 450px:
     box-sizing: border-box;
-}
+}*/
 
 
 /* shows each shift in a block */
 .shiftDetail {
     background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    margin-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
     font-size: 18px;
-        width: 100%;
-            min-width: 420px:
-
+    width: 100%;
+    min-width: 420px:
 
     line-height: 1.5;
 }
@@ -586,13 +584,12 @@ h1 {
 
 #editShifts{
         max-width: 100%;
-        min-width: 440px;
-/*
-        min-width: 100%;
-*/
+        min-width: 480px;
+        min-width: 80%;
         padding-top: 10px;
-        margin-top: 50px;
-        font-size: 18px;
+        margin-top: 30px;
+
+        font-size: 16px;
 }
 
 
@@ -655,8 +652,11 @@ h1 {
 
 #weekPlanningContainer {
     max-width: 75%;
-    padding-top: 100px;
-    margin-top: 100px;
+    padding-top: 50px;
+    margin-top: 50px;
+    margin-left: 15%;
+    margin-right: 10%;
+
 }
 
 .staffDetail .row {
