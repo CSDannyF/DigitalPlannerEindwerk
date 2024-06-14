@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**",
                                 "/newUserPassword", "/editUserLogin/**").permitAll()
                         // access only for ADMIN role
-                        .requestMatchers( "/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**",
+                        .requestMatchers( "/staff", "/staffFunction/**", "/staffList", "/editStaff/**",
                                 "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve",
                                 "/rangeWeek", "/planningDetails/**").hasRole("ADMIN")
                         // access only if user has USER or ADMIN role (user has to be logged in)

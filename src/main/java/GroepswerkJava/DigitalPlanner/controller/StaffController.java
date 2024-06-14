@@ -115,7 +115,7 @@ public class StaffController
     }
 
     @GetMapping("/myProfile")
-    public String showLoggedInStaff(Authentication authentication,
+    public String myProfile(Authentication authentication,
                             Model model)
     {
         UserLoginDto userLoginDto = userLoginService.getByEmail(authentication.getName());
