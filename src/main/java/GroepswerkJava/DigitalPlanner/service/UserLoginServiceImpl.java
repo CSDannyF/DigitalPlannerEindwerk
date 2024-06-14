@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +74,12 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
 
         user.getRoles().add(role);
+
+        // Set userImageData als het aanwezig is in userLoginDto
+        if (userLoginDto.getUserImageData() != null) {
+            user.setUserImageData(userLoginDto.getUserImageData());
+        }
+
         //TODO delete? user.setRoles(Arrays.asList(role));
         userLoginRepository.save(user);
     }
@@ -89,6 +92,11 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
         userLogin.setChangePassword(false);
+
+        if (userLoginDto.getUserImageData() != null) {
+            userLogin.setUserImageData(userLoginDto.getUserImageData());
+        }
+
         userLoginRepository.save(userLogin);
     }
 
@@ -156,6 +164,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setChangePassword(user.getChangePassword());
+        userLoginDto.setUserImageData(userLoginDto.getUserImageData());
         return userLoginDto;
     }
 
@@ -181,6 +190,11 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setChangePassword(userLoginDto.getChangePassword());
 
+        // Set userImageData als het aanwezig is in userLoginDto
+        if (userLoginDto.getUserImageData() != null) {
+            userLogin.setUserImageData(userLoginDto.getUserImageData());
+        }
+
         return userLogin;
     }
 
@@ -191,6 +205,9 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setRoles(user.getRoles());
         userLoginDto.setChangePassword(user.getChangePassword());
+        if (user.getUserImageData() != null) {
+            userLoginDto.setUserImageData(user.getUserImageData());
+        }
         return userLoginDto;
     }
 

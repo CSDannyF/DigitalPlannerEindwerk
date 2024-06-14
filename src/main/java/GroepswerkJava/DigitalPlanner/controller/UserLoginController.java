@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.model.ImageConverter;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -69,6 +70,9 @@ public class UserLoginController
     {
         //user via id uit db gehaalt, dat is degene waar de update wordt op uitgevoerd
         UserLoginDto userFromDb = userLoginService.getById(id);
+
+
+
         model.addAttribute("userLogin", userFromDb);
 
         /*

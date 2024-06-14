@@ -25,6 +25,7 @@ public class UserLoginDto {
     private String password;
     private StaffDto staffDto;
     private Boolean changePassword;
+    private byte[] userImageData;
     private List<Role> roles = new ArrayList<>();
 
 
