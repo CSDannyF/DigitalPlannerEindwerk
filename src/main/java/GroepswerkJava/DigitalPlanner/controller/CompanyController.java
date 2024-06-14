@@ -33,15 +33,12 @@ public class CompanyController {
     @Autowired StaffService staffService;
 
     @GetMapping("/company")
-    public String showNewCompanyForm(Model model, Authentication authentication) {
+    public String showNewCompanyForm(Model model, Authentication authentication)
+    {
+        checkSetup(model);
+
         CompanyDto companyDto = new CompanyDto();
         model.addAttribute("company", companyDto);
-
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isCompanyEmpty = companyService.getAll().isEmpty();
-
-        model.addAttribute("isCompanyEmpty", isCompanyEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -59,7 +56,9 @@ public class CompanyController {
     @PostMapping("/company")
     public String saveCompany(@ModelAttribute("company") CompanyDto companyDto,
                               BindingResult result,
-                              Model model) {
+                              Model model)
+    {
+        checkSetup(model);
 
         if (companyDto.getName().equals(""))
         {
@@ -76,8 +75,9 @@ public class CompanyController {
     }
 
     @GetMapping("company/openingdays")
-    public String openingDayForm(Model model, Authentication authentication){
-
+    public String openingDayForm(Model model, Authentication authentication)
+    {
+        checkSetup(model);
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -105,8 +105,7 @@ public class CompanyController {
     @GetMapping("company/exception")
     public String exceptionForm(Model model, Authentication authentication)
     {
-        boolean isSetupDone = companyService.isSetupDone();
-        model.addAttribute("isSetupDone", isSetupDone);
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -130,7 +129,6 @@ public class CompanyController {
         return "yearlyExceptions";
     }
 
-
     //TODO replace this function to extract daysOfWeek from DB
     public OpeningDaysDto getWeekDto(){
         OpeningDaysDto openingDaysDto = new OpeningDaysDto();
@@ -142,5 +140,14 @@ public class CompanyController {
         openingDaysDto.addOpeningDay(new WeeklyOpeningDay("Saturday"));
         openingDaysDto.addOpeningDay(new WeeklyOpeningDay("Sunday"));
         return openingDaysDto;
+    }
+
+    private void checkSetup(Model model)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isCompanyEmpty = companyService.getAll().isEmpty();
+
+        model.addAttribute("isCompanyEmpty", isCompanyEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
     }
 }

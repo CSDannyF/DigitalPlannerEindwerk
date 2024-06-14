@@ -44,8 +44,7 @@ public class ContractTypeController {
         List<ContractTypeDto> contractTypeDtos;
         contractTypeDtos = contractTypeService.getAll();
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -57,9 +56,6 @@ public class ContractTypeController {
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
 
         model.addAttribute("contractTypes", contractTypeDtos);
         model.addAttribute("contractType", contractType);
@@ -75,11 +71,7 @@ public class ContractTypeController {
         contractTypeDtos = contractTypeService.getAll();
         model.addAttribute("contractTypes", contractTypeDtos);
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
-
-        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -112,15 +104,10 @@ public class ContractTypeController {
                                      Model model,
                                      Authentication authentication)
     {
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
-
-        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
+        checkSetup(model);
 
         List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
         model.addAttribute("contractTypes", contractTypeDtos);
-
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -210,5 +197,13 @@ public class ContractTypeController {
         return "redirect:/contractType";
     }
 
+    private void checkSetup(Model model)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
+
+        model.addAttribute("isContractTypeEmpty", isContractTypeEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
+    }
 
 }

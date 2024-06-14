@@ -39,11 +39,8 @@ public class DepartmentController {
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+        checkSetup(model);
 
-        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
         model.addAttribute("departments" ,departmentDtos);
         model.addAttribute("department", department);
 
@@ -57,7 +54,6 @@ public class DepartmentController {
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
         return "department";
     }
 
@@ -70,11 +66,7 @@ public class DepartmentController {
         departmentDtos = departmentService.getAll();
         model.addAttribute("departments" ,departmentDtos);
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
-
-        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -106,11 +98,7 @@ public class DepartmentController {
                                    Model model,
                                    Authentication authentication)
     {
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
-
-        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -197,5 +185,14 @@ public class DepartmentController {
         departmentDto.setDepartmentId(departmentDto1.getDepartmentId());
         departmentService.save(departmentDto);
         return "redirect:/department";
+    }
+
+    private void checkSetup(Model model)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+
+        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
     }
 }
