@@ -6,11 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface PlanningGenerator {
-//    Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays,
-//                              AvailabilityService availabilityService, PlanningStatusService planningStatusService,
-//                              LogDetailService logDetailService, DaysOfWeekRepository daysOfWeekRepository, StaffService staffService);
 
     Response generatePlanning(List<StaffDto> staff, List<WorkingDayDto> workingDays);
 }

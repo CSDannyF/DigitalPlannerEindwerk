@@ -81,6 +81,7 @@ public class StaffController
         return "staffList";
     }
 
+
     @GetMapping("/staffDetail/{staffId}")
     public String staffDetail(@PathVariable long staffId,
                               Model model, Authentication authentication)
@@ -111,6 +112,19 @@ public class StaffController
         model.addAttribute("percentage", roundedPercentage);
 
         return "/staffDetail";
+    }
+
+    @GetMapping("/myProfile")
+    public String myProfile(Authentication authentication,
+                            Model model)
+    {
+        UserLoginDto userLoginDto = userLoginService.getByEmail(authentication.getName());
+        StaffDto staffDto = userLoginDto.getStaffDto();
+
+        model.addAttribute("staff", staffDto);
+        model.addAttribute("userLogin", userLoginDto);
+
+        return "myProfile";
     }
 
     @GetMapping("/editStaff/{staffId}")
