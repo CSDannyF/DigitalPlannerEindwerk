@@ -79,9 +79,13 @@
     <br>
     <div class="card mt-6" style="background-color: #4D4C5A;  color: white;">
         <div class="card-body">
-            <p>Total staff hours: <span th:text="${totalStaffContractHours}"></span></p>
-            <p>Total shift hours: <span th:text="${totalWorkingHoursNeeded}"></span></p>
-            <p style="font-weight: bold; font-size: 1.1em; font-color">Occupancy rate: <span th:text="${percentage}"></span>%</p>
+            <p>Total staff hours: <span th:text="${statistics.totalStaffContractHours}"></span></p>
+            <p>Total shift hours: <span th:text="${statistics.totalWorkingHoursNeeded}"></span></p>
+            <p style="font-weight: bold; font-size: 1.1em; font-color">Occupancy rate: <span th:text="${statistics.percentage}"></span>%</p>
+
+<!--            <p>Total staff hours: <span th:text="${totalStaffContractHours}"></span></p>-->
+<!--            <p>Total shift hours: <span th:text="${totalWorkingHoursNeeded}"></span></p>-->
+<!--            <p style="font-weight: bold; font-size: 1.1em; font-color">Occupancy rate: <span th:text="${percentage}"></span>%</p>-->
         </div>
     </div>
 
