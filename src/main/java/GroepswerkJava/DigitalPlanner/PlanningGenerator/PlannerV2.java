@@ -32,10 +32,10 @@ public class PlannerV2 implements PlanningGenerator {
     private LogDetailService logDetailService;
 
     @Autowired
-    DaysOfWeekRepository daysOfWeekRepository;
+    private DaysOfWeekRepository daysOfWeekRepository;
 
     @Autowired
-    PlanningStatusService planningStatusService;
+    private PlanningStatusService planningStatusService;
 
 
 

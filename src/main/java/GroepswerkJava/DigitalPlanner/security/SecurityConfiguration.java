@@ -30,13 +30,14 @@ public class SecurityConfiguration {
                 .authorizeRequests(authorize -> authorize
                         // access for everyone
                         .requestMatchers("/register/**", "/login/**", "/index", "/", "/css/**", "/static/**",
-                                "/newUserPassword", "/editUserLogin/**", "/staff/staffDetail", "/staff/myProfile").permitAll()
+                                "/newUserPassword", "/editUserLogin/**").permitAll()
                         // access only for ADMIN role
                         .requestMatchers( "/staff/**", "/staffFunction/**", "/staffList", "/editStaff/**",
-                                "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve", "/rangeWeek",
-                                "/planningDetails/**").hasRole("ADMIN")
+                                "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve",
+                                "/rangeWeek", "/planningDetails/**").hasRole("ADMIN")
                         // access only if user has USER or ADMIN role (user has to be logged in)
-                        .requestMatchers("/dashboard", "/workSchedule", "/assignShift").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/dashboard", "/workSchedule", "/assignShift", "/staff/staffDetail",
+                                "/staff/myProfile").hasAnyRole("ADMIN", "USER")
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
