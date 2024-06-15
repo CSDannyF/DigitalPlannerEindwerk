@@ -9,7 +9,6 @@ import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -49,7 +48,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public void save(WorkingDay workingDay) {
+    public WorkingDayDto save(WorkingDay workingDay) {
         throw new UnsupportedOperationException("methode nog niet geimplementeerd");
     }
 
@@ -175,8 +174,9 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public void saveAll(List<WorkingDay> workingDays){
-        workingDayRepository.saveAll(workingDays);
+    public List<WorkingDayDto> saveAll(List<WorkingDay> workingDays){
+        List<WorkingDay> workingDayList = workingDayRepository.saveAll(workingDays);
+        return mapToDtoList(workingDayList);
     }
 
     @Override

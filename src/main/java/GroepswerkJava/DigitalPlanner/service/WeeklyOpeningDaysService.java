@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface WeeklyOpeningDaysService extends IService<WeeklyOpeningDay>{
 
-    void saveAll(List<WeeklyOpeningDay> weeklyOpeningDays);
+    List<WeeklyOpeningDay> saveAll(List<WeeklyOpeningDay> weeklyOpeningDays);
 
-    void overWriteAll(List<WeeklyOpeningDay> weeklyOpeningDayList);
+    List<WeeklyOpeningDay> overWriteAll(List<WeeklyOpeningDay> weeklyOpeningDayList);
 
     int getTotalShiftHoursPerWeek();
 

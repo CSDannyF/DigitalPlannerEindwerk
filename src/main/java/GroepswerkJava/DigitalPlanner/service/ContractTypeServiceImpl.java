@@ -36,21 +36,23 @@ public class ContractTypeServiceImpl implements ContractTypeService
     }
 
     @Override
-    public void save(ContractTypeDto contractTypeDto)
+    public ContractTypeDto save(ContractTypeDto contractTypeDto)
     {
         ContractType contractType = new ContractType();
+        ContractType newContractType = new ContractType();
 
         //hier moet er nog nagekeken worden als het object wel uniek is, indien wel krijgt hij geen id, anders niet
         if (contractTypeRepository.findByContractTypeName(contractTypeDto.getContractTypeName()) == null)
         {
             contractType = mapToContractTypeModel(contractTypeDto);
-            contractTypeRepository.save(contractType);
+            newContractType = contractTypeRepository.save(contractType);
         } else {
             contractType = contractTypeRepository.findByContractTypeName(contractTypeDto.getContractTypeName());
             contractType.setContractTypeName(contractTypeDto.getContractTypeName());
             contractType.setHoursPerWeek(contractTypeDto.getHoursPerWeek());
-            contractTypeRepository.save(contractType);
+           newContractType = contractTypeRepository.save(contractType);
         }
+        return mapToContractTypeDto(newContractType);
     }
 
     @Override

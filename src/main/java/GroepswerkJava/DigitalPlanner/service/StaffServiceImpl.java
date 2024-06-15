@@ -53,11 +53,12 @@ public class StaffServiceImpl implements StaffService{
     Hier bij de save wordt alles eigenlijk gemapt van de DTO naar de model, dit kan misschien nog in een aparte methode als we een bestaande staff gaan updaten (voor toekomstige daniel)
      */
     @Override
-    public void saveStaff(StaffDto staffDto)
+    public StaffDto saveStaff(StaffDto staffDto)
     {
         Staff staff = new Staff();
         staff = mapToStaffModel(staffDto);
-        staffRepository.save(staff);
+        Staff newStaff = staffRepository.save(staff);
+        return mapToStaffDto(newStaff);
     }
 
     @Transactional
@@ -72,7 +73,6 @@ public class StaffServiceImpl implements StaffService{
             staffRepository.save(staff);
         }
     }
-
 
     @Override
     public void saveAllStaff(List<StaffDto> staffDtoList) {

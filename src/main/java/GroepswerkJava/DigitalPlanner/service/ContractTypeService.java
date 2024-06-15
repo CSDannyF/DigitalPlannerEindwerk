@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ContractTypeService
 {
-    void save (ContractTypeDto contractTypeDto);
+    ContractTypeDto save (ContractTypeDto contractTypeDto);
     ContractTypeDto getById(long id);
     ContractTypeDto getByContractTypeName(String name);
     List<ContractTypeDto> getAll();

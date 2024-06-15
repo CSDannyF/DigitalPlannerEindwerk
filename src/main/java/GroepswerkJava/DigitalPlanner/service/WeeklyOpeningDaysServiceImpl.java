@@ -34,8 +34,9 @@ public class WeeklyOpeningDaysServiceImpl implements WeeklyOpeningDaysService {
     }
 
     @Override
-    public void saveAll(List<WeeklyOpeningDay> weeklyOpeningDayList){
-        weeklyOpeningDaysRepository.saveAll(weeklyOpeningDayList);
+    public List<WeeklyOpeningDay> saveAll(List<WeeklyOpeningDay> weeklyOpeningDayList){
+        List<WeeklyOpeningDay> weeklyOpeningDays = weeklyOpeningDaysRepository.saveAll(weeklyOpeningDayList);
+        return weeklyOpeningDays;
     }
 
     /**
@@ -47,9 +48,10 @@ public class WeeklyOpeningDaysServiceImpl implements WeeklyOpeningDaysService {
     }
 
     @Override
-    public void overWriteAll(List<WeeklyOpeningDay> weeklyOpeningDaysList){
+    public List<WeeklyOpeningDay> overWriteAll(List<WeeklyOpeningDay> weeklyOpeningDaysList){
         truncateAll();
-        saveAll(weeklyOpeningDaysList);
+        List<WeeklyOpeningDay> weeklyOpeningDays = saveAll(weeklyOpeningDaysList);
+        return weeklyOpeningDays;
     }
 
     @Override

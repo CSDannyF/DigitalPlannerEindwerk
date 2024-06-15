@@ -44,21 +44,23 @@ public class PlanningServiceImpl implements PlanningService{
     private PlanningStatusService planningStatusService;
 
     @Override
-    public void save(PlanningDto planningDto)
+    public PlanningDto save(PlanningDto planningDto)
     {
         Planning planning =  mapToPlanningModel(planningDto);
-        planningRepository.save(planning);
+        Planning newPlanning = planningRepository.save(planning);
+        return mapToPlanningDto(newPlanning);
         //TODO nog geimplementeerd worden
     }
 
     @Override
-    public void update(Planning planning) {
-        planningRepository.save(planning);
+    public PlanningDto update(Planning planning) {
+        Planning updatedPlanning = planningRepository.save(planning);
+        return mapToPlanningDto(updatedPlanning);
     }
 
 
     @Override
-    public void savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy) {
+    public PlanningDto savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy) {
         WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
         planningDto.setWorkingDayDto(workingDayService.mapToDto(workingDay));
 
@@ -110,7 +112,8 @@ public class PlanningServiceImpl implements PlanningService{
             planningDto.getPlanningDetails().add(newDetail);
         }
 
-        planningRepository.save(mapToPlanningModel(planningDto));
+        Planning newPlanning = planningRepository.save(mapToPlanningModel(planningDto));
+        return mapToPlanningDto(newPlanning);
     }
 
     private PlanningDetailDto createShift(long staffId, LocalTime startTime, LocalTime endTime) {
@@ -137,14 +140,22 @@ public class PlanningServiceImpl implements PlanningService{
     enkel bij de models die nog niet in de database staan hoeft dit niet want dit zijn nieuwe records (PlanningDetail)
      */
     @Override
-    public void saveAll(List<PlanningDto> planningDtoList) {
+    public List<PlanningDto> saveAll(List<PlanningDto> planningDtoList) {
         List<Planning> plannings = new ArrayList<>();
         for(PlanningDto planningDto: planningDtoList)
         {
             Planning planning = mapToPlanningModel(planningDto);
             plannings.add(planning);
         }
-        planningRepository.saveAll(plannings);
+        List<Planning> newPlannings = planningRepository.saveAll(plannings);
+        List<PlanningDto> newPlanningDtos = new ArrayList<>();
+        for(Planning newPlanning: newPlannings)
+        {
+            PlanningDto newPlanningDto = new PlanningDto();
+            newPlanningDto = mapToPlanningDto(newPlanning);
+            newPlanningDtos.add(newPlanningDto);
+        }
+        return newPlanningDtos;
     }
 
     @Override
@@ -208,7 +219,7 @@ public class PlanningServiceImpl implements PlanningService{
         return planningDto;
     }
 
-    public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
+    protected PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());  //setten van Id zou weg mogen als bij het mappen naar model de ID geset wordt via WorkingDay
         planningDetailDto.setStartTime(planningDetail.getStartTime());

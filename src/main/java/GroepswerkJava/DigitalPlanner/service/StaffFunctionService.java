@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface StaffFunctionService
 {
-    void save(StaffFunctionDto staffFunctionDto);
+    StaffFunctionDto save(StaffFunctionDto staffFunctionDto);
     StaffFunctionDto getById(long id);
     StaffFunctionDto getByStaffFunctionName(String functionName);
     List<StaffFunctionDto> getAll();

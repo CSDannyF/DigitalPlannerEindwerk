@@ -1,5 +1,6 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.Staff;
@@ -16,21 +17,22 @@ public class PlanningDetailServiceImpl implements PlanningDetailService{
     @Autowired
     private PlanningDetailRepository planningDetailRepository;
 
-    @Autowired UserLoginService userLoginService;
+    @Autowired
+    private UserLoginService userLoginService;
 
     @Autowired
-    AvailabilityService availabilityService;
+    private AvailabilityService availabilityService;
 
     @Autowired
-    PlanningStatusService planningStatusService;
+    private PlanningStatusService planningStatusService;
 
     @Autowired
-    PlanningService planningService;
-
+    private PlanningServiceImpl planningService;
 
     @Override
-    public void save(PlanningDetail planningDetail) {
-        planningDetailRepository.save(planningDetail);
+    public PlanningDetailDto save(PlanningDetail planningDetail) {
+        PlanningDetail newPlanningDetail = planningDetailRepository.save(planningDetail);
+        return planningService.mapToPlanningDetailDto(newPlanningDetail);
     }
 
     @Override

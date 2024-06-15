@@ -38,7 +38,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
 
     @Override
-    public void saveUser(UserLoginDto userLoginDto)
+    public UserLoginDto saveUser(UserLoginDto userLoginDto)
     {
         UserLogin user = new UserLogin();
         user.setEmail(userLoginDto.getEmail());
@@ -82,12 +82,13 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
 
         //TODO delete? user.setRoles(Arrays.asList(role));
-        userLoginRepository.save(user);
+        UserLogin newUserLogin = userLoginRepository.save(user);
+        return mapToUserLoginDto(newUserLogin);
     }
 
     //deze enkel gebruiken bij het updaten van de email en het wachtwoord
     @Override
-    public void updateUserLogin(UserLoginDto userLoginDto)
+    public UserLoginDto updateUserLogin(UserLoginDto userLoginDto)
     {
         UserLogin userLogin = userLoginRepository.findByUserLoginId(userLoginDto.getId());
         userLogin.setEmail(userLoginDto.getEmail());
@@ -96,7 +97,8 @@ public class UserLoginServiceImpl implements UserLoginService {
         if (userLoginDto.getUserImageData() != null) {
             userLogin.setUserImageData(userLoginDto.getUserImageData());
         }
-        userLoginRepository.save(userLogin);
+        UserLogin updatedUserLogin = userLoginRepository.save(userLogin);
+        return mapToUserLoginDto(updatedUserLogin);
     }
 
     @Override
