@@ -87,17 +87,15 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     //deze enkel gebruiken bij het updaten van de email en het wachtwoord
     @Override
-    public void updateEmailAndPassword(UserLoginDto userLoginDto)
+    public void updateUserLogin(UserLoginDto userLoginDto)
     {
         UserLogin userLogin = userLoginRepository.findByUserLoginId(userLoginDto.getId());
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
         userLogin.setChangePassword(false);
-
         if (userLoginDto.getUserImageData() != null) {
             userLogin.setUserImageData(userLoginDto.getUserImageData());
         }
-
         userLoginRepository.save(userLogin);
     }
 

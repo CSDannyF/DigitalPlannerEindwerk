@@ -59,7 +59,20 @@ public class UserLoginController
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         userLogin.setId(loggedInUser.getId());
         userLogin.setEmail(loggedInUser.getEmail());
-        userLoginService.updateEmailAndPassword(userLogin);
+
+        // Verwerken van de avatar
+        if (!userLogin.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLogin.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.rejectValue("avatar", null, "Failed to upload the image.");
+            }
+        }
+
+
+        userLoginService.updateUserLogin(userLogin);
         return "dashboard";
     }
 
@@ -106,7 +119,7 @@ public class UserLoginController
                 return "/editUserLogin";
             }
         }
-        userLoginService.updateEmailAndPassword(userLogin);
+        userLoginService.updateUserLogin(userLogin);
         return "redirect:/staff/staffList";
     }
 }
