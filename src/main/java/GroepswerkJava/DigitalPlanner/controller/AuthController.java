@@ -1,6 +1,7 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.model.ImageConverter;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 public class AuthController {
@@ -50,7 +55,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
-                               Model model) {
+                               Model model, @RequestParam("avatar") MultipartFile file) throws IOException {
         UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
 
         if (existing.getEmail() != null) {
@@ -60,6 +65,17 @@ public class AuthController {
             model.addAttribute("user", userLoginDto);
             return "register";
         }
+
+
+        if ((!file.isEmpty())) {
+            byte[] imageData = ImageConverter.convertImageToByteArray(file.getInputStream());
+            userLoginDto.setUserImageData(imageData);
+        }
+
+
+
+
+
         userLoginService.saveUser(userLoginDto);
         return "redirect:/login";
     }

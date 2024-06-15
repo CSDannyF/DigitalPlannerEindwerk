@@ -54,21 +54,21 @@ public class Planner implements PlanningGenerator {
         List<PlanningDto> planningList = new ArrayList<>();
         Response response = new Response();
 
-        logDetailService.addLog(logging, "check if workingdays has 7 days", LogType.INFO);
+        logDetailService.addLog(logging, "Checking if workingDays has 7 days.", LogType.INFO);
 //        logging.add("check if workingdays has 7 days");
         if(workingDays.size() != 7)     //check If the 7 workingDays are configured
         {
-            logDetailService.addLog(logging, "Week of WorkingDays not completely configured", LogType.INFO);
+            logDetailService.addLog(logging, "Week of workingDays not completely configured.", LogType.INFO);
 
 //            logging.add("Week of WorkingDays not completely configured");
             return response;
         } else {
 
-            logDetailService.addLog(logging, "Week of WorkingDays is complete", LogType.INFO);
+            logDetailService.addLog(logging, "Week of workingDays is complete.", LogType.INFO);
 //            logging.add("Week of WorkingDays is complete");
 
             //Check if every WorkingDay has a corresponding Planning
-            logDetailService.addLog(logging, "Checking if every workingDay has a corresponding Planning", LogType.INFO);
+            logDetailService.addLog(logging, "Checking if every workingDay has a corresponding Planning.", LogType.INFO);
 //            logging.add("Checking if every workingDay has a corresponding Planning");
             //planningStatusService.getAll();
 
@@ -85,7 +85,7 @@ public class Planner implements PlanningGenerator {
                 planning.setPlanningDetails(planningDetails);
 
                 if(isDayPlannedAndOpen(planning)){
-                    logDetailService.addLog(logging, "PlanningDay is not complete \n" + "Start planning", LogType.INFO);
+                    logDetailService.addLog(logging, "PlanningDay is not complete. \n" + "Start planning.", LogType.INFO);
 
 //                    logging.add("PlanningDay is not complete \n" + "Start planning");
 
@@ -93,7 +93,7 @@ public class Planner implements PlanningGenerator {
                     LocalTime endTime = planning.getWorkingDayDto().getEndTime();
 
                     //Set the total work hours for the day
-                    logDetailService.addLog(logging, "Setting the parameters for the planning day", LogType.INFO);
+                    logDetailService.addLog(logging, "Setting the parameters for the planningDay.", LogType.INFO);
 
 //                    logging.add("Setting the parameters for the planning day");
                     int minOccupation = planning.getWorkingDayDto().getMinimalOccupation();
@@ -101,7 +101,7 @@ public class Planner implements PlanningGenerator {
                     int totalWorkHours = minOccupation * openingsHours;
 
                     //loop trough staffmembers to set de planningDetail
-                    logDetailService.addLog(logging, "looping trough the staffmembers", LogType.INFO);
+                    logDetailService.addLog(logging, "looping trough the staff members...", LogType.INFO);
 //                    logging.add("looping trough the staffmembers");
                     for(StaffDto staff1 : staff)
                     {
@@ -110,11 +110,11 @@ public class Planner implements PlanningGenerator {
 
 
                         //check if schedule for the day is full, if not  set work
-                        logDetailService.addLog(logging, "check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members", LogType.INFO);
+                        logDetailService.addLog(logging, "Checking if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members", LogType.INFO);
 //                        logging.add("check if plannning day" + planning.getWorkingDayDto().getDate() + "needs more staff members");
                         if(minOccupation > 0)
                         {
-                            logDetailService.addLog(logging, "There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member ", LogType.INFO);
+                            logDetailService.addLog(logging, "Insufficient staff for this day. \nSetting the startTime, endTime en workMinutes for staff member.", LogType.INFO);
 
 //                            logging.add("There need to be more staff for this day \nSetting the startTime, endTime en work minutes off the day for staff member " + staff1.getFirstName());
                             detail.setStartTime(startTime);
@@ -127,7 +127,7 @@ public class Planner implements PlanningGenerator {
                             minOccupation -= 1;                            //subtract employee of minOccupation
                         } else
                         {
-                            logDetailService.addLog(logging, "The day is fully planned, no more staff needed", LogType.INFO);
+                            logDetailService.addLog(logging, "Day is fully planned, no more additional staff required.", LogType.INFO);
 
 //                            logging.add("The day is fully planned, no more staff needed");
                             detail.setWorkMinutesPerDay(0);
@@ -142,7 +142,7 @@ public class Planner implements PlanningGenerator {
                         }
 
                         //add planningDetail to planning
-                        logDetailService.addLog(logging, "adding planningDetail to the planning", LogType.INFO);
+                        logDetailService.addLog(logging, "Adding planningDetail to the planning.", LogType.INFO);
 
 //                        logging.add("adding planningDetail to the planning");
                         planningDetails.add(detail);

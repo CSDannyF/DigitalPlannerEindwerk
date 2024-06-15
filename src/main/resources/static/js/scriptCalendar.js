@@ -341,4 +341,3 @@ function assignShift(shiftId) {
     });
 }
 
-

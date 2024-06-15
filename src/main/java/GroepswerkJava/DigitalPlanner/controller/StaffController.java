@@ -2,6 +2,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
+import GroepswerkJava.DigitalPlanner.model.ImageConverter;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
@@ -82,6 +83,14 @@ public class StaffController
     {
         StaffDto staffDto = staffService.getById(staffId);
         UserLoginDto userLoginDto = userLoginService.getByEmail(staffDto.getEmail());
+
+        // Convert the avatar to a Base64 string
+        if (userLoginDto.getUserImageData() != null) {
+            String base64Avatar = ImageConverter.convertByteArrayToBase64(userLoginDto.getUserImageData());
+            model.addAttribute("base64Avatar", base64Avatar);
+        }
+
+
         model.addAttribute("staff", staffDto);
         model.addAttribute("userLogin", userLoginDto);
 
@@ -295,7 +304,7 @@ public class StaffController
         model.addAttribute("staffFunctionDto", new StaffFunction());
         model.addAttribute("contractTypeDto", new ContractType());
         model.addAttribute("dayOffWeekDto", new DaysOffWeekDto());
-        model.addAttribute("useLogin", new UserLoginDto());
+        model.addAttribute("userLogin", new UserLoginDto());
         model.addAttribute("staffMembers", staffService.getAll());
         model.addAttribute("departments", departmentService.getAll());
         model.addAttribute("staffFunctions", staffFunctionService.getAll());
