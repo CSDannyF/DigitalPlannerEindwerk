@@ -1,6 +1,8 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
+import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.service.CompanyService;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,11 +17,24 @@ public class UserLoginController
     @Autowired
     private UserLoginService userLoginService;
 
+    @Autowired
+    CompanyService companyService;
+
     @GetMapping("/editUserLogin/{id}")
     public String editUserLogin(@PathVariable long id,
                                 Authentication authentication,
                                 Model model)
     {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
         String email = authentication.getName();
         UserLoginDto loggedInUser = userLoginService.getByEmail(email); //wordt nog niet gebruikt
 

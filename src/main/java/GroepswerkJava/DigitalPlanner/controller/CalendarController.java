@@ -3,8 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
-import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
-import GroepswerkJava.DigitalPlanner.model.Staff;
+import GroepswerkJava.DigitalPlanner.service.PlanningDetailService;
 import GroepswerkJava.DigitalPlanner.service.PlanningService;
 import GroepswerkJava.DigitalPlanner.service.WorkingDayService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,23 +11,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class CalendarController {
-
+    @Autowired
     private WorkingDayService workingDayService;
 
+    @Autowired
     private PlanningService planningService;
 
     @Autowired
-    public CalendarController(WorkingDayService workingDayService, PlanningService planningService) {
-        this.workingDayService = workingDayService;
-        this.planningService = planningService;
-    }
+    PlanningDetailService planningDetailService;
+
+//    @Autowired
+//    public CalendarController(WorkingDayService workingDayService, PlanningService planningService) {
+//        this.workingDayService = workingDayService;
+//        this.planningService = planningService;
+//    }
 
     //Gets the planning of a certain day
     @GetMapping("/planning")
@@ -60,6 +63,22 @@ public class CalendarController {
         }
 
         return ResponseEntity.ok(workingDaysDto); // Return 200 with the retrieved data
+    }
+
+    @PostMapping("/assignShift")
+    public ResponseEntity<Map<String, String>> assignShift(@RequestBody Map<String, Long> request, Authentication authentication) {
+        Long shiftId = request.get("shiftId");
+        boolean isAssigned = planningDetailService.assignOpenShift(shiftId, authentication.getName());
+
+        Map<String, String> response = new HashMap<>();
+        if (isAssigned) {
+            response.put("message", "Shift assigned successfully");
+        } else {
+            response.put("message", "assigning shift failed");
+        }
+
+
+        return ResponseEntity.ok(response);
     }
 
 }

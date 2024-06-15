@@ -4,14 +4,10 @@ import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
-import GroepswerkJava.DigitalPlanner.model.Planning;
-import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
-import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -242,42 +237,16 @@ public class PlannerController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
-        String email = authentication.getName();
-        String firstName = email.split("@")[0];
+        String firstName = authentication.getName().split("@")[0];
 
-        int totalStaffContractHours = staffService.getTotalStaffContractHours();
-        int totalWorkingHoursNeeded = weeklyOpeningDaysService.getTotalShiftHoursPerWeek();
+        StatisticsDto statisticsDto = companyService.getStatistics();
 
-        // Calculate percentage
-        double percentage = (double) totalStaffContractHours / totalWorkingHoursNeeded * 100;
-        int roundedPercentage = (int) percentage;
-
-        model.addAttribute("totalStaffContractHours", totalStaffContractHours);
-        model.addAttribute("totalWorkingHoursNeeded", totalWorkingHoursNeeded);
-        model.addAttribute("percentage", roundedPercentage);
-
+        model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
 
         model.addAttribute("shiftsByWeek", shiftsByWeek);
         return "personalSchedule";
-    }
-
-
-    @PostMapping("/assignShift")
-    public ResponseEntity<Map<String, String>> assignShift(@RequestBody Map<String, Long> request, Authentication authentication) {
-        Long shiftId = request.get("shiftId");
-        boolean isAssigned = planningDetailService.assignOpenShift(shiftId, authentication.getName());
-
-        Map<String, String> response = new HashMap<>();
-        if(isAssigned){
-            response.put("message", "Shift assigned successfully");
-        } else {
-            response.put("message", "assigning shift failed");
-        }
-
-
-        return ResponseEntity.ok(response);
     }
 }

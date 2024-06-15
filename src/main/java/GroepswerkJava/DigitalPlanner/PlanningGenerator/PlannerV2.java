@@ -259,7 +259,7 @@ public class PlannerV2 implements PlanningGenerator {
 
         for (StaffDto staffDto : staffList) {
             // check start and endDate of staff to see if available, and check hoursInDebt
-            if (staffDto.getHoursInDebt() < 0
+            if (staffDto.getHoursInDebt() < 1
                     || staffDto.getStartDate().isAfter(day.getDate())
                     || (staffDto.getEndDate() != null && staffDto.getEndDate().isBefore(day.getDate()))) {
                 notAvailableStaff.add(staffDto);
