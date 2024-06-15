@@ -35,19 +35,21 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void save(DepartmentDto departmentDto)
+    public DepartmentDto save(DepartmentDto departmentDto)
     {
         Department department = new Department();
+        Department returnFromSave = new Department();
 
         if (departmentRepository.findByDepartmentName(departmentDto.getDepartmentName()) == null)
         {
             department = mapToDepartmentModel(departmentDto);
-            departmentRepository.save(department);
+            returnFromSave = departmentRepository.save(department);
         } else {
             department = departmentRepository.findByDepartmentName(departmentDto.getDepartmentName());
             department.setDepartmentName(departmentDto.getDepartmentName());
-            departmentRepository.save(department);
+            returnFromSave = departmentRepository.save(department);
         }
+        return mapToDepartmentDto(returnFromSave);
     }
 
     @Override
@@ -65,17 +67,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto getById(long id)
     {
-        Optional<Department> optional = departmentRepository.findById(id);
-        Department department = null;
-        if (optional.isPresent())
-        {
-            department = optional.get();
-        }
-        else
-        {
-            throw new RuntimeException("Not found");
-        }
-        return mapToDepartmentDto(department);
+        return mapToDepartmentDto(departmentRepository.findById(id).orElseThrow(()-> new RuntimeException("Department not found")));
     }
 
     //protected gebruikt zodat ze enkel kunnen worder aangeroepen in de service klassen.

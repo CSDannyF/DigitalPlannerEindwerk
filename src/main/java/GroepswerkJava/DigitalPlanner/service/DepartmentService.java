@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DepartmentService
 {
-    void save(DepartmentDto departmentDto);
+    DepartmentDto save(DepartmentDto departmentDto);
     DepartmentDto getByDepartmentName(String departmentName);
     DepartmentDto getById(long id);
     List<DepartmentDto> getAll();
