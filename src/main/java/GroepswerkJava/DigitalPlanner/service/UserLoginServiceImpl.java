@@ -10,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,18 +75,27 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
 
         user.getRoles().add(role);
+
+        // Set userImageData als het aanwezig is in userLoginDto
+        if (userLoginDto.getUserImageData() != null) {
+            user.setUserImageData(userLoginDto.getUserImageData());
+        }
+
         //TODO delete? user.setRoles(Arrays.asList(role));
         userLoginRepository.save(user);
     }
 
     //deze enkel gebruiken bij het updaten van de email en het wachtwoord
     @Override
-    public void updateEmailAndPassword(UserLoginDto userLoginDto)
+    public void updateUserLogin(UserLoginDto userLoginDto)
     {
         UserLogin userLogin = userLoginRepository.findByUserLoginId(userLoginDto.getId());
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
         userLogin.setChangePassword(false);
+        if (userLoginDto.getUserImageData() != null) {
+            userLogin.setUserImageData(userLoginDto.getUserImageData());
+        }
         userLoginRepository.save(userLogin);
     }
 
@@ -156,6 +163,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setChangePassword(user.getChangePassword());
+        userLoginDto.setUserImageData(userLoginDto.getUserImageData());
         return userLoginDto;
     }
 
@@ -181,6 +189,17 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setChangePassword(userLoginDto.getChangePassword());
 
+        // Verwerken van de avatar als deze niet leeg is
+        if (userLoginDto.getAvatar() != null && !userLoginDto.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLoginDto.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (userLoginDto.getUserImageData() != null) {
+            userLogin.setUserImageData(userLoginDto.getUserImageData());
+        }
         return userLogin;
     }
 
@@ -200,6 +219,9 @@ public class UserLoginServiceImpl implements UserLoginService {
          */
         if (user.getStaff() != null){
             userLoginDto.setStaffDto(staffService.mapToStaffDto(user.getStaff()));
+        }
+        if (user.getUserImageData() != null) {
+            userLoginDto.setUserImageData(user.getUserImageData());
         }
         return userLoginDto;
     }

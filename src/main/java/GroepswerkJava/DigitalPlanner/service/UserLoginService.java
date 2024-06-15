@@ -14,7 +14,7 @@ public interface UserLoginService {
     UserLoginDto getByEmail(String email);
     UserLoginDto getById(Long id);
     List<UserLoginDto> findAllUsers();
-    void updateEmailAndPassword(UserLoginDto userLoginDto);
+    void updateUserLogin(UserLoginDto userLoginDto);
 
     Map<Integer, List<ShiftDto>> getUserPlanningDetails(String email);
 

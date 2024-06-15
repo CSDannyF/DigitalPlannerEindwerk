@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Controller
 public class UserLoginController
 {
@@ -57,7 +59,20 @@ public class UserLoginController
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         userLogin.setId(loggedInUser.getId());
         userLogin.setEmail(loggedInUser.getEmail());
-        userLoginService.updateEmailAndPassword(userLogin);
+
+        // Verwerken van de avatar
+        if (!userLogin.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLogin.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.rejectValue("avatar", null, "Failed to upload the image.");
+            }
+        }
+
+
+        userLoginService.updateUserLogin(userLogin);
         return "dashboard";
     }
 
@@ -70,6 +85,9 @@ public class UserLoginController
     {
         //user via id uit db gehaalt, dat is degene waar de update wordt op uitgevoerd
         UserLoginDto userFromDb = userLoginService.getById(id);
+
+
+
         model.addAttribute("userLogin", userFromDb);
 
         /*
@@ -90,7 +108,18 @@ public class UserLoginController
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         System.out.println(loggedInUser.getRoles().getFirst());
 
-        userLoginService.updateEmailAndPassword(userLogin);
+        // Verwerken van de avatar
+        if (!userLogin.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLogin.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.rejectValue("avatar", null, "Failed to upload the image.");
+                return "/editUserLogin";
+            }
+        }
+        userLoginService.updateUserLogin(userLogin);
         return "redirect:/staff/staffList";
     }
 }

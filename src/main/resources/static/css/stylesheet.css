@@ -1,5 +1,5 @@
-/* ROOT
-_______________*/
+/* ROOT */
+/*_______________*/
 :root {
     --dark-body: #4D4C5A;
     --dark-main: #141529;
@@ -15,17 +15,27 @@ _______________*/
     --grey: #34495E;
     --white: #fff;
     --red: #FA0A07;
-
     --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     --font-family: cursive;
 }
 
-/* IMPORTED FONTS
-_______________*/
+/* IMPORTED FONTS */
+/*_______________*/
 
 @font-face {
-  font-family: 'Abril Fatface';
-  src: url('../fonts/AbrilFatface-Regular.ttf') format('truetype');
+    font-family: 'Roboto';
+    src: url('../Roboto/fonts/Roboto-Black.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-BlackItalic.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Bold.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-BoldItalic.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Italic.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Light.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-LightItalic.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Medium.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-MediumItalic.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Regular.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-Thin.ttf') format('truetype'),
+         url('../Roboto/fonts/Roboto-ThinItalic.ttf') format('truetype');
 }
 
 @font-face {
@@ -662,6 +672,23 @@ h1 {
 .staffDetail .row {
     margin-bottom: 10px;"
 }
+
+
+
+.avatar-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .avatar-preview img {
+      width: 100%;
+      height: auto;
+      object-fit: cover; /* Ensure the image covers the entire preview area */
+
+    }
+
 
 
 

@@ -89,10 +89,6 @@ public class Staff {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL)
     private List<PlanningDetail> planningDetails;
 
-    @Lob
-    @Column(name = "userImageData")
-    private byte[] userImageData;
-
     @Column(name = "hoursInDebt")
     private int hoursInDebt;
 

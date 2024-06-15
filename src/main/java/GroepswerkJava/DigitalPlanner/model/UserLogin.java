@@ -30,20 +30,13 @@ public class UserLogin {
     @Column(name = "changePassword")
     private Boolean changePassword;
 
+    @Lob
+    @Column (name = "userImageData", columnDefinition = "LONGBLOB")
+    private byte[] userImageData;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "staffId")
     private Staff staff;
-
-
-/*    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(
-            name = "userRoles",
-            joinColumns = {@JoinColumn(name = "userLoginId")},
-            inverseJoinColumns = {@JoinColumn(name = "roleId")}
-    )*/
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
