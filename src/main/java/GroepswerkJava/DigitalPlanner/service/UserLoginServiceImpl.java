@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -190,11 +191,17 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setChangePassword(userLoginDto.getChangePassword());
 
-        // Set userImageData als het aanwezig is in userLoginDto
-        if (userLoginDto.getUserImageData() != null) {
+        // Verwerken van de avatar als deze niet leeg is
+        if (userLoginDto.getAvatar() != null && !userLoginDto.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLoginDto.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (userLoginDto.getUserImageData() != null) {
             userLogin.setUserImageData(userLoginDto.getUserImageData());
         }
-
         return userLogin;
     }
 

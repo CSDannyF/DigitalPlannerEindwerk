@@ -1,7 +1,6 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
-import GroepswerkJava.DigitalPlanner.model.ImageConverter;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -9,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Controller
 public class UserLoginController
@@ -94,6 +95,17 @@ public class UserLoginController
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         System.out.println(loggedInUser.getRoles().getFirst());
 
+        // Verwerken van de avatar
+        if (!userLogin.getAvatar().isEmpty()) {
+            try {
+                byte[] imageData = userLogin.getAvatar().getBytes();
+                userLogin.setUserImageData(imageData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                result.rejectValue("avatar", null, "Failed to upload the image.");
+                return "/editUserLogin";
+            }
+        }
         userLoginService.updateEmailAndPassword(userLogin);
         return "redirect:/staff/staffList";
     }

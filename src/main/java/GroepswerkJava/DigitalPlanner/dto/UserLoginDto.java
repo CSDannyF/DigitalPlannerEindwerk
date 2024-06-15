@@ -1,13 +1,13 @@
 package GroepswerkJava.DigitalPlanner.dto;
 
 import GroepswerkJava.DigitalPlanner.model.Role;
-import GroepswerkJava.DigitalPlanner.model.Staff;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,12 @@ public class UserLoginDto {
     @NotEmpty(message = "Email should not be empty")
     @Email
     private String email;
-    //@NotEmpty(message = "Password should not be empty")
     private String password;
     private StaffDto staffDto;
     private Boolean changePassword;
     private byte[] userImageData;
+    private MultipartFile avatar; // Voor ontvangen afbeelding
     private List<Role> roles = new ArrayList<>();
-
 
     @Override
     public String toString() {

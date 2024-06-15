@@ -1,4 +1,4 @@
-// Show preview of selecter image
+// Show preview of selected image
 function previewAvatar(input) {
     var preview = document.getElementById('avatar-preview');
     var file = input.files[0];

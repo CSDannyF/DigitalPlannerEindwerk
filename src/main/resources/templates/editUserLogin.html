@@ -37,16 +37,13 @@
                 <input th:field="*{password}" type="password" placeholder="password" class="form-control" required>
               </label>
 
-
               <div class="form-group">
                 <label for="avatar">Profile Avatar</label>
-                <input type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+                <input th:field="*{avatar}" type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
                 <div class="avatar-preview">
                   <img id="avatar-preview" src="#" alt="Preview">
                 </div>
               </div>
-
-
 
               <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
 
