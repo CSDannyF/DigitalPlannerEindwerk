@@ -39,8 +39,7 @@ public class StaffFunctionController {
         List<StaffFunctionDto> staffFunctionDtos;
         staffFunctionDtos = staffFunctionService.getAll();
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isStaffFunctionEmpty = staffFunctionService.getAll().isEmpty();
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -52,9 +51,6 @@ public class StaffFunctionController {
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        model.addAttribute("isStaffFunctionEmpty", isStaffFunctionEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
 
         model.addAttribute("staffFunctions", staffFunctionDtos);
         model.addAttribute("staffFunction", staffFunction);
@@ -161,21 +157,27 @@ public class StaffFunctionController {
         model.addAttribute("firstName", firstName);
 
         StaffFunctionDto existing = staffFunctionService.getByStaffFunctionName(staffFunctionDto.getFunctionName());
-        if(existing.getFunctionName() != null)
+        if (existing.getFunctionName().equals(staffFunctionDto.getFunctionName()) && !staffFunctionDto.getFunctionName().equals(functionName))
         {
-            if (functionName.equals(staffFunctionDto.getFunctionName()) || existing.getFunctionName().equals(staffFunctionDto.getFunctionName()))
-            {
-                result.rejectValue("functionName", null, "The Staff function has to be unique");
-            }
-            if (result.hasErrors())
-            {
-                return "/editStaffFunction";
-            }
+            result.rejectValue("functionName", null, "The Staff function has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/editStaffFunction";
         }
 
         StaffFunctionDto staffFunctionDto1 = staffFunctionService.getByStaffFunctionName(functionName);
         staffFunctionDto.setFunctionId(staffFunctionDto1.getFunctionId());
         staffFunctionService.save(staffFunctionDto);
         return "redirect:/staffFunction";
+    }
+
+    private void checkSetup(Model model)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isStaffFunctionEmpty = staffFunctionService.getAll().isEmpty();
+
+        model.addAttribute("isStaffFunctionEmpty", isStaffFunctionEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
     }
 }

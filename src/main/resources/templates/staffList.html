@@ -36,22 +36,17 @@
                 <th>Staff</th>
                 <th>Details</th>
                 <th>Availabilities</th>
-                <td>Edit</td>
               </tr>
               </thead>
 
               <tbody>
               <tr th:each="staff : ${staffMembers}">
                 <td th:text="${staff.firstName} + ' ' + ${staff.lastName}"></td>
-
                 <td>
                   <a class="btn btn-primary" th:href="@{/staff/staffDetail/} + ${staff.staffId}">Details</a>
                 </td>
                 <td>
                   <a class="btn btn-primary">Availabilities</a>
-                </td>
-                <td>
-                  <a class="btn btn-primary" th:href="@{/staff/editStaff/} + ${staff.staffId}">edit</a>
                 </td>
               </tr>
               </tbody>

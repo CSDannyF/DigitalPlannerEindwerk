@@ -39,11 +39,8 @@ public class DepartmentController {
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
 
-        boolean isSetupDone = companyService.isSetupDone();
-        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+        checkSetup(model);
 
-        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
-        model.addAttribute("isSetupDone", isSetupDone);
         model.addAttribute("departments" ,departmentDtos);
         model.addAttribute("department", department);
 
@@ -57,7 +54,6 @@ public class DepartmentController {
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
         return "department";
     }
 
@@ -69,6 +65,8 @@ public class DepartmentController {
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
         model.addAttribute("departments" ,departmentDtos);
+
+        checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -97,8 +95,11 @@ public class DepartmentController {
 
     @GetMapping("/deleteDepartment")
     public String deleteDepartment(@RequestParam String departmentName,
-                                   Model model, Authentication authentication)
+                                   Model model,
+                                   Authentication authentication)
     {
+        checkSetup(model);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -171,20 +172,27 @@ public class DepartmentController {
         model.addAttribute("firstName", firstName);
 
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
-        if (existing.getDepartmentName() != null) {
-            if (departmentName.equals(departmentDto.getDepartmentName()) || existing.getDepartmentName().equals(departmentDto.getDepartmentName()))
-            {
-                result.rejectValue("departmentName", null, "The department name has to be unique");
-            }
-            if (result.hasErrors())
-            {
-                return "/editDepartment";
-            }
+        if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName))
+        {
+            result.rejectValue("departmentName", null, "The department name has to be unique");
+        }
+        if (result.hasErrors())
+        {
+            return "/editDepartment";
         }
 
         DepartmentDto departmentDto1 = departmentService.getByDepartmentName(departmentName);
         departmentDto.setDepartmentId(departmentDto1.getDepartmentId());
         departmentService.save(departmentDto);
         return "redirect:/department";
+    }
+
+    private void checkSetup(Model model)
+    {
+        boolean isSetupDone = companyService.isSetupDone();
+        boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
+
+        model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
+        model.addAttribute("isSetupDone", isSetupDone);
     }
 }

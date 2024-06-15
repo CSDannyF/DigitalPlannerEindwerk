@@ -12,7 +12,6 @@
 
     <!-- Insert sidebar fragment based on user role -->
     <div th:if="${isSetupDone}">
-
         <div th:if="${isAdmin}">
             <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
         </div>
@@ -57,14 +56,14 @@
                     </div>
 
                     <!-- Form for adding new Department -->
-                    <form th:action="@{/department}" th:object="${department}" method="post">
+                    <form class="needs-validation" th:action="@{/department}" th:object="${department}" method="post" novalidate>
                         <div class="mb-5">
 
                             <div>
                                 <label class="form-label">New Department
-                                    <input th:field="*{departmentName}" type="text" placeholder="name" class="form-control">
+                                    <input th:field="*{departmentName}" type="text" placeholder="name" class="form-control" required>
                                     <p class="text-danger" th:if="${#fields.hasErrors('departmentName')}" th:errors="*{departmentName}"></p>
-                                    <div class="invalid-feedback">DepartmentName address is required</div>
+                                    <div class="invalid-feedback">Department name address is required</div>
                                 </label>
                             </div>
 
@@ -78,6 +77,8 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript" th:src="@{/js/validation.js}"></script>
 
 </body>
 </html>

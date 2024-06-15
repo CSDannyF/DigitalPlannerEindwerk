@@ -330,7 +330,6 @@ public class StaffController
             return "newStaff";
         }
 
-
         //Check als email uniek is
         UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
         if (existing.getEmail() != null)
