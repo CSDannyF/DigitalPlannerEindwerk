@@ -54,8 +54,9 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public void save(CompanyDto companyDto) {
-        companyRepository.save(mapToCompany(companyDto));
+    public CompanyDto save(CompanyDto companyDto) {
+        Company company = companyRepository.save(mapToCompany(companyDto));
+        return mapToCompanyDto(company);
     }
 
     @Override

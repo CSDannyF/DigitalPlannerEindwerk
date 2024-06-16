@@ -33,8 +33,9 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
     }
 
     @Override
-    public void save(AvailabilityDto availabilityDto) {
-        availabilityRepository.save(mapToAvailabilityModel(availabilityDto));
+    public AvailabilityDto save(AvailabilityDto availabilityDto) {
+        Availability availability = availabilityRepository.save(mapToAvailabilityModel(availabilityDto));
+        return mapToAvailabilityDto(availability);
     }
 
     @Override

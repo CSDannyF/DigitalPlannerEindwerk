@@ -8,7 +8,7 @@ import java.util.List;
 public interface CompanyService {
     List<CompanyDto> getAll();
 
-    void save(CompanyDto companyDto);
+    CompanyDto save(CompanyDto companyDto);
 
     StatisticsDto getStatistics();
 

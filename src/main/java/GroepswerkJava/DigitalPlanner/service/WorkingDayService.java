@@ -17,13 +17,13 @@ public interface WorkingDayService {
 
     List<WorkingDayDto> getAllDto();
 
-    public void save(WorkingDay workingDay);
+    WorkingDayDto save(WorkingDay workingDay);
 
     public WorkingDay getById(long id);
 
     void fillRestOfYear(List<WeeklyOpeningDay> weeklyOpeningDays);
 
-    void saveAll(List<WorkingDay> workingDays);
+    List<WorkingDayDto> saveAll(List<WorkingDay> workingDays);
 
     WorkingDayDto getByDate(LocalDate date);
 

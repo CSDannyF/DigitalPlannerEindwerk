@@ -10,12 +10,12 @@ import java.util.List;
 
 @Service
 public interface PlanningService {
-    void save(PlanningDto planningDto);
-    void update(Planning planning);
+    PlanningDto save(PlanningDto planningDto);
+    PlanningDto update(Planning planning);
 
-    void savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy);
+    PlanningDto savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy);
 
-    void saveAll(List<PlanningDto> planningDtoList);
+    List<PlanningDto> saveAll(List<PlanningDto> planningDtoList);
     PlanningDto getByWorkingDay(WorkingDayDto workingDayDto);
 
     boolean hasDuplicateStaff(List<PlanningDetailDto> planningDetails);

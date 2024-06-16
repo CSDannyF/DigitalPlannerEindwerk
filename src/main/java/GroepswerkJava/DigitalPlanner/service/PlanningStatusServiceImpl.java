@@ -24,13 +24,6 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
 
     private static final List<String> PLANNING_STATUSES = Arrays.asList("Planned manually", "Planned OK", "Planned NOK", "Not planned", "Closed");
 
-    /*
-    @Autowired
-    public PlanningStatusServiceImpl(PlanningStatusRepository planningStatusRepository)
-    {
-        this.planningStatusRepository = planningStatusRepository;
-    }*/
-
     @Override
     public List<PlanningStatusDto> getAll() {
         List<PlanningStatus> planningStatusList = planningStatusRepository.findAll();
@@ -40,11 +33,12 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
-    public void save(PlanningStatusDto planningStatusDto)
+    public PlanningStatusDto save(PlanningStatusDto planningStatusDto)
     {
         PlanningStatus status = new PlanningStatus();
         status.setPlanningStatusName(planningStatusDto.getPlanningStatusName());
-        planningStatusRepository.save(status);
+        PlanningStatus newPlanningStatus = planningStatusRepository.save(status);
+        return mapToPlanningStatusDto(newPlanningStatus);
     }
 
     @Override

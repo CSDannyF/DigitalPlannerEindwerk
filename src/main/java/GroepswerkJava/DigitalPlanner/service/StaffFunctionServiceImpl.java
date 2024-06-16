@@ -35,21 +35,22 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     }
 
     @Override
-    public void save(StaffFunctionDto staffFunctionDto)
+    public StaffFunctionDto save(StaffFunctionDto staffFunctionDto)
     {
         StaffFunction staffFunction = new StaffFunction();
-
+        StaffFunction newStaffFunction = new StaffFunction();
         //hier moet er nog nagekeken worden als het object wel uniek is, indien wel krijgt hij geen id, anders niet
         if (staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName()) == null)
         {
             staffFunction = mapToStaffFunctionModel(staffFunctionDto);
-            staffFunctionRepository.save(staffFunction);
+            newStaffFunction = staffFunctionRepository.save(staffFunction);
         } else {
             staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName());
             staffFunction.setFunctionName(staffFunctionDto.getFunctionName());
             staffFunction.setFunctionDescription(staffFunctionDto.getFunctionDescription());
-            staffFunctionRepository.save(staffFunction);
+            newStaffFunction = staffFunctionRepository.save(staffFunction);
         }
+        return mapToStaffFunctionDto(newStaffFunction);
     }
 
     @Override

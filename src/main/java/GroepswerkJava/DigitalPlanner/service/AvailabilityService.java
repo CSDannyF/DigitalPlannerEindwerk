@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public interface AvailabilityService {
     List<AvailabilityDto> getAll();
-    void save(AvailabilityDto availabilityDto);
+    AvailabilityDto save(AvailabilityDto availabilityDto);
     AvailabilityDto getById(long id);
     AvailabilityDto getByAvailabilityType(String type);
 

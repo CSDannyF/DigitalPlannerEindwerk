@@ -8,7 +8,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -34,11 +33,12 @@ public class DaysOfWeekServiceImpl implements DaysOffWeekService, CommandLineRun
     }
 
     @Override
-    public void save(DaysOffWeekDto daysOffWeek)
+    public DaysOffWeekDto save(DaysOffWeekDto daysOffWeek)
     {
         DaysOffWeek day = new DaysOffWeek();
         day.setDayName(daysOffWeek.getDayName());
-        daysOfWeekRepository.save(day);
+        DaysOffWeek newDayOffWeek = daysOfWeekRepository.save(day);
+        return mapToDaysOffWeekDto(newDayOffWeek);
     }
 
     @Override

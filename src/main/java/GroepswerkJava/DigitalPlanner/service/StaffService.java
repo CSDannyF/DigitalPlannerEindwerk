@@ -11,11 +11,9 @@ import java.util.List;
 
 @Service
 public interface StaffService {
-    void saveStaff(StaffDto staffDto);
-
+    StaffDto saveStaff(StaffDto staffDto);
     @Transactional
     void saveOrUpdateStaff(Staff staff);
-
     void saveAllStaff(List<StaffDto> staffList);
     StaffDto getById(long id);
     List<StaffDto> getAll();

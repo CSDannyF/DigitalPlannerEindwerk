@@ -1,4 +1,5 @@
 package GroepswerkJava.DigitalPlanner.service;
+
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.LogDetailMapper;
 import GroepswerkJava.DigitalPlanner.dto.LogDetailDto;
 import GroepswerkJava.DigitalPlanner.model.LogDetail;
