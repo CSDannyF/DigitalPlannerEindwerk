@@ -5,10 +5,6 @@ import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
-import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
-import GroepswerkJava.DigitalPlanner.repository.ContractTypeRepository;
-import GroepswerkJava.DigitalPlanner.repository.DepartmentRepository;
-import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//controller moet nog aangepast worden om volledig beheer te doen
 @Controller
 public class ContractTypeController {
 
@@ -39,27 +34,24 @@ public class ContractTypeController {
     private UserLoginService userLoginService;
 
     @GetMapping("/contractType")
-    public String contractType(Model model, Authentication authentication)
-    {
-        ContractType contractType = new ContractType();
-        List<ContractTypeDto> contractTypeDtos;
-        contractTypeDtos = contractTypeService.getAll();
+    public String contractType(Model model,
+                               Authentication authentication) {
 
         checkSetup(model);
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         model.addAttribute("loggedInUser", loggedInUser);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
+
+        ContractType contractType = new ContractType();
+        List<ContractTypeDto> contractTypeDtos;
+        contractTypeDtos = contractTypeService.getAll();
 
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
         model.addAttribute("contractTypes", contractTypeDtos);
         model.addAttribute("contractType", contractType);
         return "contractType";
@@ -68,36 +60,31 @@ public class ContractTypeController {
     @PostMapping("/contractType")
     public String saveContractType(@ModelAttribute("contractType") ContractTypeDto contractTypeDto,
                                    BindingResult result,
-                                   Model model, Authentication authentication)
-    {
+                                   Model model,
+                                   Authentication authentication) {
+
+        checkSetup(model);
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+
+        boolean isAdmin = isAdmin(authentication);
+        String firstName = authentication.getName().split("@")[0];
+        StatisticsDto statisticsDto = companyService.getStatistics();
 
         List<ContractTypeDto> contractTypeDtos;
         contractTypeDtos = contractTypeService.getAll();
+
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("contractTypes", contractTypeDtos);
-
-        checkSetup(model);
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
-        String firstName = authentication.getName().split("@")[0];
-
-        StatisticsDto statisticsDto = companyService.getStatistics();
-
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
         //Check als niet 2x hetzelfde type wordt aangemaakt
         ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
-        if (existing.getContractTypeName() != null)
-        {
+        if (existing.getContractTypeName() != null) {
             result.rejectValue("contractTypeName", null, "The contract type name has to be unique");
         }
-        if (result.hasErrors())
-        {
+        if (result.hasErrors()) {
             return "/contractType";
         }
 
@@ -108,22 +95,18 @@ public class ContractTypeController {
     @GetMapping("deleteContractType")
     public String deleteContractType(@ModelAttribute("contractType") ContractTypeDto contractTypeDto,
                                      Model model,
-                                     Authentication authentication)
-    {
+                                     Authentication authentication) {
+
         checkSetup(model);
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
-
         List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
-        model.addAttribute("contractTypes", contractTypeDtos);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("contractTypes", contractTypeDtos);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -131,15 +114,13 @@ public class ContractTypeController {
         //hier vergelijken als het een staff member niet afhankelijk is van referentiële integriteit (anders fout op de referentie bij delete)
         List<StaffDto> staffDtos = staffService.getAll();
         boolean stillLinked = false;
-        for(StaffDto staffDto: staffDtos)
-        {
+        for (StaffDto staffDto : staffDtos) {
             if (staffDto.getContractType().getContractTypeName().equals(contractTypeDto.getContractTypeName())) {
                 stillLinked = true;
                 break;
             }
         }
-        if (stillLinked)
-        {
+        if (stillLinked) {
             model.addAttribute("errorMessage", "There are still staff members linked to this contract type.");
             return "/contractType";
         }
@@ -151,21 +132,17 @@ public class ContractTypeController {
     @GetMapping("/editContractType/{contractTypeName}")
     public String editContractType(@PathVariable String contractTypeName,
                                    Model model,
-                                   Authentication authentication)
-    {
+                                   Authentication authentication) {
+
         ContractTypeDto contractTypeDto = contractTypeService.getByContractTypeName(contractTypeName);
-        model.addAttribute("contractType", contractTypeDto);
-
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("contractType", contractTypeDto);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -177,32 +154,28 @@ public class ContractTypeController {
     @PostMapping("/editContractType/{contractTypeName}")
     public String saveEditedContractType(@PathVariable String contractTypeName,
                                          @ModelAttribute("contractType") ContractTypeDto contractTypeDto,
-                                         BindingResult result, Authentication authentication, Model model)
-    {
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+                                         BindingResult result,
+                                         Authentication authentication,
+                                         Model model) {
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        boolean isAdmin = isAdmin(authentication);
 
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
-
         //bestaande type wijzigen en checken als deze al dan niet bestaat (moet uniek zijn)
         ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
         if (existing.getContractTypeName() != null) {
-            if (existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()) && !contractTypeDto.getContractTypeName().equals(contractTypeName))
-            {
+            if (existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()) && !contractTypeDto.getContractTypeName().equals(contractTypeName)) {
                 result.rejectValue("contractTypeName", null, "The contracttype name has to be unique");
             }
-            if (result.hasErrors())
-            {
+            if (result.hasErrors()) {
                 return "/editContractType";
             }
         }
@@ -213,8 +186,7 @@ public class ContractTypeController {
         return "redirect:/contractType";
     }
 
-    private void checkSetup(Model model)
-    {
+    private void checkSetup(Model model) {
         boolean isSetupDone = companyService.isSetupDone();
         boolean isContractTypeEmpty = contractTypeService.getAll().isEmpty();
 
@@ -222,4 +194,9 @@ public class ContractTypeController {
         model.addAttribute("isSetupDone", isSetupDone);
     }
 
+    private boolean isAdmin(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin;
+    }
 }

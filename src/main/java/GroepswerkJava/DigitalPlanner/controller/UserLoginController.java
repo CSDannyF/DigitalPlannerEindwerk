@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Controller
-public class UserLoginController
-{
+public class UserLoginController {
     @Autowired
     private UserLoginService userLoginService;
 
@@ -25,34 +24,26 @@ public class UserLoginController
     @GetMapping("/editUserLogin/{id}")
     public String editUserLogin(@PathVariable long id,
                                 Authentication authentication,
-                                Model model)
-    {
+                                Model model) {
+
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+        UserLoginDto userLoginDto = userLoginService.getById(id);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-        String email = authentication.getName();
-
-        UserLoginDto userLoginDto = userLoginService.getById(id);
-
         model.addAttribute("userLogin", userLoginDto);
+
         return "editUserLogin";
     }
 
     @GetMapping("/newUserPassword")
-    public String newPassword(Model model)
-    {
-
-        //model.addAttribute("password2", "");
+    public String newPassword(Model model) {
         model.addAttribute("userLogin", new UserLoginDto());
         return "newUserPassword";
     }
@@ -67,21 +58,15 @@ public class UserLoginController
         userLogin.setId(loggedInUser.getId());
         userLogin.setEmail(loggedInUser.getEmail());
 
-        model.addAttribute("staff", userLogin.getStaffDto());
-        model.addAttribute("loggedInUser", loggedInUser);
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("staff", userLogin.getStaffDto());
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-        String email = authentication.getName();
-
 
         // Verwerken van de avatar
         if (userLogin.getAvatar().getOriginalFilename() == "") {
@@ -100,29 +85,22 @@ public class UserLoginController
                                   @RequestParam("password2") String password2,
                                   BindingResult result,
                                   Authentication authentication,
-                                  Model model)
-    {
+                                  Model model) {
+
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-        String email = authentication.getName();
 
-        if (!userLogin.getPassword().equals(password2))
-        {
+        if (!userLogin.getPassword().equals(password2)) {
             result.rejectValue("password", null, "Password 1 and 2 are not the same");
         }
-        if(result.hasErrors())
-        {
+        if (result.hasErrors()) {
             return "newUserPassword";
         }
 
@@ -140,13 +118,10 @@ public class UserLoginController
                                       @ModelAttribute UserLoginDto userLogin,
                                       Authentication authentication,
                                       BindingResult result,
-                                      Model model)
-    {
+                                      Model model) {
+
         //user via id uit db gehaalt, dat is degene waar de update wordt op uitgevoerd
         UserLoginDto userFromDb = userLoginService.getById(id);
-
-
-
         model.addAttribute("userLogin", userFromDb);
 
         /*
@@ -155,30 +130,20 @@ public class UserLoginController
         deze 2 samen checken als de ingegeven email geldig is
          */
         UserLoginDto existing = userLoginService.getByEmail(userLogin.getEmail());
-        if (existing.getEmail() != null &! userFromDb.getEmail().equals(userLogin.getEmail()))
-        {  //deze melding komt er nog niet op
+        if (existing.getEmail() != null & !userFromDb.getEmail().equals(userLogin.getEmail())) {  //deze melding komt er nog niet op
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
-        if (result.hasErrors())
-        {
+        if (result.hasErrors()) {
             return "/editUserLogin";
         }
 
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        System.out.println(loggedInUser.getRoles().getFirst());
-
-        // Verwerken van de avatar
-        if (!userLogin.getAvatar().isEmpty()) {
-            try {
-                byte[] imageData = userLogin.getAvatar().getBytes();
-                userLogin.setUserImageData(imageData);
-            } catch (IOException e) {
-                e.printStackTrace();
-                result.rejectValue("avatar", null, "Failed to upload the image.");
-                return "/editUserLogin";
-            }
-        }
         userLoginService.updateUserLogin(userLogin);
         return "redirect:/staff/staffList";
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin;
     }
 }

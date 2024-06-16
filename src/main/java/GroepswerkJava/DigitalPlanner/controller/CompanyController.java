@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.naming.Binding;
-
-
 @Controller
 public class CompanyController {
 
@@ -38,19 +35,17 @@ public class CompanyController {
     private UserLoginService userLoginService;
 
     @GetMapping("/company")
-    public String showNewCompanyForm(Model model, Authentication authentication) {
+    public String showNewCompanyForm(Model model,
+                                     Authentication authentication) {
+
         checkSetup(model);
-
         CompanyDto companyDto = new CompanyDto();
-        model.addAttribute("company", companyDto);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("company", companyDto);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -61,8 +56,8 @@ public class CompanyController {
     public String saveCompany(@ModelAttribute("company") CompanyDto companyDto,
                               BindingResult result,
                               Model model) {
-        checkSetup(model);
 
+        checkSetup(model);
         if (companyDto.getName().equals("")) {
             result.rejectValue("name", null, "The company needs a name!");
         }
@@ -76,50 +71,49 @@ public class CompanyController {
     }
 
     @GetMapping("company/openingdays")
-    public String openingDayForm(Model model, Authentication authentication) {
-
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+    public String openingDayForm(Model model,
+                                 Authentication authentication) {
 
         checkSetup(model);
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
 
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
         model.addAttribute("form", getWeekDto());
+
         return "companyOpeningDays";
     }
 
     @PostMapping("company/openingdays")
-    public String saveOpeningDays(@ModelAttribute OpeningDaysDto form, Model model) {
+    public String saveOpeningDays(@ModelAttribute OpeningDaysDto form,
+                                  Model model) {
+
         weeklyOpeningDaysService.overWriteAll(form.getOpeningDaysList());
-        model.addAttribute("openingDays", weeklyOpeningDaysService.getAll());
         workingDayService.fillRestOfYear(weeklyOpeningDaysService.getAll());
+
+        model.addAttribute("openingDays", weeklyOpeningDaysService.getAll());
         model.addAttribute("exceptionDay", new WorkingDay());
         return "yearlyExceptions";
     }
 
     @GetMapping("company/exception")
-    public String exceptionForm(Model model, Authentication authentication) {
+    public String exceptionForm(Model model,
+                                Authentication authentication) {
+
         checkSetup(model);
-
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -128,7 +122,9 @@ public class CompanyController {
     }
 
     @PostMapping("company/exception")
-    public String saveException(@ModelAttribute WorkingDay exceptionDay, Model model) {
+    public String saveException(@ModelAttribute WorkingDay exceptionDay,
+                                Model model) {
+
         workingDayService.updateWorkingDay(exceptionDay);
         WorkingDay workingDay = new WorkingDay();
         model.addAttribute("exceptionDay", workingDay);
@@ -154,5 +150,11 @@ public class CompanyController {
 
         model.addAttribute("isCompanyEmpty", isCompanyEmpty);
         model.addAttribute("isSetupDone", isSetupDone);
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin;
     }
 }
