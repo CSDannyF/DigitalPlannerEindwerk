@@ -34,6 +34,7 @@
               <thead>
               <tr>
                 <th>Staff</th>
+                <th>Hours in debt</th>
                 <th>Details</th>
                 <th>Availabilities</th>
               </tr>
@@ -44,6 +45,10 @@
                 <td>
                   <img id="userImage" th:src="@{'data:image/jpeg;base64,' + ${staff.staffImage}}" onerror="this.src=img/images/dashboard/Wutang.png">
                   <span th:text="${staff.firstName} + ' ' + ${staff.lastName}"></span>
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                  <span th:text="${staff.hoursInDebt}"></span>
+
                 </td>
                 <td>
                   <a class="btn btn-primary" th:href="@{/staff/staffDetail/} + ${staff.staffId}">Details</a>
