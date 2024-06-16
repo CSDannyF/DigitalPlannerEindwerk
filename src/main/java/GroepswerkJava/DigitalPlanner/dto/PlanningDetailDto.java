@@ -45,13 +45,10 @@ public class PlanningDetailDto {
     public String toString() {
         return "PlanningDetailDto{" +
                 "Id=" + planningDetailId +
-//                ", staffId=" + staff.getStaffId() +
                 ", staff=" + staff +
-
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-//                ", workMinutesPerDay=" + workMinutesPerDay +
-//                ", availability=" + availability +
+                ", availability=" + availability +
                 '}';
     }
 }

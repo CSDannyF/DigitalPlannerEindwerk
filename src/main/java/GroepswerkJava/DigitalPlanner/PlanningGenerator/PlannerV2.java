@@ -125,10 +125,11 @@ public class PlannerV2 implements PlanningGenerator {
 
                         } else {
                             planningStatus = "Planned NOK";
+                            logDetailService.addLog(logging, "No more available staff. Create Open Shift instead", LogType.INFO);
                         }
 
                         planningDetailDto.setStaff(assignedStaff);
-                        setStartAndEndTimeShift(planningDetailDto, assignedStaff, day, shiftCounter, openHours, dayCounter);
+                        setStartAndEndTimeShift(planningDetailDto, assignedStaff, day, shiftCounter, openHours, dayCounter, logging);
 
                         //if a staff is assigned, the shift is planned, if staff is null, the shift is an open shift
                         if (planningDetailDto.getStaff() != null) {
@@ -141,11 +142,14 @@ public class PlannerV2 implements PlanningGenerator {
                         planningDetailDto.setWorkMinutesPerDay(totalShiftTime * 60);
 
                         shifts.add(planningDetailDto);
+
+                        logDetailService.addLog(logging, "Shift " + (shiftCounter + 1) + " finalized: " + planningDetailDto, LogType.INFO);
                     }
                 }
             } else {
                 planningStatus = "Closed";
 
+                logDetailService.addLog(logging, "Skipping closed day.", LogType.INFO);
             }
 
             //Sort shifts based on startTime
@@ -163,8 +167,10 @@ public class PlannerV2 implements PlanningGenerator {
 
 
     private void setStartAndEndTimeShift(PlanningDetailDto planningDetailDto, StaffDto planStaff, WorkingDayDto day,
-                                         int shiftCounter, int dayHours, int dayCounter) {
-        int shiftTime = getShiftTime(planStaff, dayHours, dayCounter);
+                                         int shiftCounter, int dayHours, int dayCounter, List<LogDetailDto> logging) {
+        int shiftTime = getShiftTime(planStaff, dayHours, dayCounter, logging);
+        logDetailService.addLog(logging, "Calculating start and end time of shift " + (shiftCounter + 1), LogType.INFO);
+
 
         // if total openHours this day is more as 16h, a midday shift is created, else there is just opening and closing shifts
         if (dayHours > 16) {
