@@ -739,8 +739,8 @@ _______________*/
     }
 
 #userImage {
-    width: 100px; /* Nieuwe breedte */
-    height: 100px; /* Nieuwe hoogte */
+    min-width: 75px; /* Nieuwe breedte */
+    min-height: 75px; /* Nieuwe hoogte */
     object-fit: cover; /* Behoudt de aspect ratio en vult de ruimte */
     border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
 }

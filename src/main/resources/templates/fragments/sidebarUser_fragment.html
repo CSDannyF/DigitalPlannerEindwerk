@@ -13,8 +13,8 @@
 <body>
 
 <div id="sidebarContent" th:fragment="sidebarContent" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark">
-  <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-    <span class="fs-4">Menu</span>
+  <a href="/dashboard" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+    <img src="/images/dashboard/digitalPlannerLogo.png" alt="Logo" style="height: 160px;">
   </a>
 
   <!-- Sidebar menu -->
@@ -36,11 +36,6 @@
         My personal schedule
       </a>
     </li>
-<!--    <li>-->
-<!--      <a href="#" class="nav-link text-white">-->
-<!--        My schedule-->
-<!--      </a>-->
-<!--    </li>-->
   </ul>
   <hr>
 
@@ -51,11 +46,10 @@
       <strong th:text="${firstName}"></strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-      <li><a class="dropdown-item" href="#">Instellingen</a></li>
       <li><a class="dropdown-item" th:href="@{/}">Uitloggen</a></li>
     </ul>
   </div>
-  <div class="sidebar-footer">
+  <div class="sidebar-footer hidden">
     <div class="toggle">
       <span>Dark Mode</span>
       <div class="dark-mode-switch">
