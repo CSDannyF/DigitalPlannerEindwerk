@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
+import static java.time.temporal.ChronoUnit.HOURS;
+
 @Component
 //@Service
 public class PlanningServiceImpl implements PlanningService{
@@ -296,6 +298,31 @@ public class PlanningServiceImpl implements PlanningService{
             planningDetailDto.setAvailability(availabilityDto);
         }
         return planningDetailDto;
+    }
+
+    @Override
+    public PlanningDetail updatePlanningDetail(PlanningDetail planningDetail, LocalTime start, LocalTime end, long staffId) {
+        planningDetail.setStartTime(start);
+        planningDetail.setEndTime(end);
+        Staff staff = staffService.getModelById(staffId);
+        staff.setHoursInDebt(staff.getHoursInDebt () - (int) HOURS.between(start, end));
+        planningDetail.setStaff(staffService.getModelById(staffId));
+        planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("Planned")));
+
+        Planning planning = planningDetail.getPlanning();
+
+        int plannedShifts = 0;
+        for(PlanningDetail detail: planning.getPlanningDetails()){
+            System.out.println(detail.getAvailability().getAvailabilityType());
+            if(detail.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")){
+                plannedShifts ++;
+            }
+        }
+        if(plannedShifts >= planning.getWorkingDay().getMinimalOccupation()){
+            planning.setPlanningStatus(planningStatusService.findByStatusName("Planned OK"));
+            planningDetail.setPlanning(planning);
+        }
+        return planningDetail;
     }
 
     protected Planning mapToPlanningModel(PlanningDto planningDto)

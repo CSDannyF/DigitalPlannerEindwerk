@@ -4,7 +4,9 @@ import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
+import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
+import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
@@ -20,6 +22,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static java.time.temporal.ChronoUnit.HOURS;
 
 @Controller
 public class PlannerController {
@@ -318,11 +322,9 @@ public class PlannerController {
         LocalTime start = LocalTime.parse(startTime, formatter);
         LocalTime end = LocalTime.parse(endTime, formatter);
 
-        planningDetail.setStartTime(start);
-        planningDetail.setEndTime(end);
-        planningDetail.setStaff(staffService.getModelById(staffId));
+        PlanningDetail updatedShift = planningService.updatePlanningDetail(planningDetail, start, end, staffId);
 
-        planningDetailService.save(planningDetail);
+        planningDetailService.save(updatedShift);
 
         return "redirect:/dashboard";
     }

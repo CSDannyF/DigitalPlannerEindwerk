@@ -6,6 +6,7 @@ import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -26,4 +27,5 @@ public interface PlanningService {
 
     PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail);
 
+    PlanningDetail updatePlanningDetail(PlanningDetail planningDetail, LocalTime startTime, LocalTime endTime, long staffId);
 }
