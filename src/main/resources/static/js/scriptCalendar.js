@@ -214,6 +214,7 @@ updateDayTitle = (day, month, year, isOpen) => {
     const dayString = `${year} /  ${month + 1} / ${day} : ${openTitle}`;
     detailDiv.textContent = dayString;
 
+    if(isAdmin()){
         const button = document.createElement('button');
             button.textContent = '  ADD SHIFTS';
             button.classList.add('btn', 'btn-primary');
@@ -224,6 +225,7 @@ updateDayTitle = (day, month, year, isOpen) => {
             };
 
             detailDiv.appendChild(button);
+    }
 
     shiftsContainer.appendChild(detailDiv);
 }

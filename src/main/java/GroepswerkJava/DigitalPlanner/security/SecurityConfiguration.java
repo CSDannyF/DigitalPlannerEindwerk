@@ -33,11 +33,14 @@ public class SecurityConfiguration {
                                 "/newUserPassword", "/editUserLogin/**").permitAll()
                         // access only for ADMIN role
                         .requestMatchers( "/staff", "/staffFunction/**", "/staffList", "/editStaff/**",
-                                "/company/**", "/contractType", "/department", "/users", "/weekPlanning/approve",
-                                "/rangeWeek", "/planningDetails/**").hasRole("ADMIN")
+                                "/company/**", "/contractType", "/deleteContractType", "/editContractType/**",
+                                "/department", "/deleteDepartment", "/editDepartment/**", "/users", "/weekPlanning/approve",
+                                "/rangeWeek", "/RangeWeek", "/planningDetails/**", "/log/**", "/log-details", "/editAvailability"
+                        , "/availabilities", "/newStaff", "/deleteStaffFunction", "/editStaffFunction/**" ).hasRole("ADMIN")
                         // access only if user has USER or ADMIN role (user has to be logged in)
                         .requestMatchers("/dashboard", "/workSchedule", "/assignShift", "/staff/staffDetail",
-                                "/staff/myProfile").hasAnyRole("ADMIN", "USER")
+                                "/planning", "/assignShift", "/handleWorkingDays", "/staff/myProfile").hasAnyRole("ADMIN", "USER")
+
                 )
                 .formLogin(login -> login
                         .loginPage("/login")

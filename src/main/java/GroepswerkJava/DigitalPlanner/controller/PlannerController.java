@@ -114,7 +114,7 @@ public class PlannerController {
     omdat ik niet met th:field werk maar met name="" kan ik spring niet gebruiken voor validatie,
     Nu moet ik dat doen met flash attributes
     */
-    @PostMapping("/RangeWeek")
+    @PostMapping("/rangeWeek")
     public String generatePlanning(@RequestParam(value = "weekNumber1") int weekNumber1,
                                    @RequestParam("plannerType") String plannerType,
                                    //@RequestParam(value = "weekNumber2") int weekNumber2,      voor later als we meerdere weken tegelijk willen renderen
