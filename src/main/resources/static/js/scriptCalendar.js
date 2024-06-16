@@ -228,6 +228,11 @@ updateDayTitle = (day, month, year, isOpen) => {
     shiftsContainer.appendChild(detailDiv);
 }
 
+//check if logged-in user is admin
+function isAdmin() {
+  const isAdminInput = document.getElementById('isAdmin');
+  return isAdminInput.value === 'true';
+}
 
 
 // show shifts on the day that is clicked
@@ -269,15 +274,17 @@ updateUIWithData = (data) => {
 
                 detailDiv.appendChild(button);
             } else {
-                const editButton = document.createElement('button');
-                        editButton.textContent = 'Edit';
-                        editButton.classList.add('btn', 'btn-primary', 'ms-2', 'edit-button');
-                        editButton.addEventListener('click', () => {
-                            editShift(detail.planningDetailId);
-                        });
-                        detailDiv.appendChild(editButton);
+                // Check isAdmin status before creating edit button
+                if (isAdmin()) {
+                    const editButton = document.createElement('button');
+                            editButton.textContent = 'Edit';
+                            editButton.classList.add('btn', 'btn-primary', 'ms-2', 'edit-button');
+                            editButton.addEventListener('click', () => {
+                                editShift(detail.planningDetailId);
+                            });
+                            detailDiv.appendChild(editButton);
+                }
             }
-
             detailDiv.appendChild(nameDiv);
             detailDiv.appendChild(timeDiv);
             shiftsContainer.appendChild(detailDiv);

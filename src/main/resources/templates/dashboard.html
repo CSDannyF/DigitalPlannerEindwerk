@@ -77,6 +77,8 @@
                 </div>
             </div>
             <div class="col">
+                <!-- Hidden input field that connects to the js to check if the logged-in user is an admin -->
+                <input type="hidden" id="isAdmin" th:value="${isAdmin}">
                 <div id="shiftsContainer"></div>
             </div>
         </div>
