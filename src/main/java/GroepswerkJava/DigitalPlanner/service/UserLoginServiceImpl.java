@@ -51,13 +51,26 @@ public class UserLoginServiceImpl implements UserLoginService {
             user.setUserLoginId(userLoginDto.getId());
         }
 
+        //check if excisting user for setting passwordS
         if (userLoginDto.getPassword() == null) {
             UserLogin temp = userLoginRepository.findByUserLoginId(userLoginDto.getId());
             user.setPassword(temp.getPassword());
             user.setChangePassword(temp.getChangePassword());
+
+            //if excisting user, setting image from db
+            user.setUserImageData(temp.getUserImageData());
         } else {
             user.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
             user.setChangePassword(true);
+
+            //if new user, default image
+            byte[] image = new byte[0];
+            try {
+                image = convertDefaultImage("src/main/resources/static/images/dashboard/digitalPlannerLogo.png");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            user.setUserImageData(image);
         }
 
         //setChangePassword op false want Hier is de ADMIN de eerste geregistreerde en is het geen dummy wachtwoord
@@ -71,14 +84,6 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
 
         user.getRoles().add(role);
-
-        byte[] image = new byte[0];
-        try {
-            image = convertDefaultImage("src/main/resources/static/images/dashboard/digitalPlannerLogo.png");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        user.setUserImageData(image);
 
         UserLogin newUserLogin = userLoginRepository.save(user);
         return mapToUserLoginDto(newUserLogin);
