@@ -15,8 +15,8 @@
 
 <body>
 <div id="sidebarContent" th:fragment="sidebarContent" class="d-flex flex-column ">
-    <a th:href="@{/dashboard}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <img th:src="@{/images/dashboard/digitalPlannerLogo.png}" alt="Logo" style="height: 160px;">
+    <a href="/dashboard" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <img src="/images/dashboard/digitalPlannerLogo.png" alt="Logo" style="height: 160px;">
     </a>
 
     <!-- Sidebar menu -->
@@ -97,7 +97,7 @@
     <!-- Sidebar bottom dropdown menu -->
     <div class="dropdown">
         <a href="#" class="dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img id="userImage" th:src="@{'data:image/jpeg;base64,' + ${loggedInUser.userImage}}" alt="Avatar" class="avatar-img">
+            <img id="userImage" th:src="@{'data:image/jpeg;base64,' + ${loggedInUser.userImage}}" alt="Avatar" class="avatar-image">
             <strong th:text="${firstName}"></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
@@ -106,8 +106,7 @@
         </ul>
     </div>
 
-
-    <div class="sidebar-footer">
+    <div class="sidebar-footer hidden">
         <div class="toggle">
             <span>Dark Mode</span>
             <div class="dark-mode-switch">

@@ -124,8 +124,6 @@ a:hover {
 
 /* SIDEBAR */
 /*_______________*/
-
-
 #sidebarContent {
   width: 250px;
   max-width: 15%;
@@ -193,14 +191,19 @@ a:hover {
     justify-content: flex-end;
     align-items: center;
 }
+
+.avatar-image {
+    width: 100px; /* Pas dit aan naar de gewenste breedte */
+    height: 100px; /* Pas dit aan naar de gewenste hoogte */
+    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
+    margin-right: 10px; /* Optioneel: voegt wat ruimte toe aan de rechterkant */
+}
+
+.hidden {
+    display: none;
+}
 /*_______________*/
 
-/* Dropdown avatar */
-.avatar-img {
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-}
 
 
 
@@ -736,12 +739,10 @@ _______________*/
     }
 
 #userImage {
-    max-width: 60px;
-    max-height: 60px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 50%;
+    width: 100px; /* Nieuwe breedte */
+    height: 100px; /* Nieuwe hoogte */
+    object-fit: cover; /* Behoudt de aspect ratio en vult de ruimte */
+    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
 }
 
 .shiftName {
