@@ -738,6 +738,15 @@ _______________*/
 
     }
 
+#userImageStaffList {
+    max-width: 60px;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 50%;
+    }
+
 #userImage {
     min-width: 75px; /* Nieuwe breedte */
     min-height: 75px; /* Nieuwe hoogte */

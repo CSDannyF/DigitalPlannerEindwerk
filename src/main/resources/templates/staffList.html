@@ -43,7 +43,7 @@
               <tbody>
               <tr th:each="staff : ${staffMembers}">
                 <td>
-                  <img id="userImage" th:src="@{'data:image/jpeg;base64,' + ${staff.staffImage}}" onerror="this.src=img/images/dashboard/Wutang.png">
+                  <img id="userImageStaffList" th:src="@{'data:image/jpeg;base64,' + ${staff.staffImage}}">
                   <span th:text="${staff.firstName} + ' ' + ${staff.lastName}"></span>
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
