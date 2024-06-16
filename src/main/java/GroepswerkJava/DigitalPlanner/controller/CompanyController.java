@@ -3,6 +3,7 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.CompanyDto;
 import GroepswerkJava.DigitalPlanner.dto.OpeningDaysDto;
 import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.WeeklyOpeningDay;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.service.*;
@@ -31,7 +32,10 @@ public class CompanyController {
     private WorkingDayService workingDayService;
 
     @Autowired
-    StaffService staffService;
+    private StaffService staffService;
+
+    @Autowired
+    private UserLoginService userLoginService;
 
     @GetMapping("/company")
     public String showNewCompanyForm(Model model, Authentication authentication) {
@@ -73,6 +77,10 @@ public class CompanyController {
 
     @GetMapping("company/openingdays")
     public String openingDayForm(Model model, Authentication authentication) {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         checkSetup(model);
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -101,6 +109,9 @@ public class CompanyController {
     @GetMapping("company/exception")
     public String exceptionForm(Model model, Authentication authentication) {
         checkSetup(model);
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));

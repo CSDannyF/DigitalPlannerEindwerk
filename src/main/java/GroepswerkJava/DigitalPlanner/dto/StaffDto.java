@@ -46,6 +46,7 @@ public class StaffDto
    private CompanyDto companyDto;
 
    private UserLoginDto userLoginDto;
+   private String staffImage;
    private int hoursInDebt;
 
 

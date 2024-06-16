@@ -196,7 +196,10 @@ public class StaffServiceImpl implements StaffService{
             }
             staffDto.setFixedDaysOff(daysOffWeekDto);
         }
-
+        if (staff.getUserLogin().getUserImageData() != null) {
+            String base64Avatar = ImageConverter.convertByteArrayToBase64(staff.getUserLogin().getUserImageData());
+            staffDto.setStaffImage(base64Avatar);
+        }
 
         return staffDto;
     }

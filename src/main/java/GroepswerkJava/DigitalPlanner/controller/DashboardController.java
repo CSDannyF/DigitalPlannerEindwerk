@@ -29,6 +29,9 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String getDashboardEmployee(Authentication authentication, Model model) {
 
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -46,7 +49,6 @@ public class DashboardController {
         }
 
         //Als de gebruiker met een dummy wachtwoord zich voor de eerste keer aanmeld moet hij zijn wachtwoord veranderen
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         if (loggedInUser.getChangePassword())
         {
             return "redirect:/newUserPassword";

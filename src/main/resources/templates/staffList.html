@@ -41,7 +41,10 @@
 
               <tbody>
               <tr th:each="staff : ${staffMembers}">
-                <td th:text="${staff.firstName} + ' ' + ${staff.lastName}"></td>
+                <td>
+                  <img id="userImage" th:src="@{'data:image/jpeg;base64,' + ${staff.staffImage}}" onerror="this.src=img/images/dashboard/Wutang.png">
+                  <span th:text="${staff.firstName} + ' ' + ${staff.lastName}"></span>
+                </td>
                 <td>
                   <a class="btn btn-primary" th:href="@{/staff/staffDetail/} + ${staff.staffId}">Details</a>
                 </td>

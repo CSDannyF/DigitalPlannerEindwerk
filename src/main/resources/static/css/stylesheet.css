@@ -697,6 +697,14 @@ h1 {
 
     }
 
+#userImage {
+    max-width: 60px;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 50%;
+}
 
 .shiftName {
     flex: 0.95;

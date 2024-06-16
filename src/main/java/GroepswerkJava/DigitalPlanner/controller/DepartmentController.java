@@ -3,11 +3,9 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.DepartmentDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.Department;
-import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.DepartmentServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.StaffService;
-import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysService;
+import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,7 +28,10 @@ public class DepartmentController {
     private StaffService staffService;
 
     @Autowired
-    WeeklyOpeningDaysService weeklyOpeningDaysService;
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
+
+    @Autowired
+    private UserLoginService userLoginService;
 
     @GetMapping("/department")
     public String department(Model model, Authentication authentication)
@@ -38,6 +39,9 @@ public class DepartmentController {
         Department department = new Department();
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         checkSetup(model);
 
@@ -100,6 +104,9 @@ public class DepartmentController {
     {
         checkSetup(model);
 
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -139,6 +146,9 @@ public class DepartmentController {
                                  Model model, Authentication authentication)
     {
         DepartmentDto departmentDto = departmentService.getByDepartmentName(departmentName);
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));

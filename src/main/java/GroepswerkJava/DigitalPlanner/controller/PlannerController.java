@@ -52,13 +52,13 @@ public class PlannerController {
     private DaysOfWeekRepository daysOfWeekRepository;
 
     @Autowired
-    PlanningDetailService planningDetailService;
+    private PlanningDetailService planningDetailService;
 
     @Autowired
-    WeeklyOpeningDaysService weeklyOpeningDaysService;
+    private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
     @Autowired
-    CompanyService companyService;
+    private CompanyService companyService;
 
     private final PlanningGenerator planner;
     private final PlanningGenerator plannerV2;
@@ -77,6 +77,9 @@ public class PlannerController {
 //        if (authentication == null) {
 //            return "redirect:/";
 //        }
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         List<WorkingDayDto> workingDayDtos = workingDayService.getAllDto();
         Map<Integer, String> workingDayDtoMap = new HashMap<>();
@@ -117,8 +120,9 @@ public class PlannerController {
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes,
                                    Model model) {
-        
-        
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         model.addAttribute("weekNumber1", new WorkingDayDto());
         //model.addAttribute("weekNumber2", new WorkingDayDto());
@@ -224,7 +228,12 @@ public class PlannerController {
 
 
     @GetMapping("/workSchedule")
-    public String showPersonalWorkSchedule(Model model, Authentication authentication) {
+    public String showPersonalWorkSchedule(Model model,
+                                           Authentication authentication) {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         Map<Integer, List<ShiftDto>> shiftsByWeek = userLoginService.getUserPlanningDetails(authentication.getName());
 
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -243,7 +252,13 @@ public class PlannerController {
 
 
     @GetMapping("/editAvailability/{staffId}")
-    public String showEditAvailabilityForm(@PathVariable Long staffId, Model model, Authentication authentication) {
+    public String showEditAvailabilityForm(@PathVariable Long staffId,
+                                           Model model,
+                                           Authentication authentication) {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<AvailabilityDto> unavailabilities = availabilityService.getUnavailabilities();
         model.addAttribute("unavailabilities", unavailabilities);
 
@@ -276,7 +291,13 @@ public class PlannerController {
     }
 
     @GetMapping("/planningDetails/edit")
-    public String editPlanningDetail(@RequestParam Long planningDetailId, Model model, Authentication authentication) {
+    public String editPlanningDetail(@RequestParam Long planningDetailId,
+                                     Model model,
+                                     Authentication authentication) {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         PlanningDetail planningDetail = planningDetailService.getById(planningDetailId);
 
         WorkingDay workingDay = planningDetail.getPlanning().getWorkingDay();

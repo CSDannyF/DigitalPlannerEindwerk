@@ -20,13 +20,16 @@ public class UserLoginController
     private UserLoginService userLoginService;
 
     @Autowired
-    CompanyService companyService;
+    private CompanyService companyService;
 
     @GetMapping("/editUserLogin/{id}")
     public String editUserLogin(@PathVariable long id,
                                 Authentication authentication,
                                 Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -38,7 +41,6 @@ public class UserLoginController
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
         String email = authentication.getName();
-        UserLoginDto loggedInUser = userLoginService.getByEmail(email); //wordt nog niet gebruikt
 
         UserLoginDto userLoginDto = userLoginService.getById(id);
 
@@ -54,8 +56,34 @@ public class UserLoginController
         return "newUserPassword";
     }
 
+    @PostMapping("/saveImage")
+    public String saveImage(@ModelAttribute("loggedInUser") UserLoginDto userLogin,
+                            BindingResult result,
+                            Authentication authentication,
+                            Model model) throws IOException {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        userLogin.setId(loggedInUser.getId());
+        userLogin.setEmail(loggedInUser.getEmail());
+
+        model.addAttribute("staff", userLogin.getStaffDto());
+        model.addAttribute("loggedInUser", loggedInUser);
+
+
+        // Verwerken van de avatar
+        if (userLogin.getAvatar() == null) {
+                result.rejectValue("avatar", null, "Failed to upload the image.");
+        }
+        if (result.hasErrors()) {
+            return "myProfile";
+        }
+
+        userLoginService.saveImage(userLogin);
+        return "myProfile";
+    }
+
     @PostMapping("/newUserPassword")
-    public String saveNewPassword(@ModelAttribute("userLogin") UserLoginDto userLogin,
+    public String saveNewPassword(@ModelAttribute("loggedInUser") UserLoginDto userLogin,
                                   @RequestParam("password2") String password2,
                                   BindingResult result,
                                   Authentication authentication,
@@ -74,18 +102,6 @@ public class UserLoginController
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         userLogin.setId(loggedInUser.getId());
         userLogin.setEmail(loggedInUser.getEmail());
-
-        // Verwerken van de avatar
-        if (!userLogin.getAvatar().isEmpty()) {
-            try {
-                byte[] imageData = userLogin.getAvatar().getBytes();
-                userLogin.setUserImageData(imageData);
-            } catch (IOException e) {
-                e.printStackTrace();
-                result.rejectValue("avatar", null, "Failed to upload the image.");
-            }
-        }
-
 
         userLoginService.updateUserLogin(userLogin);
         return "dashboard";

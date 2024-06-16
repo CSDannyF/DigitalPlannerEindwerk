@@ -3,11 +3,9 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffFunctionDto;
 import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.StaffFunction;
-import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.StaffFunctionServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.StaffService;
-import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysService;
+import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -32,9 +30,16 @@ public class StaffFunctionController {
     @Autowired
     private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
+    @Autowired
+    private UserLoginService userLoginService;
+
     @GetMapping("/staffFunction")
     public String staffFunction(Model model, Authentication authentication)
     {
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         StaffFunctionDto staffFunction = new StaffFunctionDto();
         List<StaffFunctionDto> staffFunctionDtos;
         staffFunctionDtos = staffFunctionService.getAll();
@@ -84,6 +89,9 @@ public class StaffFunctionController {
     public String deleteStaffFunction(@RequestParam String functionName,
                                       Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<StaffFunctionDto> staffFunctionDtos = staffFunctionService.getAll();
         model.addAttribute("staffFunctions", staffFunctionDtos);
         model.addAttribute("staffFunction", new StaffFunction());
@@ -122,6 +130,9 @@ public class StaffFunctionController {
     public  String editStaffFunction(@PathVariable String functionName,
                                      Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+        
         StaffFunctionDto staffFunctionDto = staffFunctionService.getByStaffFunctionName(functionName);
         model.addAttribute("staffFunction", staffFunctionDto);
 

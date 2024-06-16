@@ -3,15 +3,13 @@ package GroepswerkJava.DigitalPlanner.controller;
 import GroepswerkJava.DigitalPlanner.dto.ContractTypeDto;
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.StatisticsDto;
+import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
 import GroepswerkJava.DigitalPlanner.model.ContractType;
 import GroepswerkJava.DigitalPlanner.repository.CompanyRepository;
 import GroepswerkJava.DigitalPlanner.repository.ContractTypeRepository;
 import GroepswerkJava.DigitalPlanner.repository.DepartmentRepository;
 import GroepswerkJava.DigitalPlanner.repository.StaffFunctionRepository;
-import GroepswerkJava.DigitalPlanner.service.CompanyServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.ContractTypeServiceImpl;
-import GroepswerkJava.DigitalPlanner.service.StaffService;
-import GroepswerkJava.DigitalPlanner.service.WeeklyOpeningDaysService;
+import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -37,6 +35,9 @@ public class ContractTypeController {
     @Autowired
     private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
+    @Autowired
+    private UserLoginService userLoginService;
+
     @GetMapping("/contractType")
     public String contractType(Model model, Authentication authentication)
     {
@@ -45,6 +46,8 @@ public class ContractTypeController {
         contractTypeDtos = contractTypeService.getAll();
 
         checkSetup(model);
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -105,6 +108,8 @@ public class ContractTypeController {
                                      Authentication authentication)
     {
         checkSetup(model);
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         List<ContractTypeDto> contractTypeDtos = contractTypeService.getAll();
         model.addAttribute("contractTypes", contractTypeDtos);
@@ -147,6 +152,9 @@ public class ContractTypeController {
     {
         ContractTypeDto contractTypeDto = contractTypeService.getByContractTypeName(contractTypeName);
         model.addAttribute("contractType", contractTypeDto);
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));

@@ -55,12 +55,16 @@ public class StaffController
     private CompanyService companyService;
 
     @GetMapping("/staffList")
-    public String showStaffList(Model model, Authentication authentication)
+    public String showStaffList(Model model,
+                                Authentication authentication)
     {
         StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffMembers", staffDtos);
         model.addAttribute("staffDto", staffDto);
+
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -79,20 +83,16 @@ public class StaffController
 
     @GetMapping("/staffDetail/{staffId}")
     public String staffDetail(@PathVariable long staffId,
-                              Model model, Authentication authentication)
+                              Model model,
+                              Authentication authentication)
     {
         StaffDto staffDto = staffService.getById(staffId);
-        UserLoginDto userLoginDto = userLoginService.getByEmail(staffDto.getEmail());
-
-        // Convert the avatar to a Base64 string
-        if (userLoginDto.getUserImageData() != null) {
-            String base64Avatar = ImageConverter.convertByteArrayToBase64(userLoginDto.getUserImageData());
-            model.addAttribute("base64Avatar", base64Avatar);
-        }
-
+        UserLoginDto userLogin = userLoginService.getByEmail(staffDto.getEmail());
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
 
         model.addAttribute("staff", staffDto);
-        model.addAttribute("userLogin", userLoginDto);
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("userLogin", userLogin);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -112,8 +112,8 @@ public class StaffController
     public String myProfile(Authentication authentication,
                             Model model)
     {
-        UserLoginDto userLoginDto = userLoginService.getByEmail(authentication.getName());
-        StaffDto staffDto = userLoginDto.getStaffDto();
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        StaffDto staffDto = loggedInUser.getStaffDto();
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -127,15 +127,19 @@ public class StaffController
         model.addAttribute("firstName", firstName);
 
         model.addAttribute("staff", staffDto);
-        model.addAttribute("userLogin", userLoginDto);
+        model.addAttribute("loggedInUser", loggedInUser);
 
         return "myProfile";
     }
 
     @GetMapping("/editStaff/{staffId}")
     public String editStaff(@PathVariable long staffId,
-                             Model model, Authentication authentication)
+                            Model model,
+                            Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         StaffDto staffDto = staffService.getById(staffId);
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffDto", staffDto);
@@ -254,6 +258,9 @@ public class StaffController
     @GetMapping("/newStaff")
     public String newStaff(Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         StaffDto staffDto = new StaffDto();
         List<StaffDto> staffDtos = staffService.getAll();
         model.addAttribute("staffDto", staffDto);

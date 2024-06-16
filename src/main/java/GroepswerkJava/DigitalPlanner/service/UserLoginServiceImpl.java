@@ -94,6 +94,18 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
         userLogin.setChangePassword(false);
+        UserLogin updatedUserLogin = userLoginRepository.save(userLogin);
+        return mapToUserLoginDto(updatedUserLogin);
+    }
+
+    @Override
+    public UserLoginDto saveImage(UserLoginDto userLoginDto) throws IOException {
+        UserLogin userLogin = userLoginRepository.findByUserLoginId(userLoginDto.getId());
+
+        // Verwerken van de avatar
+        byte[] imageData = userLoginDto.getAvatar().getBytes();
+        userLoginDto.setUserImageData(imageData);
+
         if (userLoginDto.getUserImageData() != null) {
             userLogin.setUserImageData(userLoginDto.getUserImageData());
         }
@@ -165,6 +177,13 @@ public class UserLoginServiceImpl implements UserLoginService {
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setChangePassword(user.getChangePassword());
+
+        // Convert the avatar to a Base64 string
+        if (user.getUserImageData() != null) {
+            String base64Avatar = ImageConverter.convertByteArrayToBase64(user.getUserImageData());
+            userLoginDto.setUserImage(base64Avatar);
+        }
+
         userLoginDto.setUserImageData(userLoginDto.getUserImageData());
         return userLoginDto;
     }
@@ -225,6 +244,12 @@ public class UserLoginServiceImpl implements UserLoginService {
         if (user.getUserImageData() != null) {
             userLoginDto.setUserImageData(user.getUserImageData());
         }
+        // Convert the avatar to a Base64 string
+        if (user.getUserImageData() != null) {
+            String base64Avatar = ImageConverter.convertByteArrayToBase64(user.getUserImageData());
+            userLoginDto.setUserImage(base64Avatar);
+        }
+
         return userLoginDto;
     }
 

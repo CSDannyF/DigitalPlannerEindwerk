@@ -102,7 +102,21 @@
             <div class="row">
               <div class="col">
                 <h6>Email</h6>
-                <h5 th:text="${userLogin.email}"></h5>
+                <h5 th:text="${loggedInUser.email}"></h5>
+              </div>
+
+              <div class="col">
+                <form th:action="@{/saveImage}" th:object="${loggedInUser}" method="post" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="avatar">Profile Avatar</label>
+                    <input th:field="*{avatar}" type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+                    <div class="avatar-preview">
+                      <img id="avatar-preview" src="#" alt="Preview">
+                    </div>
+                  </div>
+                  <br>
+                  <button class="btn btn-primary" type="submit">Save image</button>
+                </form>
               </div>
             </div>
           </div>
@@ -115,5 +129,8 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript" th:src="@{/js/profileavatar.js}"></script>
+
 </body>
 </html>

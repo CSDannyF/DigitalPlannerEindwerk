@@ -25,6 +25,7 @@ public class UserLoginDto {
     private StaffDto staffDto;
     private Boolean changePassword;
     private byte[] userImageData;
+    private String userImage;
     private MultipartFile avatar; // Voor ontvangen afbeelding
     private List<Role> roles = new ArrayList<>();
 
