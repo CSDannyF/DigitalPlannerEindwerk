@@ -83,7 +83,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
         byte[] image = new byte[0];
         try {
-            image = convertDefaultImage("src/main/resources/static/images/dashboard/logo.png");
+            image = convertDefaultImage("src/main/resources/static/images/dashboard/digitalPlannerLogo.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
