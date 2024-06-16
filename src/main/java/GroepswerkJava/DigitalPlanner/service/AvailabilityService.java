@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface AvailabilityService {
     List<AvailabilityDto> getAll();
+
     AvailabilityDto save(AvailabilityDto availabilityDto);
+
     AvailabilityDto getById(long id);
+
     AvailabilityDto getByAvailabilityType(String type);
 
     Availability mapToAvailabilityModel(AvailabilityDto availabilityDto);

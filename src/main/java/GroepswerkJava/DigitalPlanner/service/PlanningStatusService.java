@@ -7,8 +7,11 @@ import java.util.List;
 
 public interface PlanningStatusService {
     List<PlanningStatusDto> getAll();
+
     PlanningStatusDto save(PlanningStatusDto planningStatusDto);
+
     PlanningStatusDto findByPlanningStatusName(String planningStatusName);
+
     PlanningStatusDto findByPlanningStatusId(long planningStatusId);
 
     PlanningStatus findByStatusName(String statusName);

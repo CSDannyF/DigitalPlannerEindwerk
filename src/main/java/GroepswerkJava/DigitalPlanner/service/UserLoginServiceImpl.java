@@ -30,8 +30,7 @@ public class UserLoginServiceImpl implements UserLoginService {
     public UserLoginServiceImpl(UserLoginRepository userLoginRepository,
                                 RoleRepository roleRepository,
                                 PasswordEncoder passwordEncoder,
-                                StaffRepository staffRepository)
-    {
+                                StaffRepository staffRepository) {
         this.userLoginRepository = userLoginRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -44,18 +43,15 @@ public class UserLoginServiceImpl implements UserLoginService {
         UserLogin user = new UserLogin();
         user.setEmail(userLoginDto.getEmail());
 
-        if (userLoginDto.getStaffDto() != null)
-        {
+        if (userLoginDto.getStaffDto() != null) {
             StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
             user.setStaff(staffService.mapToStaffModel(userLoginDto.getStaffDto()));
         }
-        if (userLoginDto.getId() != null)
-        {
+        if (userLoginDto.getId() != null) {
             user.setUserLoginId(userLoginDto.getId());
         }
 
-        if (userLoginDto.getPassword() == null)
-        {
+        if (userLoginDto.getPassword() == null) {
             UserLogin temp = userLoginRepository.findByUserLoginId(userLoginDto.getId());
             user.setPassword(temp.getPassword());
             user.setChangePassword(temp.getChangePassword());
@@ -66,8 +62,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         //setChangePassword op false want Hier is de ADMIN de eerste geregistreerde en is het geen dummy wachtwoord
         Role role;
-        if (userLoginRepository.findAll().isEmpty())
-        {
+        if (userLoginRepository.findAll().isEmpty()) {
             initiateRoles();
             role = roleRepository.findByRoleName("ROLE_ADMIN");
             user.setChangePassword(false);
@@ -77,10 +72,6 @@ public class UserLoginServiceImpl implements UserLoginService {
 
         user.getRoles().add(role);
 
-        // Set userImageData als het aanwezig is in userLoginDto
-        if (userLoginDto.getUserImageData() != null) {
-            user.setUserImageData(userLoginDto.getUserImageData());
-        }
         byte[] image = new byte[0];
         try {
             image = convertDefaultImage("src/main/resources/static/images/dashboard/digitalPlannerLogo.png");
@@ -95,8 +86,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     //deze enkel gebruiken bij het updaten van de email en het wachtwoord
     @Override
-    public UserLoginDto updateUserLogin(UserLoginDto userLoginDto)
-    {
+    public UserLoginDto updateUserLogin(UserLoginDto userLoginDto) {
         UserLogin userLogin = userLoginRepository.findByUserLoginId(userLoginDto.getId());
         userLogin.setEmail(userLoginDto.getEmail());
         userLogin.setPassword(passwordEncoder.encode(userLoginDto.getPassword()));
@@ -121,11 +111,9 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public UserLoginDto getByEmail(String email)
-    {
+    public UserLoginDto getByEmail(String email) {
         UserLoginDto userLoginDto = new UserLoginDto();
-        if (userLoginRepository.findByEmail(email) != null)
-        {
+        if (userLoginRepository.findByEmail(email) != null) {
             userLoginDto = mapToDtoWithId(userLoginRepository.findByEmail(email));
         }
         return userLoginDto;
@@ -137,14 +125,11 @@ public class UserLoginServiceImpl implements UserLoginService {
     }
 
     @Override
-    public List<UserLoginDto> findAllUsers()
-    {
+    public List<UserLoginDto> findAllUsers() {
         List<UserLogin> users = userLoginRepository.findAll();
         return users.stream().map((userLogin) -> mapToDtoWithId(userLogin))
                 .collect(Collectors.toList());
     }
-
-
 
 
     //returns list of shiftDtos, ordered by weeknumber, to show personal schedule to staff
@@ -165,7 +150,6 @@ public class UserLoginServiceImpl implements UserLoginService {
             int weekNumber = date.get(WeekFields.ISO.weekOfWeekBasedYear());
             shiftsByWeek.computeIfAbsent(weekNumber, k -> new ArrayList<>()).add(shiftDto);
         }
-
         return shiftsByWeek;
     }
 
@@ -178,9 +162,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         return staff;
     }
 
-
-    private UserLoginDto mapToUserLoginDto(UserLogin user)
-    {
+    private UserLoginDto mapToUserLoginDto(UserLogin user) {
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setEmail(user.getEmail());
         userLoginDto.setChangePassword(user.getChangePassword());
@@ -198,17 +180,14 @@ public class UserLoginServiceImpl implements UserLoginService {
     //map naar model: als object al bestaat gaat de Id geset worden om te kunnen updaten
     //als het object al bestaat gaat hij ook al Roles hebben
     //indien het wachtwoord niet wordt veranderd is hij null in de DTO
-    protected UserLogin mapToUserLoginModel(UserLoginDto userLoginDto)
-    {
+    protected UserLogin mapToUserLoginModel(UserLoginDto userLoginDto) {
         UserLogin userLogin = new UserLogin();
 
-        if (userLoginDto.getId() != null)
-        {
+        if (userLoginDto.getId() != null) {
             userLogin.setUserLoginId(userLoginDto.getId());
             userLogin.setRoles(userLoginDto.getRoles());
         }
-        if (userLoginDto.getPassword() != null)
-        {
+        if (userLoginDto.getPassword() != null) {
             userLogin.setPassword(passwordEncoder.encode(userLoginDto.getEmail()));
         } else {
             UserLoginDto hash = getById(userLoginDto.getId());
@@ -231,8 +210,7 @@ public class UserLoginServiceImpl implements UserLoginService {
         return userLogin;
     }
 
-    private UserLoginDto mapToDtoWithId(UserLogin user)
-    {
+    private UserLoginDto mapToDtoWithId(UserLogin user) {
         UserLoginDto userLoginDto = new UserLoginDto();
         userLoginDto.setId(user.getUserLoginId());
         userLoginDto.setEmail(user.getEmail());
@@ -240,12 +218,8 @@ public class UserLoginServiceImpl implements UserLoginService {
         userLoginDto.setChangePassword(user.getChangePassword());
 
         StaffServiceImpl staffService = new StaffServiceImpl(staffRepository);
-        /*
-        TODO Als admin inlogd in komt hij in de DashboardController hier wordt gekeken indien het ww veranderd moet worden,
-         hier word een getByEmail gedaan voor de user en deze wordt gemapt,
-         hier in deze mapper kan de staff null zijn omdat de admin niet gelinkt is aan een staff
-         */
-        if (user.getStaff() != null){
+
+        if (user.getStaff() != null) {
             userLoginDto.setStaffDto(staffService.mapToStaffDto(user.getStaff()));
         }
         if (user.getUserImageData() != null) {
@@ -256,12 +230,10 @@ public class UserLoginServiceImpl implements UserLoginService {
             String base64Avatar = ImageConverter.convertByteArrayToBase64(user.getUserImageData());
             userLoginDto.setUserImage(base64Avatar);
         }
-
         return userLoginDto;
     }
 
-    private void initiateRoles()
-    {
+    private void initiateRoles() {
         Role admin = new Role();
         admin.setRoleName("ROLE_ADMIN");
         Role user = new Role();

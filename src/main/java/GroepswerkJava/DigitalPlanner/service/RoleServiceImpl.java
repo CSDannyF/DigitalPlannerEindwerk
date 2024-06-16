@@ -16,6 +16,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepository roleRepository;
+
     @Override
     public RoleDto save(RoleDto roleDto) {
         Role role = roleRepository.save(mapToRoleModel(roleDto));
@@ -33,24 +34,21 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RoleDto> getAll()
-    {
+    public List<RoleDto> getAll() {
         List<Role> roles = roleRepository.findAll();
         return roles.stream()
                 .map((role) -> mapToRoleDto(role))
                 .collect(Collectors.toList());
     }
 
-    protected RoleDto mapToRoleDto(Role role)
-    {
+    protected RoleDto mapToRoleDto(Role role) {
         RoleDto roleDto = new RoleDto();
         roleDto.setRoleName(role.getRoleName());
         roleDto.setRoleId(role.getRoleId());
         return roleDto;
     }
 
-    protected Role mapToRoleModel(RoleDto roleDto)
-    {
+    protected Role mapToRoleModel(RoleDto roleDto) {
         Role role = new Role();
         role.setRoleName(roleDto.getRoleName());
         role.setRoleId(roleDto.getRoleId());

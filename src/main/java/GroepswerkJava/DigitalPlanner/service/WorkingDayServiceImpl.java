@@ -9,7 +9,6 @@ import GroepswerkJava.DigitalPlanner.repository.WorkingDayRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -44,7 +43,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public List<WorkingDayDto> getAllDto(){
+    public List<WorkingDayDto> getAllDto() {
         return mapToDtoList(workingDayRepository.findAll());
     }
 
@@ -55,7 +54,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
 
     @Override
     public WorkingDay getById(long id) {
-        return workingDayRepository.findByWorkingDayId((int)id);
+        return workingDayRepository.findByWorkingDayId((int) id);
     }
 
     /**
@@ -97,7 +96,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                 if (startDate.getDayOfWeek().toString().equalsIgnoreCase(weeklyOpeningDay.getDay())) {
 
                     Optional<WorkingDay> existingWorkingDayOpt = Optional.ofNullable(workingDayRepository.findByDate(startDate));
-                    if(existingWorkingDayOpt.isPresent()){
+                    if (existingWorkingDayOpt.isPresent()) {
                         WorkingDay existingWorkingDay = existingWorkingDayOpt.get();
                         existingWorkingDay.setOpen(weeklyOpeningDay.isOpen());
                         existingWorkingDay.setStartTime(weeklyOpeningDay.getStartTime());
@@ -117,7 +116,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
 
                         Planning planning = new Planning();
-                        if(workingDay.isOpen()){
+                        if (workingDay.isOpen()) {
                             planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
                         } else {
                             planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Closed"));
@@ -131,13 +130,11 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         plannings.add(planning);
                     }
 
-
                     WorkingDay workingDay = workingDayRepository.findByDate(startDate);
                     if (workingDay == null) {
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
-
                     break;
                 }
             }
@@ -147,7 +144,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     }
 
     @Override
-    public List<WorkingDayDto> saveAll(List<WorkingDay> workingDays){
+    public List<WorkingDayDto> saveAll(List<WorkingDay> workingDays) {
         List<WorkingDay> workingDayList = workingDayRepository.saveAll(workingDays);
         return mapToDtoList(workingDayList);
     }
@@ -167,9 +164,9 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         workingDayRepository.deleteAll();
     }
 
-    public WorkingDayDto mapToDto(WorkingDay workingDay){
+    public WorkingDayDto mapToDto(WorkingDay workingDay) {
         WorkingDayDto workingDayDto = new WorkingDayDto();
-        if(workingDay != null){
+        if (workingDay != null) {
             workingDayDto.setWorkingDayId(workingDay.getWorkingDayId());
             workingDayDto.setDate(workingDay.getDate());
             workingDayDto.setStartTime(workingDay.getStartTime());
@@ -184,10 +181,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         return workingDayDto;
     }
 
-
-
-    protected WorkingDay mapToWorkingDayModel(WorkingDayDto workingDayDto)
-    {
+    protected WorkingDay mapToWorkingDayModel(WorkingDayDto workingDayDto) {
         WorkingDay workingDay = new WorkingDay();
         workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
         workingDay.setDate(workingDayDto.getDate());
@@ -200,19 +194,14 @@ public class WorkingDayServiceImpl implements WorkingDayService {
         return workingDay;
     }
 
-    public List <WorkingDayDto> mapToDtoList(List<WorkingDay> workingDays){
+    protected List<WorkingDayDto> mapToDtoList(List<WorkingDay> workingDays) {
         List<WorkingDayDto> workingDayDtos = new ArrayList<>();
-        for(WorkingDay workingDay: workingDays){
+        for (WorkingDay workingDay : workingDays) {
             WorkingDayDto workingDayDto = mapToDto(workingDay);
             workingDayDtos.add(workingDayDto);
         }
         return workingDayDtos;
     }
-
-
-
-
-
 
 
 }

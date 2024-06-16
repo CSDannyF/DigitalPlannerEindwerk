@@ -6,6 +6,7 @@ import GroepswerkJava.DigitalPlanner.repository.AvailabilityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-//@Service
+@Service
 public class AvailabilityServiceImpl implements AvailabilityService, CommandLineRunner {
 
     @Autowired
@@ -25,7 +26,7 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
     public List<AvailabilityDto> getAll() {
         List<Availability> availabilityList = availabilityRepository.findAll();
         List<AvailabilityDto> availabilityDtoList = new ArrayList<>();
-        for (Availability availability: availabilityList) {
+        for (Availability availability : availabilityList) {
             AvailabilityDto availabilityDto = mapToAvailabilityDto(availability);
             availabilityDtoList.add(availabilityDto);
         }
@@ -42,7 +43,7 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
     public AvailabilityDto getById(long id) {
         Optional<Availability> optional = availabilityRepository.findById(id);
         Availability availability = null;
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             availability = optional.get();
         } else {
             throw new RuntimeException("Availability not found");
@@ -56,8 +57,7 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
         return mapToAvailabilityDto(availability);
     }
 
-    protected AvailabilityDto mapToAvailabilityDto(Availability availability)
-    {
+    protected AvailabilityDto mapToAvailabilityDto(Availability availability) {
         AvailabilityDto availabilityDto = new AvailabilityDto();
         availabilityDto.setAvailabilityId(availability.getAvailabilityId());
         availabilityDto.setAvailabilityType(availability.getAvailabilityType());
@@ -65,8 +65,7 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
     }
 
     @Override
-    public Availability mapToAvailabilityModel(AvailabilityDto availabilityDto)
-    {
+    public Availability mapToAvailabilityModel(AvailabilityDto availabilityDto) {
         Availability availability = new Availability();
         availability.setAvailabilityId(availabilityDto.getAvailabilityId());
         availability.setAvailabilityType(availabilityDto.getAvailabilityType());
@@ -89,10 +88,8 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
         return availabilityRepository.findById(unavailabilityId);
     }
 
-    private void initializeAvailabilities()
-    {
-        for (String availability: AVAILABILITIES)
-        {
+    private void initializeAvailabilities() {
+        for (String availability : AVAILABILITIES) {
             Availability availability1 = new Availability();
             availability1.setAvailabilityType(availability);
             availabilityRepository.save(availability1);
@@ -101,8 +98,7 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
 
     @Override
     public void run(String... args) throws Exception {
-        if (availabilityRepository.count() == 0)
-        {
+        if (availabilityRepository.count() == 0) {
             initializeAvailabilities();
         }
     }

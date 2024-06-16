@@ -17,8 +17,7 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     @Autowired
     private PlanningStatusRepository planningStatusRepository;
 
-    public PlanningStatusServiceImpl(PlanningStatusRepository planningStatusRepository)
-    {
+    public PlanningStatusServiceImpl(PlanningStatusRepository planningStatusRepository) {
         this.planningStatusRepository = planningStatusRepository;
     }
 
@@ -33,8 +32,7 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
-    public PlanningStatusDto save(PlanningStatusDto planningStatusDto)
-    {
+    public PlanningStatusDto save(PlanningStatusDto planningStatusDto) {
         PlanningStatus status = new PlanningStatus();
         status.setPlanningStatusName(planningStatusDto.getPlanningStatusName());
         PlanningStatus newPlanningStatus = planningStatusRepository.save(status);
@@ -44,7 +42,7 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     @Override
     public PlanningStatusDto findByPlanningStatusName(String planningStatusName) {
         PlanningStatusDto planningStatus = new PlanningStatusDto();
-        if(planningStatusRepository.findByPlanningStatusName(planningStatusName) != null){
+        if (planningStatusRepository.findByPlanningStatusName(planningStatusName) != null) {
             planningStatus = mapToPlanningStatusDto(planningStatusRepository.findByPlanningStatusName(planningStatusName));
         }
         return planningStatus;
@@ -57,13 +55,11 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
 
     @Override
     public PlanningStatus findByStatusName(String statusName) {
-
         return planningStatusRepository.findByPlanningStatusName(statusName);
     }
 
     @Override
-    public PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus)
-    {
+    public PlanningStatusDto mapToPlanningStatusDto(PlanningStatus planningStatus) {
         PlanningStatusDto planningStatusDto = new PlanningStatusDto();
         planningStatusDto.setPlanningStatusId(planningStatusDto.getPlanningStatusId());
         planningStatusDto.setPlanningStatusName(planningStatus.getPlanningStatusName());
@@ -71,17 +67,14 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
-    public PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto)
-    {
+    public PlanningStatus mapToPlanningStatus(PlanningStatusDto planningStatusDto) {
         PlanningStatus planningStatus = new PlanningStatus();
         planningStatus.setPlanningStatusName(planningStatusDto.getPlanningStatusName());
         return planningStatus;
     }
 
-    private void initializePlanningStatus()
-    {
-        for (String status : PLANNING_STATUSES)
-        {
+    private void initializePlanningStatus() {
+        for (String status : PLANNING_STATUSES) {
             PlanningStatus planningStatus = new PlanningStatus();
             planningStatus.setPlanningStatusName(status);
             planningStatusRepository.save(planningStatus);
@@ -89,10 +82,8 @@ public class PlanningStatusServiceImpl implements PlanningStatusService, Command
     }
 
     @Override
-    public void run(String... args) throws Exception
-    {
-        if(planningStatusRepository.count() == 0)
-        {
+    public void run(String... args) throws Exception {
+        if (planningStatusRepository.count() == 0) {
             initializePlanningStatus();
         }
     }

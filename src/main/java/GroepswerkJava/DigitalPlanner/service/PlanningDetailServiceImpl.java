@@ -7,13 +7,12 @@ import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.repository.PlanningDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Optional;
 
 @Service
-public class PlanningDetailServiceImpl implements PlanningDetailService{
+public class PlanningDetailServiceImpl implements PlanningDetailService {
 
     @Autowired
     private PlanningDetailRepository planningDetailRepository;
@@ -36,10 +35,11 @@ public class PlanningDetailServiceImpl implements PlanningDetailService{
         return planningService.mapToPlanningDetailDto(newPlanningDetail);
     }
 
+    // Return null if planningDetailOptional is empty, otherwise return the PlanningDetail object inside the Optional
     @Override
     public PlanningDetail get(long id) {
         Optional<PlanningDetail> planningDetailOptional = planningDetailRepository.findById(id);
-        return planningDetailOptional.orElse(null); // Return null if planningDetailOptional is empty, otherwise return the PlanningDetail object inside the Optional
+        return planningDetailOptional.orElse(null);
     }
 
     @Override
@@ -50,27 +50,26 @@ public class PlanningDetailServiceImpl implements PlanningDetailService{
         boolean canBeAssigned = true;
         int openShiftCounter = 0;
 
-        for(PlanningDetail detail: planning.getPlanningDetails()){
-            if(detail.getStaff() == null){
+        for (PlanningDetail detail : planning.getPlanningDetails()) {
+            if (detail.getStaff() == null) {
                 openShiftCounter++;
-            } else if(detail.getStaff().getStaffId() == staff.getStaffId()){
+            } else if (detail.getStaff().getStaffId() == staff.getStaffId()) {
                 canBeAssigned = false;
             }
         }
 
-        if(canBeAssigned){
+        if (canBeAssigned) {
             planningDetail.setStaff(staff);
             planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("Planned")));
 
             int hours = (int) Duration.between(planningDetail.getStartTime(), planningDetail.getEndTime()).toHours();
             staff.setHoursInDebt(staff.getHoursInDebt() - hours);
-            if(openShiftCounter <= 1){
+            if (openShiftCounter <= 1) {
                 planning.setPlanningStatus(planningStatusService.findByStatusName("Planned OK"));
                 planningService.update(planning);
             }
             save(planningDetail);
         }
-
         return canBeAssigned;
     }
 
@@ -78,17 +77,9 @@ public class PlanningDetailServiceImpl implements PlanningDetailService{
     public PlanningDetail getById(Long planningDetailId) {
         PlanningDetail planningDetail = null;
         Optional<PlanningDetail> optional = planningDetailRepository.findById(planningDetailId);
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             planningDetail = optional.get();
         }
         return planningDetail;
     }
-
-//    @Override
-//    public void deleteById(Long id) {
-//        PlanningDetail planningDetail = getById(id);
-//        planningDetailRepository.delete(planningDetail);
-////        planningDetailRepository.deleteById(id);
-//    }
-
 }

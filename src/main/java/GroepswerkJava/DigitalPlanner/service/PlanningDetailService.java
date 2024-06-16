@@ -13,5 +13,4 @@ public interface PlanningDetailService {
 
     PlanningDetail getById(Long planningDetailId);
 
-//    void deleteById(Long id);
 }
