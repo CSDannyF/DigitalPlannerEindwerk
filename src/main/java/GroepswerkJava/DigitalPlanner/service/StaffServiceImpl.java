@@ -150,7 +150,8 @@ public class StaffServiceImpl implements StaffService{
         return mapToStaffDto(staff);
     }
 
-    protected StaffDto mapToStaffDto(Staff staff)
+    @Override
+    public StaffDto mapToStaffDto(Staff staff)
     {
         StaffDto staffDto = new StaffDto();
         staffDto.setStaffId(staff.getStaffId());
