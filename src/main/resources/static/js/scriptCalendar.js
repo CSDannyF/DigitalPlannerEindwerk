@@ -58,7 +58,6 @@ const handleWorkingDays = (workingDays) => {
             status: status
         };
 
-        console.log(status); // Now this will log the correct status
     });
 
     // After processing workingDays data, generate the calendar
@@ -87,17 +86,17 @@ generateCalendar = (month, year) => {
             let dayNumber = i - firstDay.getDay() + 1;
             day.textContent = dayNumber;
 
-            // Ensure consistent dateKey format (YYYY-MM-DD) for comparison
+            //  dateKey formatting (YYYY-MM-DD)
             const formattedMonth = (month + 1).toString().padStart(2, '0'); // Add leading zero if needed
             const formattedDay = dayNumber.toString().padStart(2, '0');
             const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
 
             const dayData = workingDayData[dateKey] || {}; // Get the day data
 
-            const isOpen = dayData.open; // Check if the day is open based on the open property
-            const status = dayData.status; // Get the status from the day data
-            const isPlannedNOK = status === "Planned NOK"; // Check if the day is "Planned NOK" based on the status property
-            const isPlannedOK = status === "Planned OK"; // Check if the day is "Planned NOK" based on the status property
+            const isOpen = dayData.open;
+            const status = dayData.status;
+            const isPlannedNOK = status === "Planned NOK";
+            const isPlannedOK = status === "Planned OK";
 
 
             // Add a click event listener to each day element
@@ -113,12 +112,12 @@ generateCalendar = (month, year) => {
             }
 
             if (isPlannedNOK) {
-                day.classList.add('plannedNOK'); // Add Planned NOK styling
+                day.classList.add('plannedNOK');
             }
 
             if (isPlannedOK) {
                 console.log('Applying plannedNOK styling');
-                day.classList.add('plannedOK'); // Add Planned NOK styling
+                day.classList.add('plannedOK');
             }
 
             if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
@@ -164,7 +163,7 @@ document.querySelector('#next-year').onclick = () => {
 };
 
 
-// Hide the thymeleafContent when a new date is selected
+// Hide the shifts container when a new date is selected
 function hideElements(){
                 const thymeleafContent = document.getElementById('thymeleafContent');
                 thymeleafContent.innerHTML = '';
@@ -216,7 +215,7 @@ updateDayTitle = (day, month, year, isOpen) => {
     detailDiv.textContent = dayString;
 
         const button = document.createElement('button');
-            button.textContent = '  EDIT PLANNING';
+            button.textContent = '  ADD SHIFTS';
             button.classList.add('btn', 'btn-primary');
             button.style.marginLeft = '20px';
             button.onclick = () => {
@@ -224,24 +223,10 @@ updateDayTitle = (day, month, year, isOpen) => {
                 loadThymeleafTemplate(year, month + 1, day);
             };
 
-            // Append the button to detailDiv
             detailDiv.appendChild(button);
 
     shiftsContainer.appendChild(detailDiv);
 }
-
-
-// Create a context menu when right clicking on a shift div to delete or make open shift
-const contextMenu = document.createElement('div');
-contextMenu.id = 'contextMenu';
-contextMenu.style.position = 'absolute';
-contextMenu.style.display = 'none';
-
-contextMenu.innerHTML = `
-    <button class="context-menu-btn" id="removeShift">Remove Shift</button><br>
-    <button class="context-menu-btn" id="removeStaff">Make open shift</button>
-`;
-document.body.appendChild(contextMenu);
 
 
 
@@ -260,9 +245,17 @@ updateUIWithData = (data) => {
             nameDiv.textContent = detail.staff ? `${detail.staff.firstName} , ${detail.staff.lastName}` : 'OPEN SHIFT';
             nameDiv.classList.add('shiftName');
 
-            const timeDiv = document.createElement('div');
-            timeDiv.textContent = `${detail.startTime || 'FREE'} - ${detail.endTime || 'Not planned'}`;
+
+           const timeDiv = document.createElement('div');
             timeDiv.classList.add('shiftTime');
+
+            if (detail.availability && (detail.availability.availabilityType === "Sick" || detail.availability.availabilityType === "Absence")) {
+                // Set different text content based on availability type
+                timeDiv.textContent = detail.availability.availabilityType; // Set to availability type if "Sick" or "Absence"
+                detailDiv.classList.add('unavailable'); // Add class to parent div for styling
+            } else {
+                timeDiv.textContent = `${detail.startTime || 'FREE'} - ${detail.endTime || 'Not planned'}`;
+            }
 
             // Check if it's an open shift to color it red
             if (!detail.staff) {
@@ -275,6 +268,14 @@ updateUIWithData = (data) => {
                 });
 
                 detailDiv.appendChild(button);
+            } else {
+                const editButton = document.createElement('button');
+                        editButton.textContent = 'Edit';
+                        editButton.classList.add('btn', 'btn-primary', 'ms-2', 'edit-button');
+                        editButton.addEventListener('click', () => {
+                            editShift(detail.planningDetailId);
+                        });
+                        detailDiv.appendChild(editButton);
             }
 
             detailDiv.appendChild(nameDiv);
@@ -284,17 +285,18 @@ updateUIWithData = (data) => {
     }
 };
 
-// Hide context menu when clicking elsewhere
-document.addEventListener('click', () => {
-    contextMenu.style.display = 'none';
-});
+
+function editShift(planningDetailId) {
+    window.location.href = `/planningDetails/edit?planningDetailId=${planningDetailId}`;
+}
+
 
 
 
 // Function to load Thymeleaf fragment to edit or add planning details
 loadThymeleafTemplate = (year, month, day) => {
     const thymeleafContent = document.getElementById('thymeleafContent');
-    const url = `/planningDetails/edit?year=${year}&month=${month}&day=${day}`;
+    const url = `/planningDetails/add?year=${year}&month=${month}&day=${day}`;
 
     fetch(url)
         .then(response => {
@@ -327,13 +329,13 @@ function assignShift(shiftId) {
     })
     .then(response => {
         if (response.ok) {
-            return response.json(); // Ensure this is JSON.parse
+            return response.json();
         } else {
             throw new Error('Failed to assign shift');
         }
     })
     .then(data => {
-        alert(data.message); // Display the message from the server
+        alert(data.message);
     })
     .catch(error => {
         console.error('Error:', error);

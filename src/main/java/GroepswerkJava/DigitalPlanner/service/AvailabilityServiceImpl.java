@@ -72,6 +72,22 @@ public class AvailabilityServiceImpl implements AvailabilityService, CommandLine
         return availability;
     }
 
+    @Override
+    public List<AvailabilityDto> getUnavailabilities() {
+        List<AvailabilityDto> uavailabilities = new ArrayList<>();
+        uavailabilities.add(getByAvailabilityType("Sick"));
+        uavailabilities.add(getByAvailabilityType("Absence"));
+        System.out.println(uavailabilities);
+
+
+        return uavailabilities;
+    }
+
+    @Override
+    public Optional<Availability> getModelById(Long unavailabilityId) {
+        return availabilityRepository.findById(unavailabilityId);
+    }
+
     private void initializeAvailabilities()
     {
         for (String availability: AVAILABILITIES)

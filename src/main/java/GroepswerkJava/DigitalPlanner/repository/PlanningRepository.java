@@ -1,12 +1,12 @@
 package GroepswerkJava.DigitalPlanner.repository;
 
-import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface PlanningRepository extends JpaRepository<Planning, Long> {
     Planning findByWorkingDay(WorkingDay workingDay);
 

@@ -530,6 +530,10 @@ h1 {
     margin: auto;
 }
 
+#Card {
+    margin-top: -200px;
+}
+
 /* Add employee */
 
 .container {
@@ -544,8 +548,7 @@ h1 {
 /*_______________*/
 
 
-/*
-*//*  show day shifts when clicked on a day in the calendar *//*
+/*  show day shifts when clicked on a day in the calendar *//*
 #shiftsContainer {
     display: block;
     font-family: Arial, sans-serif;
@@ -554,7 +557,7 @@ h1 {
     width: 100%;
     min-width: 450px:
     box-sizing: border-box;
-}*/
+}
 
 
 /* shows each shift in a block */
@@ -566,13 +569,20 @@ h1 {
     font-size: 18px;
     width: 100%;
     min-width: 420px:
+    position: relative;
 
     line-height: 1.5;
+    display: flex;
+    align-items: center;
 }
 
 /* Color red for open shifts */
 .openShift {
     background-color: rgba(255, 0, 0, 0.75); /* Red background with opacity */
+}
+
+.unavailable{
+    background-color: rgba(220,70,70, 0.8);
 }
 
 /* prints out the date of the day as a title*/
@@ -598,7 +608,6 @@ h1 {
         min-width: 80%;
         padding-top: 10px;
         margin-top: 30px;
-
         font-size: 16px;
 }
 
@@ -659,7 +668,6 @@ h1 {
 
 
 
-
 #weekPlanningContainer {
     max-width: 75%;
     padding-top: 50px;
@@ -685,12 +693,16 @@ h1 {
     .avatar-preview img {
       width: 100%;
       height: auto;
-      object-fit: cover; /* Ensure the image covers the entire preview area */
+      object-fit: cover;
 
     }
 
 
+.shiftName {
+    flex: 0.95;
+    font-weight: bold;
+}
 
-
-
-
+.edit-button {
+    margin-left: auto;
+}

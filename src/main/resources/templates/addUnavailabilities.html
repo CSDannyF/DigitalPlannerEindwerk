@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
+
+    <title>Edit Unavailability</title>
+</head>
+<body>
+
+<!-- Insert sidebar fragment based on user role -->
+<div th:if="${isAdmin}">
+    <div th:insert="~{fragments/sidebarAdmin_fragment :: sidebarContent}"></div>
+</div>
+<div th:unless="${isAdmin}">
+    <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
+</div>
+
+<section class="text-center">
+    <div class="p-5" id="shiftBanner"></div>
+
+    <div class="card w-50 mx-auto" id="card">
+        <div class="card-body py-5 px-md-5">
+            <div class="row d-flex justify-content-center">
+                <h2>Edit Unavailabilities</h2>
+                <form th:action="@{/availabilities/update}" method="post">
+                    <input type="hidden" th:field="*{staff.staffId}" th:value="${staff.staffId}"/>
+                    <div class="form-group">
+                        <label for="unavailability">Unavailability</label>
+                        <select class="form-control" id="unavailability" name="unavailabilityId" required>
+                            <option value="" disabled selected>Select unavailability</option>
+                            <option th:each="unavailability : ${unavailabilities}"
+                                    th:value="${unavailability.availabilityId}"
+                                    th:text="${unavailability.availabilityType}">Unavailability Option</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("startDate").setAttribute('min', today);
+        document.getElementById("endDate").setAttribute('min', today);
+    });
+</script>
+</body>
+</html>
+

@@ -104,14 +104,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         existingWorkingDay.setWeekNumber(existingWorkingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
 
                         workingDays.add(existingWorkingDay);
-//                        Planning planning = new Planning();
-//                        planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
-//
-//                        planning.setWorkingDay(existingWorkingDay);
-//                        existingWorkingDay.setPlanning(planning);
-//
-//                        workingDays.add(existingWorkingDay);
-//                        plannings.add(planning);
+
                     } else {
                         WorkingDay workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
@@ -142,20 +135,7 @@ public class WorkingDayServiceImpl implements WorkingDayService {
                         workingDay = new WorkingDay();
                         workingDay.setDate(startDate);
                     }
-//                    workingDay.setOpen(weeklyOpeningDay.isOpen());
-//                    workingDay.setStartTime(weeklyOpeningDay.getStartTime());
-//                    workingDay.setEndTime(weeklyOpeningDay.getEndTime());
-//                    workingDay.setMinimalOccupation(weeklyOpeningDay.getMinOccupation());
-//                    workingDay.setWeekNumber(workingDay.getDate().get(WeekFields.ISO.weekOfWeekBasedYear()));
-//
-//                    Planning planning = new Planning();
-//                    planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName("Not planned"));
-//
-//                    planning.setWorkingDay(workingDay);
-//                    workingDay.setPlanning(planning);
-//
-//                    workingDays.add(workingDay);
-//                    plannings.add(planning);
+
                     break;
                 }
             }
@@ -173,6 +153,11 @@ public class WorkingDayServiceImpl implements WorkingDayService {
     public WorkingDayDto getByDate(LocalDate date) {
         WorkingDay workingDay = workingDayRepository.findByDate(date);
         return mapToDto(workingDay);
+    }
+
+    @Override
+    public WorkingDay getModelByDate(LocalDate date) {
+        return workingDayRepository.findByDate(date);
     }
 
     public void deleteAll() {

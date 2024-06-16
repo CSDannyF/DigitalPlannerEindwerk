@@ -8,6 +8,7 @@ import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -85,7 +86,7 @@ public class PlannerV2 implements PlanningGenerator {
 
             if (day.isOpen()) {
                 if (currentStatus.equalsIgnoreCase("Not planned")
-                        || currentStatus.equalsIgnoreCase("Planned NOK")){
+                        || currentStatus.equalsIgnoreCase("Planned NOK")) {
                     List<StaffDto> availableStaff = getAvailableStaff(day, new ArrayList<>(staff));
 
                     //Get amount of shifts that needs to be planned
@@ -278,8 +279,10 @@ public class PlannerV2 implements PlanningGenerator {
             // check if there is already a planningDetail with this staff on this day, and checks the availabilityType
             for (PlanningDetailDto planningDetailDto : day.getPlanningDto().getPlanningDetails()) {
                 if (planningDetailDto.getStaff() != null) {
-                    if (staffDto.getStaffId() == planningDetailDto.getStaff().getStaffId()
-                            && planningDetailDto.getAvailability().getAvailabilityId() == 4) {
+                    if (staffDto.getStaffId() == planningDetailDto.getStaff().getStaffId() &&
+                            (planningDetailDto.getAvailability().getAvailabilityId() == 4 ||
+                                    planningDetailDto.getAvailability().getAvailabilityId() == 3 ||
+                                    planningDetailDto.getAvailability().getAvailabilityId() == 2)) {
 
                         notAvailableStaff.add(staffDto);
                         break;

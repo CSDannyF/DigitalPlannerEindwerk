@@ -4,16 +4,14 @@ import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
 import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 //@Service
@@ -167,6 +165,61 @@ public class PlanningServiceImpl implements PlanningService{
     }
 
 
+    //saves a range (start and end date) of sickness or absence unavailabilities
+    @Override
+    public void saveUnavailabilities(LocalDate startDate, LocalDate endDate, Long unavailabilityId, long staffId) {
+        List<WorkingDay> days = new ArrayList<>();
+
+        Staff staff = staffService.getModelById(staffId);
+        Optional<Availability> availabilityOpt = availabilityService.getModelById(unavailabilityId);
+        Availability availability = null;
+        if(availabilityOpt.isPresent()){
+            availability = availabilityOpt.get();
+        }
+
+        LocalDate date = startDate;
+        while (!date.isAfter(endDate)) {
+            WorkingDay workingDay = workingDayService.getModelByDate(date);
+
+            for(PlanningDetail planningDetail: workingDay.getPlanning().getPlanningDetails()){
+                if(planningDetail.getStaff() != null && planningDetail.getStaff().getStaffId() == staff.getStaffId()){
+                    planningDetail.setStaff(null);
+                    planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("OPEN SHIFT")));
+//                    planningDetail.setAvailability(availability);
+                    workingDay.getPlanning().setPlanningStatus(planningStatusService.findByStatusName("Planned NOK"));
+
+                }
+            }
+            PlanningDetail planningDetail = new PlanningDetail();
+            planningDetail.setStaff(staff);
+            planningDetail.setAvailability(availability);
+//            workingDay.getPlanning().setPlanningStatus(planningStatusService.findByStatusName("Planned NOK"));
+            planningDetail.setPlanning(workingDay.getPlanning());
+            workingDay.getPlanning().getPlanningDetails().add(planningDetail);
+
+            days.add(workingDay);
+
+            date = date.plusDays(1);
+        }
+        workingDayService.saveAll(days);
+    }
+
+    @Override
+    public List<StaffDto> getAvailableStaff(List<PlanningDetailDto> planningDetails) {
+
+        List<StaffDto> staffList = staffService.getActiveStaff();
+        //removing staff that is already planned on this day, staffList is for dropDown select
+        for(PlanningDetailDto planningDetailDto: planningDetails){
+            if(planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")
+                    || planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Sick")
+                    || planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Absence")){
+                staffList.remove(planningDetailDto.getStaff());
+            }
+        }
+        return staffList;
+    }
+
+
     //Dto mappers
 
     private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){    //effe op public, stond op private
@@ -208,6 +261,7 @@ public class PlanningServiceImpl implements PlanningService{
         return planningDto;
     }
 
+    @Override
     public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
         planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());  //setten van Id zou weg mogen als bij het mappen naar model de ID geset wordt via WorkingDay

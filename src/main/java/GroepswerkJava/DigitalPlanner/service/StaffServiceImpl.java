@@ -66,7 +66,6 @@ public class StaffServiceImpl implements StaffService{
         Staff existingStaff = staffRepository.findByStaffLastNameAndStaffFirstName(staff.getStaffLastName(), staff.getStaffFirstName());
         if (existingStaff != null) {
             existingStaff.setHoursInDebt(staff.getHoursInDebt());
-            // Update other fields as needed
             staffRepository.save(existingStaff);
         } else {
             staffRepository.save(staff);
@@ -126,6 +125,16 @@ public class StaffServiceImpl implements StaffService{
         return  activeStaffDtoList.stream()
                 .mapToInt(staff -> staff.getContractType().getHoursPerWeek())
                 .sum();
+    }
+
+    @Override
+    public Staff getModelById(long id) {
+        Staff staff = null;
+        Optional<Staff> optStaff = staffRepository.findById(id);
+        if(optStaff.isPresent()) {
+            staff = optStaff.get();
+        }
+        return staff;
     }
 
     @Override

@@ -4,6 +4,7 @@ import GroepswerkJava.DigitalPlanner.PlanningGenerator.PlanningGenerator;
 import GroepswerkJava.DigitalPlanner.PlanningGenerator.Response;
 import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
+import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.WorkingDay;
 import GroepswerkJava.DigitalPlanner.repository.DaysOfWeekRepository;
 import GroepswerkJava.DigitalPlanner.service.*;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -183,22 +186,13 @@ public class PlannerController {
     }
 
 
-    @GetMapping("/planningDetails/edit")
+    @GetMapping("/planningDetails/add")
     public String getThymeleafTemplate(@RequestParam int year, @RequestParam int month, @RequestParam int day,
                                        Model model)
     {
         LocalDate date = LocalDate.of(year, month, day);
-
         PlanningDto planningDto = workingDayService.getByDate(date).getPlanningDto();
-
-        List<StaffDto> staffList = staffService.getAll();
-
-        //removing staff that is already planned on this day, staffList is for dropDown select
-        for(PlanningDetailDto planningDetailDto: planningDto.getPlanningDetails()){
-            if(planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")){
-                staffList.remove(planningDetailDto.getStaff());
-            }
-        }
+        List<StaffDto> staffList = planningService.getAvailableStaff(planningDto.getPlanningDetails());
 
         model.addAttribute("date", date);
         model.addAttribute("planning", workingDayService.getByDate(date).getPlanningDto());
@@ -207,8 +201,7 @@ public class PlannerController {
         model.addAttribute("staffDto", staffDto);
         model.addAttribute("availableStaff", staffList);
 
-
-        return "editShifts";
+        return "addShifts";
     }
 
 
@@ -238,9 +231,7 @@ public class PlannerController {
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
-
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -249,4 +240,96 @@ public class PlannerController {
         model.addAttribute("shiftsByWeek", shiftsByWeek);
         return "personalSchedule";
     }
+
+
+    @GetMapping("/editAvailability/{staffId}")
+    public String showEditAvailabilityForm(@PathVariable Long staffId, Model model, Authentication authentication) {
+        List<AvailabilityDto> unavailabilities = availabilityService.getUnavailabilities();
+        model.addAttribute("unavailabilities", unavailabilities);
+
+        StaffDto staffDto = staffService.getById(staffId);
+        model.addAttribute("staff", staffDto);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+
+        return "addUnavailabilities";
+    }
+
+    @PostMapping("/availabilities/update")
+    public String updateAvailability(@RequestParam("startDate") LocalDate startDate,
+                                     @RequestParam("endDate") LocalDate endDate,
+                                     @RequestParam("unavailabilityId") Long unavailabilityId,
+                                     @ModelAttribute("staff") StaffDto staffDto) {
+
+        planningService.saveUnavailabilities(startDate, endDate, unavailabilityId, staffDto.getStaffId());
+
+        return "redirect:/staff/staffList";
+    }
+
+    @GetMapping("/planningDetails/edit")
+    public String editPlanningDetail(@RequestParam Long planningDetailId, Model model, Authentication authentication) {
+        PlanningDetail planningDetail = planningDetailService.getById(planningDetailId);
+
+        WorkingDay workingDay = planningDetail.getPlanning().getWorkingDay();
+        WorkingDayDto workingDayDto = workingDayService.mapToDto(workingDay);
+
+        List<StaffDto> staffList = planningService.getAvailableStaff(workingDayDto.getPlanningDto().getPlanningDetails());
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("planningDetail", planningDetail);
+        model.addAttribute("availableStaff", staffList);
+        model.addAttribute("staff", planningDetail.getStaff());
+
+        return "editPlanningDetail";
+    }
+
+
+    @PostMapping("/planningDetails/update")
+    public String updatePlanningDetail(@RequestParam Long planningDetailId,
+                                       @RequestParam String startTime,
+                                       @RequestParam String endTime,
+                                       @RequestParam Long staffId) {
+        PlanningDetail planningDetail = planningDetailService.getById(planningDetailId);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime start = LocalTime.parse(startTime, formatter);
+        LocalTime end = LocalTime.parse(endTime, formatter);
+
+        planningDetail.setStartTime(start);
+        planningDetail.setEndTime(end);
+        planningDetail.setStaff(staffService.getModelById(staffId));
+
+        planningDetailService.save(planningDetail);
+
+        return "redirect:/dashboard";
+    }
+
+//TODO NOT WORKING YET
+    @PostMapping("/planningDetails/delete/{id}")
+    public String deletePlanningDetail(@PathVariable("id") Long id) {
+        PlanningDetail planningDetail = planningDetailService.getById(id);
+//        planningService.deletePlanningDetail(planningDetail);
+//        System.out.println("plID" +     id);
+//        planningDetailService.deleteById(id);
+        return "redirect:/dashboard";
+    }
+
 }

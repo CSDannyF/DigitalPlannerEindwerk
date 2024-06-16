@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Details</title>
+
+    <script th:src="@{/js/scriptCalendar.js}" ></script>
+</head>
+<body>
+
+<div class="card w-50 mx-auto" id="editShifts">
+    <h3 align="center">New shifts for <span th:text="${date}"></span></h3>
+
+    <form action="/planningDetails/save" method="post" th:object="${ListPlanningDetailsDTO}">
+        <div th:each="planning : ${planning}">
+            <input type="hidden" name="planningId" th:value="${planning.planningId}">
+            <input type="hidden" name="workingDayDtoId" th:value="${planning.workingDayDtoId}">
+
+
+        </div>
+
+        <!-- New Planning Detail Section -->
+        <div>
+            <div th:each="i : ${#numbers.sequence(0, availableStaff.size() - 1)}">
+
+                <label>Start Time:</label>
+                <input type="time"
+                       th:name="newPlanningDetails[__${i}__].startTime">
+
+                <label>End Time:</label>
+                <input type="time"
+                       th:name="newPlanningDetails[__${i}__].endTime">
+
+                <label class="form-label">Select Staff
+                    <select class="form-select" th:name="newPlanningDetails[__${i}__].staffId">
+                        <option th:each="staffDto : ${availableStaff}" th:value="${staffDto.staffId}"
+                                th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"></option>
+                    </select>
+                </label>
+                <br>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-success mx-2" type="submit">Save</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

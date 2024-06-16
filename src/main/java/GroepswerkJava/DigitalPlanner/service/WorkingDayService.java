@@ -27,6 +27,9 @@ public interface WorkingDayService {
 
     WorkingDayDto getByDate(LocalDate date);
 
+    WorkingDay getModelByDate(LocalDate date);
+
+
     List<WorkingDay> getAll();
 
     List<WorkingDayDto> getByWeekNumber(int weekNumber);

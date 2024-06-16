@@ -1,11 +1,13 @@
 package GroepswerkJava.DigitalPlanner.service;
 
+import GroepswerkJava.DigitalPlanner.dto.PlanningDetailDto;
 import GroepswerkJava.DigitalPlanner.model.Planning;
 import GroepswerkJava.DigitalPlanner.model.PlanningDetail;
 import GroepswerkJava.DigitalPlanner.model.Staff;
 import GroepswerkJava.DigitalPlanner.repository.PlanningDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -70,5 +72,22 @@ public class PlanningDetailServiceImpl implements PlanningDetailService{
 
         return canBeAssigned;
     }
+
+    @Override
+    public PlanningDetail getById(Long planningDetailId) {
+        PlanningDetail planningDetail = null;
+        Optional<PlanningDetail> optional = planningDetailRepository.findById(planningDetailId);
+        if(optional.isPresent()){
+            planningDetail = optional.get();
+        }
+        return planningDetail;
+    }
+
+//    @Override
+//    public void deleteById(Long id) {
+//        PlanningDetail planningDetail = getById(id);
+//        planningDetailRepository.delete(planningDetail);
+////        planningDetailRepository.deleteById(id);
+//    }
 
 }

@@ -5,6 +5,7 @@ import GroepswerkJava.DigitalPlanner.model.Availability;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface AvailabilityService {
@@ -14,4 +15,8 @@ public interface AvailabilityService {
     AvailabilityDto getByAvailabilityType(String type);
 
     Availability mapToAvailabilityModel(AvailabilityDto availabilityDto);
+
+    List<AvailabilityDto> getUnavailabilities();
+
+    Optional<Availability> getModelById(Long unavailabilityId);
 }

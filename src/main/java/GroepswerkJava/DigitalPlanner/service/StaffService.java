@@ -2,6 +2,7 @@ package GroepswerkJava.DigitalPlanner.service;
 
 import GroepswerkJava.DigitalPlanner.dto.StaffDto;
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
+import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.model.Staff;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,4 +22,6 @@ public interface StaffService {
     Staff mapToStaffModel(StaffDto staffDto);
     void updateStaff(StaffDto staffDto);
     int getTotalStaffContractHours();
+
+    Staff getModelById(long id);
 }
