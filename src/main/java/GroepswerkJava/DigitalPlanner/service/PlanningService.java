@@ -9,14 +9,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-@Service
 public interface PlanningService {
     PlanningDto save(PlanningDto planningDto);
+
     PlanningDto update(Planning planning);
 
     PlanningDto savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy);
 
     List<PlanningDto> saveAll(List<PlanningDto> planningDtoList);
+
     PlanningDto getByWorkingDay(WorkingDayDto workingDayDto);
 
     boolean hasDuplicateStaff(List<PlanningDetailDto> planningDetails);

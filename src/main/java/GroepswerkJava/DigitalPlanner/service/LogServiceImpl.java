@@ -6,6 +6,7 @@ import GroepswerkJava.DigitalPlanner.model.Log;
 import GroepswerkJava.DigitalPlanner.repository.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,6 @@ public class LogServiceImpl implements LogService {
     @Autowired
     private LogRepository logRepository;
 
-    //*** Mappers getest met MapStruct ***
     private final LogMapper logMapper = LogMapper.INSTANCE;
 
     public LogServiceImpl(LogRepository logRepository) {

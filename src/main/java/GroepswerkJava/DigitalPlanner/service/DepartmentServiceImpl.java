@@ -18,8 +18,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private DepartmentRepository departmentRepository;
 
     @Override
-    public List<DepartmentDto> getAll()
-    {
+    public List<DepartmentDto> getAll() {
         List<Department> departments = departmentRepository.findAll();
         return departments.stream()
                 .map((department) -> mapToDepartmentDto(department))
@@ -27,20 +26,17 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void deleteDepartmentByName(String departmentName)
-    {
+    public void deleteDepartmentByName(String departmentName) {
         Department department = departmentRepository.findByDepartmentName(departmentName);
         this.departmentRepository.delete(department);
     }
 
     @Override
-    public DepartmentDto save(DepartmentDto departmentDto)
-    {
+    public DepartmentDto save(DepartmentDto departmentDto) {
         Department department = new Department();
         Department returnFromSave = new Department();
 
-        if (departmentRepository.findByDepartmentName(departmentDto.getDepartmentName()) == null)
-        {
+        if (departmentRepository.findByDepartmentName(departmentDto.getDepartmentName()) == null) {
             department = mapToDepartmentModel(departmentDto);
             returnFromSave = departmentRepository.save(department);
         } else {
@@ -52,43 +48,35 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public DepartmentDto getByDepartmentName(String departmentName)
-    {
+    public DepartmentDto getByDepartmentName(String departmentName) {
         Department department = departmentRepository.findByDepartmentName(departmentName);
         DepartmentDto departmentDto = new DepartmentDto();
-        if (department != null)
-        {
+        if (department != null) {
             departmentDto = mapToDepartmentDto(department);
         }
         return departmentDto;
     }
 
     @Override
-    public DepartmentDto getById(long id)
-    {
-        return mapToDepartmentDto(departmentRepository.findById(id).orElseThrow(()-> new RuntimeException("Department not found")));
+    public DepartmentDto getById(long id) {
+        return mapToDepartmentDto(departmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Department not found")));
     }
 
     //protected gebruikt zodat ze enkel kunnen worder aangeroepen in de service klassen.
 
-    protected DepartmentDto mapToDepartmentDto(Department department)
-    {
+    protected DepartmentDto mapToDepartmentDto(Department department) {
         DepartmentDto departmentDto = new DepartmentDto();
-        if(department != null){
+        if (department != null) {
 
             departmentDto.setDepartmentName(department.getDepartmentName());
-            if (department.getDepartmentId() != 0)
-            {
+            if (department.getDepartmentId() != 0) {
                 departmentDto.setDepartmentId(department.getDepartmentId());
             }
         }
-
-
         return departmentDto;
     }
 
-    protected Department mapToDepartmentModel(DepartmentDto departmentDto)
-    {
+    protected Department mapToDepartmentModel(DepartmentDto departmentDto) {
         Department department = new Department();
         department.setDepartmentId(departmentDto.getDepartmentId());
         department.setDepartmentName(departmentDto.getDepartmentName());

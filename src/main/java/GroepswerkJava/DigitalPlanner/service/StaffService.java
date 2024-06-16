@@ -9,19 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 public interface StaffService {
     StaffDto saveStaff(StaffDto staffDto);
+
     @Transactional
     void saveOrUpdateStaff(Staff staff);
+
     void saveAllStaff(List<StaffDto> staffList);
+
     StaffDto getById(long id);
+
     List<StaffDto> getAll();
 
     StaffDto mapToStaffDto(Staff staff);
 
     Staff mapToStaffModel(StaffDto staffDto);
-    void updateStaff(StaffDto staffDto);
+
     int getTotalStaffContractHours();
 
     Staff getModelById(long id);

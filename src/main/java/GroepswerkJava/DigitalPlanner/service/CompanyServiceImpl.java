@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 @Service
-public class CompanyServiceImpl implements CompanyService{
+public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
 
@@ -37,16 +37,15 @@ public class CompanyServiceImpl implements CompanyService{
     private WeeklyOpeningDaysService weeklyOpeningDaysService;
 
     @Autowired
-    public CompanyServiceImpl(CompanyRepository companyRepository){
+    public CompanyServiceImpl(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
 
     @Override
-    public List<CompanyDto> getAll()
-    {
+    public List<CompanyDto> getAll() {
         List<Company> companyList = companyRepository.findAll();
         List<CompanyDto> companyDtoList = new ArrayList<>();
-        for (Company company: companyList){
+        for (Company company : companyList) {
             CompanyDto companyDto = mapToCompanyDto(company);
             companyDtoList.add(companyDto);
         }
@@ -60,7 +59,7 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public StatisticsDto getStatistics(){
+    public StatisticsDto getStatistics() {
         StatisticsDto statisticsDto = new StatisticsDto();
         int totalStaffContractHours = staffService.getTotalStaffContractHours();
         statisticsDto.setTotalStaffContractHours(totalStaffContractHours);
@@ -75,11 +74,10 @@ public class CompanyServiceImpl implements CompanyService{
     }
 
     @Override
-    public CompanyDto getById(long id)
-    {
+    public CompanyDto getById(long id) {
         Optional<Company> optional = companyRepository.findById(id);
         Company company = null;
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             company = optional.get();
         } else {
             throw new RuntimeException("Company not found");
@@ -87,8 +85,7 @@ public class CompanyServiceImpl implements CompanyService{
         return mapToCompanyDto(company);
     }
 
-    protected CompanyDto mapToCompanyDto(Company company)
-    {
+    protected CompanyDto mapToCompanyDto(Company company) {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setCompanyId(company.getCompanyId());
         companyDto.setName(company.getName());
@@ -96,8 +93,7 @@ public class CompanyServiceImpl implements CompanyService{
         return companyDto;
     }
 
-    protected Company mapToCompany(CompanyDto companyDto)
-    {
+    protected Company mapToCompany(CompanyDto companyDto) {
         Company company = new Company();
         company.setCompanyId(companyDto.getCompanyId());
         company.setName(companyDto.getName());
@@ -105,11 +101,9 @@ public class CompanyServiceImpl implements CompanyService{
         return company;
     }
 
-    public boolean isSetupDone()
-    {
+    public boolean isSetupDone() {
         boolean isSetupDone = true;
-        if (getAll().isEmpty() || departmentRepository.findAll().isEmpty() || staffFunctionRepository.findAll().isEmpty() || contractTypeRepository.findAll().isEmpty())
-        {
+        if (getAll().isEmpty() || departmentRepository.findAll().isEmpty() || staffFunctionRepository.findAll().isEmpty() || contractTypeRepository.findAll().isEmpty()) {
             isSetupDone = false;
         }
         return isSetupDone;

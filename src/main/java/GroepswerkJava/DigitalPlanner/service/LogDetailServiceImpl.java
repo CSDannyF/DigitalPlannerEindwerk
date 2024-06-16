@@ -12,8 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//*** Mappers getest met MapStruct ***
-
 @Service
 public class LogDetailServiceImpl implements LogDetailService {
 

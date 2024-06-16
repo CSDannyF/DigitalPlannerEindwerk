@@ -19,8 +19,7 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     private StaffFunctionRepository staffFunctionRepository;
 
     @Override
-    public List<StaffFunctionDto> getAll()
-    {
+    public List<StaffFunctionDto> getAll() {
         List<StaffFunction> staffFunctions = staffFunctionRepository.findAll();
         return staffFunctions.stream()
                 .map((staffFunction) -> mapToStaffFunctionDto(staffFunction))
@@ -28,20 +27,16 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     }
 
     @Override
-    public void deleteStaffFunctionByName(String staffFunctionName)
-    {
+    public void deleteStaffFunctionByName(String staffFunctionName) {
         StaffFunction staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionName);
         staffFunctionRepository.delete(staffFunction);
     }
 
     @Override
-    public StaffFunctionDto save(StaffFunctionDto staffFunctionDto)
-    {
+    public StaffFunctionDto save(StaffFunctionDto staffFunctionDto) {
         StaffFunction staffFunction = new StaffFunction();
         StaffFunction newStaffFunction = new StaffFunction();
-        //hier moet er nog nagekeken worden als het object wel uniek is, indien wel krijgt hij geen id, anders niet
-        if (staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName()) == null)
-        {
+        if (staffFunctionRepository.findByFunctionName(staffFunctionDto.getFunctionName()) == null) {
             staffFunction = mapToStaffFunctionModel(staffFunctionDto);
             newStaffFunction = staffFunctionRepository.save(staffFunction);
         } else {
@@ -54,36 +49,29 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
     }
 
     @Override
-    public StaffFunctionDto getById(long id)
-    {
+    public StaffFunctionDto getById(long id) {
         Optional<StaffFunction> optional = staffFunctionRepository.findById(id);
         StaffFunction staffFunction = null;
-        if (optional.isPresent())
-        {
+        if (optional.isPresent()) {
             staffFunction = optional.get();
-        }
-        else
-        {
+        } else {
             throw new RuntimeException("Not found");
         }
         return mapToStaffFunctionDto(staffFunction);
     }
 
     @Override
-    public StaffFunctionDto getByStaffFunctionName(String staffFunctionName)
-    {
+    public StaffFunctionDto getByStaffFunctionName(String staffFunctionName) {
         StaffFunction staffFunction = staffFunctionRepository.findByFunctionName(staffFunctionName);
         StaffFunctionDto staffFunctionDto = new StaffFunctionDto();
-        if (staffFunction != null)
-        {
+        if (staffFunction != null) {
             staffFunctionDto = mapToStaffFunctionDto(staffFunction);
         }
         return staffFunctionDto;
     }
 
-    //protected gebruikt zodat ze enkel kunnen worder aangeroepen in de service klassen.
-    protected StaffFunctionDto mapToStaffFunctionDto(StaffFunction staffFunction)
-    {
+    //protected gebruikt zodat ze enkel kunnen worden aangeroepen in de service klassen.
+    protected StaffFunctionDto mapToStaffFunctionDto(StaffFunction staffFunction) {
         StaffFunctionDto staffFunctionDto = new StaffFunctionDto();
         staffFunctionDto.setFunctionId(staffFunction.getFunctionId());
         staffFunctionDto.setFunctionName(staffFunction.getFunctionName());
@@ -91,8 +79,7 @@ public class StaffFunctionServiceImpl implements StaffFunctionService {
         return staffFunctionDto;
     }
 
-    protected StaffFunction mapToStaffFunctionModel(StaffFunctionDto staffFunctionDto)
-    {
+    protected StaffFunction mapToStaffFunctionModel(StaffFunctionDto staffFunctionDto) {
         StaffFunction staffFunction = new StaffFunction();
         staffFunction.setFunctionId(staffFunctionDto.getFunctionId());
         staffFunction.setFunctionName(staffFunctionDto.getFunctionName());

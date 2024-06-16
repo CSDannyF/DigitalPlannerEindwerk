@@ -4,7 +4,6 @@ import GroepswerkJava.DigitalPlanner.dto.*;
 import GroepswerkJava.DigitalPlanner.exceptions.DuplicateStaffException;
 import GroepswerkJava.DigitalPlanner.model.*;
 import GroepswerkJava.DigitalPlanner.repository.*;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +15,7 @@ import java.util.*;
 import static java.time.temporal.ChronoUnit.HOURS;
 
 @Component
-//@Service
-public class PlanningServiceImpl implements PlanningService{
+public class PlanningServiceImpl implements PlanningService {
 
     @Autowired
     private PlanningRepository planningRepository;
@@ -44,9 +42,8 @@ public class PlanningServiceImpl implements PlanningService{
     private PlanningStatusService planningStatusService;
 
     @Override
-    public PlanningDto save(PlanningDto planningDto)
-    {
-        Planning planning =  mapToPlanningModel(planningDto);
+    public PlanningDto save(PlanningDto planningDto) {
+        Planning planning = mapToPlanningModel(planningDto);
         Planning newPlanning = planningRepository.save(planning);
         return mapToPlanningDto(newPlanning);
     }
@@ -57,14 +54,13 @@ public class PlanningServiceImpl implements PlanningService{
         return mapToPlanningDto(updatedPlanning);
     }
 
-
     @Override
     public PlanningDto savePlanningDetails(PlanningDto planningDto, ListPlanningDetailDto listPlanningDetailDto, String plannedBy) {
         WorkingDay workingDay = workingDayService.getById(planningDto.getWorkingDayDtoId());
         planningDto.setWorkingDayDto(workingDayService.mapToDto(workingDay));
 
         PlanningDto exising = getByWorkingDay(workingDayService.mapToDto(workingDay));
-        if(exising.getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned OK")){
+        if (exising.getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned OK")) {
             planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned OK"));
         } else {
             planningDto.setPlanningStatusDto(planningStatusService.findByPlanningStatusName("Planned NOK"));
@@ -141,15 +137,13 @@ public class PlanningServiceImpl implements PlanningService{
     @Override
     public List<PlanningDto> saveAll(List<PlanningDto> planningDtoList) {
         List<Planning> plannings = new ArrayList<>();
-        for(PlanningDto planningDto: planningDtoList)
-        {
+        for (PlanningDto planningDto : planningDtoList) {
             Planning planning = mapToPlanningModel(planningDto);
             plannings.add(planning);
         }
         List<Planning> newPlannings = planningRepository.saveAll(plannings);
         List<PlanningDto> newPlanningDtos = new ArrayList<>();
-        for(Planning newPlanning: newPlannings)
-        {
+        for (Planning newPlanning : newPlannings) {
             PlanningDto newPlanningDto = new PlanningDto();
             newPlanningDto = mapToPlanningDto(newPlanning);
             newPlanningDtos.add(newPlanningDto);
@@ -167,7 +161,7 @@ public class PlanningServiceImpl implements PlanningService{
     public boolean hasDuplicateStaff(List<PlanningDetailDto> planningDetails) {
         Set<String> staffNames = new HashSet<>();
         for (PlanningDetailDto detail : planningDetails) {
-            if(detail.getStaff() != null){
+            if (detail.getStaff() != null) {
                 if (!staffNames.add(detail.getStaff().getFirstName() + ", " + detail.getStaff().getLastName())) {
                     return true;
                 }
@@ -175,7 +169,6 @@ public class PlanningServiceImpl implements PlanningService{
         }
         return false;
     }
-
 
     //saves a range (start and end date) of sickness or absence unavailabilities
     @Override
@@ -185,7 +178,7 @@ public class PlanningServiceImpl implements PlanningService{
         Staff staff = staffService.getModelById(staffId);
         Optional<Availability> availabilityOpt = availabilityService.getModelById(unavailabilityId);
         Availability availability = null;
-        if(availabilityOpt.isPresent()){
+        if (availabilityOpt.isPresent()) {
             availability = availabilityOpt.get();
         }
 
@@ -193,19 +186,16 @@ public class PlanningServiceImpl implements PlanningService{
         while (!date.isAfter(endDate)) {
             WorkingDay workingDay = workingDayService.getModelByDate(date);
 
-            for(PlanningDetail planningDetail: workingDay.getPlanning().getPlanningDetails()){
-                if(planningDetail.getStaff() != null && planningDetail.getStaff().getStaffId() == staff.getStaffId()){
+            for (PlanningDetail planningDetail : workingDay.getPlanning().getPlanningDetails()) {
+                if (planningDetail.getStaff() != null && planningDetail.getStaff().getStaffId() == staff.getStaffId()) {
                     planningDetail.setStaff(null);
                     planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("OPEN SHIFT")));
-//                    planningDetail.setAvailability(availability);
                     workingDay.getPlanning().setPlanningStatus(planningStatusService.findByStatusName("Planned NOK"));
-
                 }
             }
             PlanningDetail planningDetail = new PlanningDetail();
             planningDetail.setStaff(staff);
             planningDetail.setAvailability(availability);
-//            workingDay.getPlanning().setPlanningStatus(planningStatusService.findByStatusName("Planned NOK"));
             planningDetail.setPlanning(workingDay.getPlanning());
             workingDay.getPlanning().getPlanningDetails().add(planningDetail);
 
@@ -221,20 +211,18 @@ public class PlanningServiceImpl implements PlanningService{
 
         List<StaffDto> staffList = staffService.getActiveStaff();
         //removing staff that is already planned on this day, staffList is for dropDown select
-        for(PlanningDetailDto planningDetailDto: planningDetails){
-            if(planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")
+        for (PlanningDetailDto planningDetailDto : planningDetails) {
+            if (planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")
                     || planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Sick")
-                    || planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Absence")){
+                    || planningDetailDto.getAvailability().getAvailabilityType().equalsIgnoreCase("Absence")) {
                 staffList.remove(planningDetailDto.getStaff());
             }
         }
         return staffList;
     }
 
-
     //Dto mappers
-
-    private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto){    //effe op public, stond op private
+    private WorkingDay mapFromWorkingDayDto(WorkingDayDto workingDayDto) {
         WorkingDay workingDay = new WorkingDay();
         workingDay.setWorkingDayId(workingDayDto.getWorkingDayId());
         workingDay.setDate(workingDayDto.getDate());
@@ -245,14 +233,14 @@ public class PlanningServiceImpl implements PlanningService{
         return workingDay;
     }
 
-    protected PlanningDto mapToPlanningDto(Planning planning){
+    protected PlanningDto mapToPlanningDto(Planning planning) {
         PlanningDto planningDto = new PlanningDto();
         PlanningStatusServiceImpl planningStatusService = new PlanningStatusServiceImpl(planningStatusRepository);
 
-        if(planning != null){
+        if (planning != null) {
 
             planningDto.setPlanningId(planning.getPlanningId()); //id zou hier via de WorkingDay moeten worden opgehaald (getByDate())
-            if(planning.getPlanningStatus() != null){
+            if (planning.getPlanningStatus() != null) {
 
                 //map to planningStatusDto
                 PlanningStatusDto planningStatusDto = planningStatusService.mapToPlanningStatusDto(planning.getPlanningStatus());
@@ -262,7 +250,7 @@ public class PlanningServiceImpl implements PlanningService{
             planningDto.setPlannedDate(planning.getPlannedDate());
             planningDto.setWorkingDayDtoId(planning.getWorkingDay().getWorkingDayId());
             List<PlanningDetailDto> planningDetailDtoList = new ArrayList<>();
-            for(PlanningDetail planningDetail: planning.getPlanningDetails()){
+            for (PlanningDetail planningDetail : planning.getPlanningDetails()) {
                 PlanningDetailDto planningDetailDto = mapToPlanningDetailDto(planningDetail);
                 planningDetailDtoList.add(planningDetailDto);
             }
@@ -274,24 +262,23 @@ public class PlanningServiceImpl implements PlanningService{
     }
 
     @Override
-    public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail){
+    public PlanningDetailDto mapToPlanningDetailDto(PlanningDetail planningDetail) {
         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
-        planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());  //setten van Id zou weg mogen als bij het mappen naar model de ID geset wordt via WorkingDay
+        planningDetailDto.setPlanningDetailId(planningDetail.getPlanningDetailId());
         planningDetailDto.setStartTime(planningDetail.getStartTime());
         planningDetailDto.setEndTime(planningDetail.getEndTime());
         planningDetailDto.setWorkMinutesPerDay(planningDetail.getWorkMinutesPerDay());
 
         StaffServiceImpl service = new StaffServiceImpl(staffRepository);
 
-        if(planningDetail.getStaff() != null){
+        if (planningDetail.getStaff() != null) {
             StaffDto staffDto = service.mapToStaffDto(planningDetail.getStaff());
             planningDetailDto.setStaff(staffDto);
         } else {
             planningDetailDto.setStaff(null);
-
         }
 
-        if(planningDetail.getAvailability() != null){
+        if (planningDetail.getAvailability() != null) {
             AvailabilityServiceImpl availabilityService1 = new AvailabilityServiceImpl();
             AvailabilityDto availabilityDto = availabilityService1.mapToAvailabilityDto(planningDetail.getAvailability());
             planningDetailDto.setAvailability(availabilityDto);
@@ -304,45 +291,38 @@ public class PlanningServiceImpl implements PlanningService{
         planningDetail.setStartTime(start);
         planningDetail.setEndTime(end);
         Staff staff = staffService.getModelById(staffId);
-        staff.setHoursInDebt(staff.getHoursInDebt () - (int) HOURS.between(start, end));
+        staff.setHoursInDebt(staff.getHoursInDebt() - (int) HOURS.between(start, end));
         planningDetail.setStaff(staffService.getModelById(staffId));
         planningDetail.setAvailability(availabilityService.mapToAvailabilityModel(availabilityService.getByAvailabilityType("Planned")));
 
         Planning planning = planningDetail.getPlanning();
 
         int plannedShifts = 0;
-        for(PlanningDetail detail: planning.getPlanningDetails()){
+        for (PlanningDetail detail : planning.getPlanningDetails()) {
             System.out.println(detail.getAvailability().getAvailabilityType());
-            if(detail.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")){
-                plannedShifts ++;
+            if (detail.getAvailability().getAvailabilityType().equalsIgnoreCase("Planned")) {
+                plannedShifts++;
             }
         }
-        if(plannedShifts >= planning.getWorkingDay().getMinimalOccupation()){
+        if (plannedShifts >= planning.getWorkingDay().getMinimalOccupation()) {
             planning.setPlanningStatus(planningStatusService.findByStatusName("Planned OK"));
             planningDetail.setPlanning(planning);
         }
         return planningDetail;
     }
 
-    protected Planning mapToPlanningModel(PlanningDto planningDto)
-    {
+    protected Planning mapToPlanningModel(PlanningDto planningDto) {
         Planning planning = new Planning();
 
         planning.setPlannedByStaff(planningDto.getPlannedByStaff());
         planning.setPlannedDate(planningDto.getPlannedDate());
         planning.setPlanningDetails(mapToPlanningDetailModel(planningDto.getPlanningDetails()));
 
-
-
         WorkingDay workingDay = workingDayRepository.findByDate(planningDto.getWorkingDayDto().getDate());
-        if(!workingDay.getPlanning().getPlanningDetails().isEmpty())
-        {
-            for (PlanningDetail repoPlanningDetail: workingDay.getPlanning().getPlanningDetails())
-            {
-                for (PlanningDetail mappedPlanningDetail: planning.getPlanningDetails())
-                {
-                    if(repoPlanningDetail.getStaff() == mappedPlanningDetail.getStaff())
-                    {
+        if (!workingDay.getPlanning().getPlanningDetails().isEmpty()) {
+            for (PlanningDetail repoPlanningDetail : workingDay.getPlanning().getPlanningDetails()) {
+                for (PlanningDetail mappedPlanningDetail : planning.getPlanningDetails()) {
+                    if (repoPlanningDetail.getStaff() == mappedPlanningDetail.getStaff()) {
                         mappedPlanningDetail.setPlanningDetailId(repoPlanningDetail.getPlanningDetailId());
                     }
                 }
@@ -355,49 +335,40 @@ public class PlanningServiceImpl implements PlanningService{
         planning.setWorkingDay(workingDayService.mapToWorkingDayModel(planningDto.getWorkingDayDto()));
 
         PlanningStatusServiceImpl planningStatusService = new PlanningStatusServiceImpl(planningStatusRepository);
-        if(planningDto.getPlanningStatusDto() != null){
+        if (planningDto.getPlanningStatusDto() != null) {
             PlanningStatus planningStatus = planningStatusService.mapToPlanningStatus(planningDto.getPlanningStatusDto());
             planning.setPlanningStatus(planningStatusRepository.findByPlanningStatusName(planningStatus.getPlanningStatusName()));
         }
 
-        for(PlanningDetail planningDetail: planning.getPlanningDetails())
-        {
+        for (PlanningDetail planningDetail : planning.getPlanningDetails()) {
             planningDetail.setPlanning(planning);
         }
-
-        return  planning;
+        return planning;
     }
 
-    protected List<PlanningDetail> mapToPlanningDetailModel(List<PlanningDetailDto> planningDetailDtoList)
-    {
+    protected List<PlanningDetail> mapToPlanningDetailModel(List<PlanningDetailDto> planningDetailDtoList) {
         List<PlanningDetail> planningDetails = new ArrayList<>();
 
-        for(PlanningDetailDto planningDetailDto: planningDetailDtoList)
-        {
-
+        for (PlanningDetailDto planningDetailDto : planningDetailDtoList) {
 
             PlanningDetail planningDetail = new PlanningDetail();
             planningDetail.setStartTime(planningDetailDto.getStartTime());
             planningDetail.setEndTime(planningDetailDto.getEndTime());
             planningDetail.setWorkMinutesPerDay(planningDetailDto.getWorkMinutesPerDay());
 
-            //TODO als er 2 personen met dezelfde naam zijn wordt de planning niet aangemaakt via email address
-
-            if(planningDetailDto.getStaff() != null){
+            if (planningDetailDto.getStaff() != null) {
                 Staff staff = staffRepository.findByStaffLastNameAndStaffFirstName(planningDetailDto.getStaff().getLastName(), planningDetailDto.getStaff().getFirstName());
                 planningDetail.setStaff(staff);
             } else {
                 planningDetail.setStaff(null);
             }
 
-            if(planningDetailDto.getAvailability() != null)
-            {
+            if (planningDetailDto.getAvailability() != null) {
                 Availability availability = availabilityService.mapToAvailabilityModel(planningDetailDto.getAvailability());
                 planningDetail.setAvailability(availability);
             }
             planningDetails.add(planningDetail);
         }
-
         return planningDetails;
     }
 }
