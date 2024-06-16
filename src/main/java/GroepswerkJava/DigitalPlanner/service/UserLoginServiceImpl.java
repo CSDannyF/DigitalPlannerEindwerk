@@ -89,7 +89,6 @@ public class UserLoginServiceImpl implements UserLoginService {
         }
         user.setUserImageData(image);
 
-        //TODO delete? user.setRoles(Arrays.asList(role));
         UserLogin newUserLogin = userLoginRepository.save(user);
         return mapToUserLoginDto(newUserLogin);
     }
