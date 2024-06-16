@@ -55,7 +55,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
-                               Model model, @RequestParam("avatar") MultipartFile file) throws IOException {
+                               Model model){
         UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
 
         if (existing.getEmail() != null) {
@@ -65,17 +65,6 @@ public class AuthController {
             model.addAttribute("user", userLoginDto);
             return "register";
         }
-
-
-        if ((!file.isEmpty())) {
-            byte[] imageData = ImageConverter.convertImageToByteArray(file.getInputStream());
-            userLoginDto.setUserImageData(imageData);
-        }
-
-
-
-
-
         userLoginService.saveUser(userLoginDto);
         return "redirect:/login";
     }

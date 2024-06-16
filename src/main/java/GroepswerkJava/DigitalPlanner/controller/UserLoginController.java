@@ -51,6 +51,7 @@ public class UserLoginController
     @GetMapping("/newUserPassword")
     public String newPassword(Model model)
     {
+
         //model.addAttribute("password2", "");
         model.addAttribute("userLogin", new UserLoginDto());
         return "newUserPassword";
@@ -69,10 +70,22 @@ public class UserLoginController
         model.addAttribute("staff", userLogin.getStaffDto());
         model.addAttribute("loggedInUser", loggedInUser);
 
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+        String email = authentication.getName();
+
 
         // Verwerken van de avatar
-        if (userLogin.getAvatar() == null) {
-                result.rejectValue("avatar", null, "Failed to upload the image.");
+        if (userLogin.getAvatar().getOriginalFilename() == "") {
+            result.rejectValue("avatar", null, "Failed to upload the image.");
         }
         if (result.hasErrors()) {
             return "myProfile";
@@ -89,6 +102,21 @@ public class UserLoginController
                                   Authentication authentication,
                                   Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+
+        String firstName = authentication.getName().split("@")[0];
+
+        StatisticsDto statisticsDto = companyService.getStatistics();
+
+        model.addAttribute("statistics", statisticsDto);
+        model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("firstName", firstName);
+        String email = authentication.getName();
+
         if (!userLogin.getPassword().equals(password2))
         {
             result.rejectValue("password", null, "Password 1 and 2 are not the same");
@@ -99,7 +127,7 @@ public class UserLoginController
         }
 
         //Hier komt de user terecht als hij een dummy wachtwoord heeft en hij deze nog moet veranderen
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        loggedInUser = userLoginService.getByEmail(authentication.getName());
         userLogin.setId(loggedInUser.getId());
         userLogin.setEmail(loggedInUser.getEmail());
 

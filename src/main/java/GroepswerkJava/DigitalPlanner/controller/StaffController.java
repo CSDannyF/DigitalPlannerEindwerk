@@ -183,8 +183,12 @@ public class StaffController
                                   @RequestParam("contractTypeId") long contractTypeId,
                                   @RequestParam(value = "daysOffWeekId", required = false) String daysOffWeekId,
                                   BindingResult result,
+                                  Authentication authentication,
                                   Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         StaffDto staffFromDb = staffService.getById(staffId);
         model.addAttribute("userLogin",userLoginDto);
         model.addAttribute("staffDto", staffFromDb);
@@ -306,6 +310,9 @@ public class StaffController
                             BindingResult result,
                             Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         //Model attributen teruggeven, anders kan hij de pagina niet opnieuw inladen
         model.addAttribute("departmentDto", new DepartmentDto());
         model.addAttribute("staffFunctionDto", new StaffFunction());

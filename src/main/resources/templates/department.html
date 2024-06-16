@@ -63,7 +63,7 @@
                                 <label class="form-label">New Department
                                     <input th:field="*{departmentName}" type="text" placeholder="name" class="form-control" required>
                                     <p class="text-danger" th:if="${#fields.hasErrors('departmentName')}" th:errors="*{departmentName}"></p>
-                                    <div class="invalid-feedback">Department name address is required</div>
+                                    <div class="invalid-feedback">Department name is required</div>
                                 </label>
                             </div>
 

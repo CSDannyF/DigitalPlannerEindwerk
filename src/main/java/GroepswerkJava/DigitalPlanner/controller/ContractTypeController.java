@@ -70,6 +70,9 @@ public class ContractTypeController {
                                    BindingResult result,
                                    Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<ContractTypeDto> contractTypeDtos;
         contractTypeDtos = contractTypeService.getAll();
         model.addAttribute("contractTypes", contractTypeDtos);
@@ -176,6 +179,9 @@ public class ContractTypeController {
                                          @ModelAttribute("contractType") ContractTypeDto contractTypeDto,
                                          BindingResult result, Authentication authentication, Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -190,13 +196,15 @@ public class ContractTypeController {
 
         //bestaande type wijzigen en checken als deze al dan niet bestaat (moet uniek zijn)
         ContractTypeDto existing = contractTypeService.getByContractTypeName(contractTypeDto.getContractTypeName());
-        if (existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()) && !contractTypeDto.getContractTypeName().equals(contractTypeName))
-        {
-            result.rejectValue("contractTypeName", null, "The contracttype name has to be unique");
-        }
-        if (result.hasErrors())
-        {
-            return "/editContractType";
+        if (existing.getContractTypeName() != null) {
+            if (existing.getContractTypeName().equals(contractTypeDto.getContractTypeName()) && !contractTypeDto.getContractTypeName().equals(contractTypeName))
+            {
+                result.rejectValue("contractTypeName", null, "The contracttype name has to be unique");
+            }
+            if (result.hasErrors())
+            {
+                return "/editContractType";
+            }
         }
 
         ContractTypeDto contractTypeDto1 = contractTypeService.getByContractTypeName(contractTypeName);

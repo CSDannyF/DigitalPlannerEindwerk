@@ -36,7 +36,6 @@ public class StaffFunctionController {
     @GetMapping("/staffFunction")
     public String staffFunction(Model model, Authentication authentication)
     {
-
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         model.addAttribute("loggedInUser", loggedInUser);
 
@@ -65,8 +64,12 @@ public class StaffFunctionController {
     @PostMapping("/staffFunction")
     public String saveStaffFunction(@ModelAttribute("staffFunction") StaffFunctionDto staffFunctionDto,
                                     BindingResult result,
+                                    Authentication authentication,
                                     Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<StaffFunctionDto> staffFunctionDtos;
         staffFunctionDtos = staffFunctionService.getAll();
         model.addAttribute("staffFunctions", staffFunctionDtos);
@@ -87,8 +90,10 @@ public class StaffFunctionController {
 
     @GetMapping("/deleteStaffFunction")
     public String deleteStaffFunction(@RequestParam String functionName,
-                                      Model model, Authentication authentication)
+                                      Model model,
+                                      Authentication authentication)
     {
+        checkSetup(model);
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         model.addAttribute("loggedInUser", loggedInUser);
 
@@ -132,7 +137,7 @@ public class StaffFunctionController {
     {
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
         model.addAttribute("loggedInUser", loggedInUser);
-        
+
         StaffFunctionDto staffFunctionDto = staffFunctionService.getByStaffFunctionName(functionName);
         model.addAttribute("staffFunction", staffFunctionDto);
 
@@ -155,6 +160,8 @@ public class StaffFunctionController {
                                           @ModelAttribute("staffFunction") StaffFunctionDto staffFunctionDto,
                                           BindingResult result, Authentication authentication, Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -168,14 +175,17 @@ public class StaffFunctionController {
         model.addAttribute("firstName", firstName);
 
         StaffFunctionDto existing = staffFunctionService.getByStaffFunctionName(staffFunctionDto.getFunctionName());
-        if (existing.getFunctionName().equals(staffFunctionDto.getFunctionName()) && !staffFunctionDto.getFunctionName().equals(functionName))
-        {
-            result.rejectValue("functionName", null, "The Staff function has to be unique");
+        if (existing.getFunctionName() != null) {
+            if (existing.getFunctionName().equals(staffFunctionDto.getFunctionName()) && !staffFunctionDto.getFunctionName().equals(functionName))
+            {
+                result.rejectValue("functionName", null, "The Staff function has to be unique");
+            }
+            if (result.hasErrors())
+            {
+                return "/editStaffFunction";
+            }
         }
-        if (result.hasErrors())
-        {
-            return "/editStaffFunction";
-        }
+
 
         StaffFunctionDto staffFunctionDto1 = staffFunctionService.getByStaffFunctionName(functionName);
         staffFunctionDto.setFunctionId(staffFunctionDto1.getFunctionId());

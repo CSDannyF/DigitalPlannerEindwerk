@@ -66,6 +66,9 @@ public class DepartmentController {
                                  BindingResult result,
                                  Model model, Authentication authentication)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
         model.addAttribute("departments" ,departmentDtos);
@@ -170,6 +173,9 @@ public class DepartmentController {
                                        @ModelAttribute("department") DepartmentDto departmentDto,
                                        BindingResult result, Authentication authentication, Model model)
     {
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        model.addAttribute("loggedInUser", loggedInUser);
+
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
 
@@ -182,14 +188,17 @@ public class DepartmentController {
         model.addAttribute("firstName", firstName);
 
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
-        if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName))
-        {
-            result.rejectValue("departmentName", null, "The department name has to be unique");
+        if (existing.getDepartmentName() != null){
+            if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName))
+            {
+                result.rejectValue("departmentName", null, "The department name has to be unique");
+            }
+            if (result.hasErrors())
+            {
+                return "/editDepartment";
+            }
         }
-        if (result.hasErrors())
-        {
-            return "/editDepartment";
-        }
+
 
         DepartmentDto departmentDto1 = departmentService.getByDepartmentName(departmentName);
         departmentDto.setDepartmentId(departmentDto1.getDepartmentId());

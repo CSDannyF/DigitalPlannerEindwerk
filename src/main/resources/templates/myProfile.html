@@ -108,11 +108,13 @@
               <div class="col">
                 <form th:action="@{/saveImage}" th:object="${loggedInUser}" method="post" enctype="multipart/form-data">
                   <div class="form-group">
-                    <label for="avatar">Profile Avatar</label>
+                    <label for="avatar">Profile Avatar
                     <input th:field="*{avatar}" type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+                    <p class="text-danger" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></p>
                     <div class="avatar-preview">
                       <img id="avatar-preview" src="#" alt="Preview">
                     </div>
+                    </label>
                   </div>
                   <br>
                   <button class="btn btn-primary" type="submit">Save image</button>
