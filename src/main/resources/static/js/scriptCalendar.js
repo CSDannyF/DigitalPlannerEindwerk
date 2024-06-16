@@ -264,25 +264,40 @@ updateUIWithData = (data) => {
 
             // Check if it's an open shift to color it red
             if (!detail.staff) {
-                detailDiv.classList.add('openShift');
-                const button = document.createElement('button');
-                button.textContent = 'Assign';
-                button.classList.add('btn', 'btn-primary', 'ms-2');
-                button.addEventListener('click', () => {
-                    assignShift(detail.planningDetailId);
-                });
+                if(isAdmin()){
+                    console.log("is admin");
+                    detailDiv.classList.add('openShift');
+                    const button = document.createElement('button');
+                    button.textContent = 'Edit';
+                    button.classList.add('btn', 'btn-primary', 'ms-2');
+                    button.addEventListener('click', () => {
+                        editShift(detail.planningDetailId);
+                    });
+                    detailDiv.appendChild(button);
 
-                detailDiv.appendChild(button);
+                } else {
+                    console.log("is not admin");
+                    detailDiv.classList.add('openShift');
+                    const button = document.createElement('button');
+                    button.textContent = 'Assign';
+                    button.classList.add('btn', 'btn-primary', 'ms-2');
+                    button.addEventListener('click', () => {
+                        assignShift(detail.planningDetailId);
+                    });
+                    detailDiv.appendChild(button);
+                }
+
+
             } else {
                 // Check isAdmin status before creating edit button
                 if (isAdmin()) {
                     const editButton = document.createElement('button');
-                            editButton.textContent = 'Edit';
-                            editButton.classList.add('btn', 'btn-primary', 'ms-2', 'edit-button');
-                            editButton.addEventListener('click', () => {
-                                editShift(detail.planningDetailId);
-                            });
-                            detailDiv.appendChild(editButton);
+                    editButton.textContent = 'Edit';
+                    editButton.classList.add('btn', 'btn-primary', 'ms-2', 'edit-button');
+                    editButton.addEventListener('click', () => {
+                        editShift(detail.planningDetailId);
+                    });
+                    detailDiv.appendChild(editButton);
                 }
             }
             detailDiv.appendChild(nameDiv);

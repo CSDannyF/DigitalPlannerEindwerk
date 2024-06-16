@@ -30,11 +30,11 @@ public class CompanyController {
     @Autowired
     private WorkingDayService workingDayService;
 
-    @Autowired StaffService staffService;
+    @Autowired
+    StaffService staffService;
 
     @GetMapping("/company")
-    public String showNewCompanyForm(Model model, Authentication authentication)
-    {
+    public String showNewCompanyForm(Model model, Authentication authentication) {
         checkSetup(model);
 
         CompanyDto companyDto = new CompanyDto();
@@ -56,16 +56,13 @@ public class CompanyController {
     @PostMapping("/company")
     public String saveCompany(@ModelAttribute("company") CompanyDto companyDto,
                               BindingResult result,
-                              Model model)
-    {
+                              Model model) {
         checkSetup(model);
 
-        if (companyDto.getName().equals(""))
-        {
+        if (companyDto.getName().equals("")) {
             result.rejectValue("name", null, "The company needs a name!");
         }
-        if (result.hasErrors())
-        {
+        if (result.hasErrors()) {
             return "newCompany";
         }
 
@@ -75,8 +72,7 @@ public class CompanyController {
     }
 
     @GetMapping("company/openingdays")
-    public String openingDayForm(Model model, Authentication authentication)
-    {
+    public String openingDayForm(Model model, Authentication authentication) {
         checkSetup(model);
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
@@ -103,8 +99,7 @@ public class CompanyController {
     }
 
     @GetMapping("company/exception")
-    public String exceptionForm(Model model, Authentication authentication)
-    {
+    public String exceptionForm(Model model, Authentication authentication) {
         checkSetup(model);
 
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -122,15 +117,15 @@ public class CompanyController {
     }
 
     @PostMapping("company/exception")
-    public String saveException(@ModelAttribute WorkingDay exceptionDay, Model model){
+    public String saveException(@ModelAttribute WorkingDay exceptionDay, Model model) {
         workingDayService.updateWorkingDay(exceptionDay);
-        WorkingDay workingDay= new WorkingDay();
+        WorkingDay workingDay = new WorkingDay();
         model.addAttribute("exceptionDay", workingDay);
         return "yearlyExceptions";
     }
 
     //TODO replace this function to extract daysOfWeek from DB
-    public OpeningDaysDto getWeekDto(){
+    public OpeningDaysDto getWeekDto() {
         OpeningDaysDto openingDaysDto = new OpeningDaysDto();
         openingDaysDto.addOpeningDay(new WeeklyOpeningDay("Monday"));
         openingDaysDto.addOpeningDay(new WeeklyOpeningDay("Tuesday"));
@@ -142,8 +137,7 @@ public class CompanyController {
         return openingDaysDto;
     }
 
-    private void checkSetup(Model model)
-    {
+    private void checkSetup(Model model) {
         boolean isSetupDone = companyService.isSetupDone();
         boolean isCompanyEmpty = companyService.getAll().isEmpty();
 
