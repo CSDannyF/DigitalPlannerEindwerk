@@ -105,14 +105,15 @@
                 <h5 th:text="${loggedInUser.email}"></h5>
               </div>
 
+
               <div class="col">
                 <form th:action="@{/saveImage}" th:object="${loggedInUser}" method="post" enctype="multipart/form-data">
                   <div class="form-group">
                     <label for="avatar">Profile Avatar
-                    <input th:field="*{avatar}" type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
-                    <p class="text-danger" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></p>
+                    <input th:field="*{avatar}"  type="file" class="form-control-file" id="avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+                      <p class="text-danger" th:if="${#fields.hasErrors('avatar')}" th:errors="*{avatar}"></p>
                     <div class="avatar-preview">
-                      <img id="avatar-preview" src="#" alt="Preview">
+                      <img id="avatar-preview" th:src="@{'data:image/jpeg;base64,' + ${loggedInUser.userImage}}" alt="Preview">
                     </div>
                     </label>
                   </div>
@@ -127,6 +128,7 @@
           <a class="btn btn-primary" th:href="@{/newUserPassword}">Edit email and Password</a>
 
         </div>
+
       </div>
     </div>
   </div>
