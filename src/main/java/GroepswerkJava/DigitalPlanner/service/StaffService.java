@@ -17,6 +17,9 @@ public interface StaffService {
     void saveAllStaff(List<StaffDto> staffList);
     StaffDto getById(long id);
     List<StaffDto> getAll();
+
+    StaffDto mapToStaffDto(Staff staff);
+
     Staff mapToStaffModel(StaffDto staffDto);
     void updateStaff(StaffDto staffDto);
     int getTotalStaffContractHours();

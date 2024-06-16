@@ -283,6 +283,10 @@ public class PlannerController {
         WorkingDayDto workingDayDto = workingDayService.mapToDto(workingDay);
 
         List<StaffDto> staffList = planningService.getAvailableStaff(workingDayDto.getPlanningDto().getPlanningDetails());
+        if(planningDetail.getStaff() != null){
+            staffList.addFirst(staffService.mapToStaffDto(planningDetail.getStaff()));
+        }
+
 
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
