@@ -8,7 +8,6 @@ import GroepswerkJava.DigitalPlanner.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -56,9 +55,10 @@ public class PlannerV2 implements PlanningGenerator {
             List<PlanningDto> planningList;
             List<DaysOffWeek> daysOffWeekList = sortWorkingDaysForComplexity(workingDays);
 
-            checkIfWeekAlreadyPlanned(workingDays, staff);
+            checkIfWeekAlreadyPlanned(workingDays, staff, logging);
 
-            planningList = populateShifts(workingDays, daysOffWeekList, staff, dayCounter);
+
+            planningList = populateShifts(workingDays, daysOffWeekList, staff, dayCounter, logging);
             response.setPlanningList(planningList);
         }
         staffService.saveAllStaff(staff);
@@ -68,7 +68,9 @@ public class PlannerV2 implements PlanningGenerator {
 
 
     private List<PlanningDto> populateShifts(List<WorkingDayDto> workingDays, List<DaysOffWeek> daysOffWeekList,
-                                             List<StaffDto> staff, int dayCounter) {
+                                             List<StaffDto> staff, int dayCounter, List<LogDetailDto> logging) {
+
+        logDetailService.addLog(logging, "Start creating shifts.", LogType.INFO);
 
         int totalShiftTime = 8;
         List<PlanningDto> planningList = new ArrayList<>();
@@ -88,6 +90,8 @@ public class PlannerV2 implements PlanningGenerator {
                 if (currentStatus.equalsIgnoreCase("Not planned")
                         || currentStatus.equalsIgnoreCase("Planned NOK")) {
                     List<StaffDto> availableStaff = getAvailableStaff(day, new ArrayList<>(staff));
+                    logDetailService.addLog(logging, "Start planning " + day.getDate().getDayOfWeek() + ".", LogType.INFO);
+
 
                     //Get amount of shifts that needs to be planned
                     int requiredShifts = day.getMinimalOccupation();
@@ -97,9 +101,13 @@ public class PlannerV2 implements PlanningGenerator {
                     // if planned (manually) but not ok, get amount of shifts that still needs to be planned
                     if (day.getPlanningDto().getPlanningStatusDto().getPlanningStatusName().equalsIgnoreCase("Planned NOK")) {
                         requiredShifts -= day.getPlanningDto().getPlanningDetails().size();
+                        logDetailService.addLog(logging, requiredShifts + " Shifts are needed for this day.", LogType.INFO);
+
                     }
 
                     for (int shiftCounter = 0; shiftCounter < requiredShifts; shiftCounter++) {
+                        logDetailService.addLog(logging, "Start planning shift " + (shiftCounter + 1), LogType.INFO);
+
                         PlanningDetailDto planningDetailDto = new PlanningDetailDto();
                         StaffDto assignedStaff = null;
 
@@ -108,8 +116,12 @@ public class PlannerV2 implements PlanningGenerator {
                             assignedStaff = availableStaff.getFirst();
                             planningStatus = "Planned OK";
 
-                            totalShiftTime = getShiftTime(assignedStaff, openHours, dayCounter);
+                            logDetailService.addLog(logging, "Shift " + (shiftCounter + 1) + " is assigned to "
+                                    + assignedStaff.getFirstName() + ", " + assignedStaff.getLastName(), LogType.INFO);
+
+                            totalShiftTime = getShiftTime(assignedStaff, openHours, dayCounter, logging);
                             assignedStaff.setHoursInDebt(assignedStaff.getHoursInDebt() - totalShiftTime);
+
 
                         } else {
                             planningStatus = "Planned NOK";
@@ -182,7 +194,9 @@ public class PlannerV2 implements PlanningGenerator {
     }
 
     // calculates length of a shift, if too many hoursInDebt, set shift to 9 instead of 8 hours
-    private int getShiftTime(StaffDto planStaff, int dayHours, int dayCounter) {
+    private int getShiftTime(StaffDto planStaff, int dayHours, int dayCounter, List<LogDetailDto> logging) {
+        logDetailService.addLog(logging, "Calculating shift length", LogType.INFO);
+
         int hoursPerShift = 8;
 
         if (planStaff != null) {
@@ -196,6 +210,8 @@ public class PlannerV2 implements PlanningGenerator {
         if (dayHours <= 8) {
             hoursPerShift = dayHours;
         }
+        logDetailService.addLog(logging, "shift time: " + hoursPerShift + "h", LogType.INFO);
+
         return hoursPerShift;
 
     }
@@ -305,7 +321,9 @@ public class PlannerV2 implements PlanningGenerator {
     // not a great method, probably better way to determine if a week is planned.
     // if a week has more than 3 days that are not planned, it is seen as an unplanned week, and thus
     // hoursInDebt for the staff are set by their contract hoursPerWeek
-    private void checkIfWeekAlreadyPlanned(List<WorkingDayDto> workingDays, List<StaffDto> staff) {
+    private void checkIfWeekAlreadyPlanned(List<WorkingDayDto> workingDays, List<StaffDto> staff, List<LogDetailDto> logging) {
+        logDetailService.addLog(logging, "Check if week is already planned.", LogType.INFO);
+
         int counter = 0;
         for (WorkingDayDto workingDayDto : workingDays) {
             String status = workingDayDto.getPlanningDto().getPlanningStatusDto().getPlanningStatusName();
@@ -315,6 +333,10 @@ public class PlannerV2 implements PlanningGenerator {
         }
         if (counter > 3) {
             setStaffHoursInDebt(staff, workingDays);
+            logDetailService.addLog(logging, "Week is not yet fully planned.", LogType.INFO);
+        } else{
+            logDetailService.addLog(logging, "Week is already planned.", LogType.INFO);
+
         }
     }
 

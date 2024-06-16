@@ -49,7 +49,6 @@ public class PlanningServiceImpl implements PlanningService{
         Planning planning =  mapToPlanningModel(planningDto);
         Planning newPlanning = planningRepository.save(planning);
         return mapToPlanningDto(newPlanning);
-        //TODO nog geimplementeerd worden
     }
 
     @Override

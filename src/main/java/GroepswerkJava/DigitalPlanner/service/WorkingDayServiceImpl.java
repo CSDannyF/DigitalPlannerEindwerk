@@ -74,7 +74,6 @@ public class WorkingDayServiceImpl implements WorkingDayService {
             workingDay.setMinimalOccupation(exceptionDay.getMinimalOccupation());
             workingDayRepository.save(workingDay);
         } else {
-            // TODO gebruik logger
             System.out.println("error: no working day found by this date");
         }
     }

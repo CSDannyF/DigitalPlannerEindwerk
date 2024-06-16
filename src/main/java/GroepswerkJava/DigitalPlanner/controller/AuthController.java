@@ -69,17 +69,4 @@ public class AuthController {
         return "redirect:/login";
     }
 
-
-//    TODO <--> Nice to have? Show list of staff with button to update staff role to admin
-//    @GetMapping("/users")
-//    public String listRegisteredUsers(Model model){
-//        model.addAttribute("users", userLoginService.findAllUsers());
-//        return "users";
-//    }
-//
-//    @GetMapping("/users/edit/{id}")
-//    public String editUserRole(@PathVariable Long id, Model model){
-//        model.addAttribute("user", userLoginService.findById(id));
-//        return "editUser";
-//    }
 }

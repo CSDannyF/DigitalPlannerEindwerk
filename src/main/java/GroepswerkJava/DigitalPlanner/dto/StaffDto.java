@@ -50,10 +50,11 @@ public class StaffDto
    private int hoursInDebt;
 
 
-//   private int weeklyHoursLeft;
 
-   // TODO always implement equals and hashcode together, not one and not the other
-
+   @Override
+   public int hashCode() {
+      return Objects.hash(firstName, lastName, startDate);
+   }
 
 
    @Override
