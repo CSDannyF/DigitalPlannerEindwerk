@@ -29,10 +29,6 @@ public class Log {
     @JoinColumn(name = "planningId")
     private Planning planning;
 
-    @ManyToOne
-    @JoinColumn(name = "staffId")
-    private Staff plannedByStaff;
-
     @Column(name = "plannedDate")
     private LocalDate plannedDate;
 

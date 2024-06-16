@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -38,8 +40,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
 
     @Override
-    public UserLoginDto saveUser(UserLoginDto userLoginDto)
-    {
+    public UserLoginDto saveUser(UserLoginDto userLoginDto) {
         UserLogin user = new UserLogin();
         user.setEmail(userLoginDto.getEmail());
 
@@ -80,6 +81,13 @@ public class UserLoginServiceImpl implements UserLoginService {
         if (userLoginDto.getUserImageData() != null) {
             user.setUserImageData(userLoginDto.getUserImageData());
         }
+        byte[] image = new byte[0];
+        try {
+            image = convertDefaultImage("src/main/resources/static/images/dashboard/logo.png");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        user.setUserImageData(image);
 
         //TODO delete? user.setRoles(Arrays.asList(role));
         UserLogin newUserLogin = userLoginRepository.save(user);
@@ -261,5 +269,11 @@ public class UserLoginServiceImpl implements UserLoginService {
         user.setRoleName("ROLE_USER");
         roleRepository.save(admin);
         roleRepository.save(user);
+    }
+
+    private byte[] convertDefaultImage(String url) throws IOException {
+        File file = new File(url);
+        byte[] image = Files.readAllBytes(file.toPath());
+        return image;
     }
 }
