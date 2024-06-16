@@ -34,27 +34,23 @@ public class DepartmentController {
     private UserLoginService userLoginService;
 
     @GetMapping("/department")
-    public String department(Model model, Authentication authentication)
-    {
+    public String department(Model model,
+                             Authentication authentication) {
+
         Department department = new Department();
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
 
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
-
         checkSetup(model);
 
-        model.addAttribute("departments" ,departmentDtos);
-        model.addAttribute("department", department);
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("departments", departmentDtos);
+        model.addAttribute("department", department);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
@@ -64,35 +60,30 @@ public class DepartmentController {
     @PostMapping("/department")
     public String saveDepartment(@ModelAttribute("department") DepartmentDto departmentDto,
                                  BindingResult result,
-                                 Model model, Authentication authentication)
-    {
-        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+                                 Model model,
+                                 Authentication authentication) {
 
+        UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
+        checkSetup(model);
         List<DepartmentDto> departmentDtos;
         departmentDtos = departmentService.getAll();
-        model.addAttribute("departments" ,departmentDtos);
 
-        checkSetup(model);
-
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("departments", departmentDtos);
+        model.addAttribute("departments", departmentDtos);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
-        if (existing.getDepartmentName() != null)
-        {
+        if (existing.getDepartmentName() != null) {
             result.rejectValue("departmentName", null, "The department name has to be unique");
         }
-        if (result.hasErrors())
-        {
+        if (result.hasErrors()) {
             return "/department";
         }
 
@@ -103,39 +94,32 @@ public class DepartmentController {
     @GetMapping("/deleteDepartment")
     public String deleteDepartment(@RequestParam String departmentName,
                                    Model model,
-                                   Authentication authentication)
-    {
+                                   Authentication authentication) {
+
         checkSetup(model);
-
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
+        List<DepartmentDto> departmentDtos = departmentService.getAll();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
-
-        List<DepartmentDto> departmentDtos = departmentService.getAll();
         model.addAttribute("departments", departmentDtos);
         model.addAttribute("department", new DepartmentDto());
 
         List<StaffDto> staffDtos = staffService.getAll();
         boolean stillLinked = false;
-        for(StaffDto staffDto: staffDtos)
-        {
+        for (StaffDto staffDto : staffDtos) {
             if (staffDto.getDepartment().getDepartmentName().equals(departmentName)) {
                 stillLinked = true;
                 break;
             }
         }
-        if (stillLinked)
-        {
+        if (stillLinked) {
             model.addAttribute("errorMessage", "There are still staff members linked to this department.");
             return "/department";
         }
@@ -146,59 +130,53 @@ public class DepartmentController {
 
     @GetMapping("/editDepartment/{departmentName}")
     public String editDepartment(@PathVariable String departmentName,
-                                 Model model, Authentication authentication)
-    {
+                                 Model model,
+                                 Authentication authentication) {
+
         DepartmentDto departmentDto = departmentService.getByDepartmentName(departmentName);
-
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
-        model.addAttribute("department",departmentDto);
+        model.addAttribute("department", departmentDto);
         return "/editDepartment";
     }
 
     @PostMapping("/editDepartment/{departmentName}")
     public String saveEditedDepartment(@PathVariable String departmentName,
                                        @ModelAttribute("department") DepartmentDto departmentDto,
-                                       BindingResult result, Authentication authentication, Model model)
-    {
+                                       BindingResult result,
+                                       Authentication authentication,
+                                       Model model) {
+
         UserLoginDto loggedInUser = userLoginService.getByEmail(authentication.getName());
-        model.addAttribute("loggedInUser", loggedInUser);
+        checkSetup(model);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = isAdmin(authentication);
         String firstName = authentication.getName().split("@")[0];
-
         StatisticsDto statisticsDto = companyService.getStatistics();
 
+        model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("statistics", statisticsDto);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("firstName", firstName);
 
         DepartmentDto existing = departmentService.getByDepartmentName(departmentDto.getDepartmentName());
-        if (existing.getDepartmentName() != null){
-            if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName))
-            {
+        if (existing.getDepartmentName() != null) {
+            if (existing.getDepartmentName().equals(departmentDto.getDepartmentName()) && !departmentDto.getDepartmentName().equals(departmentName)) {
                 result.rejectValue("departmentName", null, "The department name has to be unique");
             }
-            if (result.hasErrors())
-            {
+            if (result.hasErrors()) {
                 return "/editDepartment";
             }
         }
-
 
         DepartmentDto departmentDto1 = departmentService.getByDepartmentName(departmentName);
         departmentDto.setDepartmentId(departmentDto1.getDepartmentId());
@@ -206,12 +184,17 @@ public class DepartmentController {
         return "redirect:/department";
     }
 
-    private void checkSetup(Model model)
-    {
+    private void checkSetup(Model model) {
         boolean isSetupDone = companyService.isSetupDone();
         boolean isDepartmentEmpty = departmentService.getAll().isEmpty();
 
         model.addAttribute("isDepartmentEmpty", isDepartmentEmpty);
         model.addAttribute("isSetupDone", isSetupDone);
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+        return isAdmin;
     }
 }

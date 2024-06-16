@@ -1,6 +1,5 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
-
 import GroepswerkJava.DigitalPlanner.dto.PlanningDto;
 import GroepswerkJava.DigitalPlanner.dto.WorkingDayDto;
 import GroepswerkJava.DigitalPlanner.service.PlanningDetailService;
@@ -25,13 +24,7 @@ public class CalendarController {
     private PlanningService planningService;
 
     @Autowired
-    PlanningDetailService planningDetailService;
-
-//    @Autowired
-//    public CalendarController(WorkingDayService workingDayService, PlanningService planningService) {
-//        this.workingDayService = workingDayService;
-//        this.planningService = planningService;
-//    }
+    private PlanningDetailService planningDetailService;
 
     //Gets the planning of a certain day
     @GetMapping("/planning")
@@ -49,24 +42,23 @@ public class CalendarController {
         if (planningDto == null) {
             return ResponseEntity.notFound().build(); // Return 404 if data not found
         }
-
         return ResponseEntity.ok(planningDto); // Return 200 with the retrieved data
     }
 
     //Gets the workingDay on a certain day
     @GetMapping("/workingDay")
     public ResponseEntity<?> getWorkingDays() {
-        List<WorkingDayDto> workingDaysDto = workingDayService.getAllDto();
 
+        List<WorkingDayDto> workingDaysDto = workingDayService.getAllDto();
         if (workingDaysDto == null) {
             return ResponseEntity.notFound().build(); // Return 404 if data not found
         }
-
         return ResponseEntity.ok(workingDaysDto); // Return 200 with the retrieved data
     }
 
     @PostMapping("/assignShift")
     public ResponseEntity<Map<String, String>> assignShift(@RequestBody Map<String, Long> request, Authentication authentication) {
+
         Long shiftId = request.get("shiftId");
         boolean isAssigned = planningDetailService.assignOpenShift(shiftId, authentication.getName());
 
@@ -76,9 +68,6 @@ public class CalendarController {
         } else {
             response.put("message", "assigning shift failed");
         }
-
-
         return ResponseEntity.ok(response);
     }
-
 }

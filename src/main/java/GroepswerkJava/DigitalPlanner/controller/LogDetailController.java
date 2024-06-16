@@ -17,12 +17,14 @@ public class LogDetailController {
 
     @PostMapping
     public ResponseEntity<LogDetailDto> saveLogDetail(@RequestBody LogDetailDto logDetailDto) {
+
         logDetailService.saveLogDetail(logDetailDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(logDetailDto);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LogDetailDto> findById(@PathVariable Long logDetailId) {
+
         LogDetailDto logDetailDto = logDetailService.findById(logDetailId);
         if (logDetailDto != null) {
             return ResponseEntity.ok(logDetailDto);
@@ -33,12 +35,14 @@ public class LogDetailController {
 
     @GetMapping("/allLogDetails")
     public ResponseEntity<List<LogDetailDto>> getAllLogDetails() {
+
         List<LogDetailDto> logDetailDtoList = logDetailService.findAllLogDetails();
         return ResponseEntity.ok(logDetailDtoList);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<LogDetailDto> updateLogDetail(@PathVariable Long logDetailId, @RequestBody LogDetailDto logDetailDto) {
+
         LogDetailDto updatedLogDetailDto = logDetailService.updateLogDetail(logDetailId, logDetailDto);
         if (updatedLogDetailDto != null) {
             return ResponseEntity.ok(updatedLogDetailDto);
@@ -49,6 +53,7 @@ public class LogDetailController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLogDetail(@PathVariable Long logDetailId) {
+
         logDetailService.deleteLogDetail(logDetailId);
         return ResponseEntity.noContent().build();
     }

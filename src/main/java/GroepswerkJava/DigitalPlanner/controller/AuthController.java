@@ -1,7 +1,6 @@
 package GroepswerkJava.DigitalPlanner.controller;
 
 import GroepswerkJava.DigitalPlanner.dto.UserLoginDto;
-import GroepswerkJava.DigitalPlanner.model.ImageConverter;
 import GroepswerkJava.DigitalPlanner.service.UserLoginService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +10,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Controller
 public class AuthController {
@@ -36,14 +31,10 @@ public class AuthController {
         return "index";
     }
 
-//    @PostMapping("/login")
-//    public String dashboard() {
-//        return "dashboard";
-//    }
-
     // handler method to handle user registration request
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
+
         UserLoginDto userLoginDto = new UserLoginDto();
         model.addAttribute("user", userLoginDto);
         return "register";
@@ -55,7 +46,8 @@ public class AuthController {
     @PostMapping("/register")
     public String registration(@Valid @ModelAttribute("user") UserLoginDto userLoginDto,
                                BindingResult result,
-                               Model model){
+                               Model model) {
+
         UserLoginDto existing = userLoginService.getByEmail(userLoginDto.getEmail());
 
         if (existing.getEmail() != null) {
@@ -68,18 +60,4 @@ public class AuthController {
         userLoginService.saveUser(userLoginDto);
         return "redirect:/login";
     }
-
-
-//    TODO <--> Nice to have? Show list of staff with button to update staff role to admin
-//    @GetMapping("/users")
-//    public String listRegisteredUsers(Model model){
-//        model.addAttribute("users", userLoginService.findAllUsers());
-//        return "users";
-//    }
-//
-//    @GetMapping("/users/edit/{id}")
-//    public String editUserRole(@PathVariable Long id, Model model){
-//        model.addAttribute("user", userLoginService.findById(id));
-//        return "editUser";
-//    }
 }
