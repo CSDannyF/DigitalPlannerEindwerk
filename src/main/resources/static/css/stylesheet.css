@@ -541,7 +541,8 @@ _______________*/
 }
 /*_______________*/
 
-/*  show day shifts when clicked on a day in the calendar */
+
+/*  show day shifts when clicked on a day in the calendar *//*
 #shiftsContainer {
     display: block;
     font-family: Arial, sans-serif;
@@ -673,13 +674,21 @@ _______________*/
       object-fit: cover;
 
     }
-#userImage {
-    min-width: 100px;
-    min-height: 100px;
+
+#userImageStaffList {
+    max-width: 60px;
+    max-height: 60px;
     width: auto;
     height: auto;
     object-fit: contain;
     border-radius: 50%;
+    }
+
+#userImage {
+    min-width: 75px; /* Nieuwe breedte */
+    min-height: 75px; /* Nieuwe hoogte */
+    object-fit: cover; /* Behoudt de aspect ratio en vult de ruimte */
+    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
 }
 .shiftName {
     flex: 0.95;
