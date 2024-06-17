@@ -7,8 +7,6 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
-
-
 </head>
 <body class="bg-light">
 
@@ -21,25 +19,18 @@
         <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
     </div>
 </div>
-
 <section class="text-center">
-
     <div class="p-5" id="loginBanner">
         <h1>Digital Planner</h1>
     </div>
-
-
     <div class="card w-50 mx-auto" id="loginCard">
         <div class="card-body py-5 px-md-5">
             <div class="row d-flex justify-content-center">
-
                 <h2>Company opening days</h2>
-
                 <form action="#" th:action="@{/company/exception}" th:object="${exceptionDay}" method="POST">
                     <fieldset>
                         <table style="width:100%" class="table">
                             <h4>Specify the yearly exceptions (for example, holidays, shopping Sunday,...) </h4>
-
                             <thead>
                             <tr>
                                 <th>Date</th>
@@ -50,7 +41,6 @@
                                 </th>
                             </tr>
                             </thead>
-
                             <tbody>
                             <td><input type="date" th:field="*{date}" class="form-control"/>
                             <td><input type="checkbox" id="box" value="false"

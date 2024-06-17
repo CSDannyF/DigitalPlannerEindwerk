@@ -7,7 +7,6 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
-
     <title>Edit shift</title>
 </head>
 <body class="bg-light text-dark">
@@ -21,7 +20,6 @@
         <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
     </div>
 </div>
-
 <section class="text-center">
 
     <!-- Upper background gradient -->
@@ -66,15 +64,6 @@
                     </div>
                 </form>
             </div>
-
-<!--            <div class="col-md-12 mt-3">-->
-<!--                <hr>-->
-<!--                <p>Delete this planning detail?</p>-->
-<!--                <form th:action="@{/planningDetails/delete/{id}(id=${planningDetail.planningDetailId})}" method="post">-->
-<!--                    <input type="hidden" name="_method" value="DELETE"/>-->
-<!--                    <button type="submit" class="btn btn-danger">Delete</button>-->
-<!--                </form>-->
-<!--            </div>-->
         </div>
     </div>
 </section>

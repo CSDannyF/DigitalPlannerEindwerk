@@ -7,10 +7,7 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
-
-
     <title>Create new company</title>
-
 </head>
 <body class="bg-light text-dark">
 
@@ -23,18 +20,14 @@
         <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
     </div>
 </div>
-
 <section class="text-center">
 
     <!-- Upper background gradient -->
     <div class="p-5" id="CompanyBanner">
         <h1>Digital Planner</h1>
     </div>
-
-
     <div class="card w-50 mx-auto" id="loginCard" >
         <div class="card-body py-5 px-md-5">
-
             <h2>Create company</h2>
             <div class="row justify-content-md-center">
                 <div class="col-3 align-self-center">
@@ -45,7 +38,6 @@
                                 placeholder="name"
                                 class="form-control">
                         <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
-
                         <br>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>

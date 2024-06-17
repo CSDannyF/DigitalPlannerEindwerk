@@ -38,15 +38,14 @@
 /* BODY */
 /*_______________*/
 body {
-
     /* Background */
     background-image: url('/images/dashboard/defaultBackground.jpg');
     background-size: cover;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* Zorgt ervoor dat de afbeelding gefixeerd blijft tijdens het scrollen */
+    background-attachment: fixed;
     background-position: center;
-    margin: 0; /* Verwijder eventuele standaardmarges van de body */
-    padding: 0; /* Verwijder eventuele standaardpadding van de body */
+    margin: 0;
+    padding: 0;
 
     /* Default font */
     font-family: 'Roboto', sans-serif;
@@ -58,7 +57,7 @@ body, h3, h4, h5, h6, p, label, input, button, span, a {
 }
 
 h2 {
-    font-weight: bold; /* Zorgt ervoor dat h2-elementen vetgedrukt zijn */
+    font-weight: bold;
 }
 /*_______________*/
 
@@ -66,28 +65,28 @@ h2 {
 /* DIGITAL PLANNER LOGO */
 /*_______________*/
 .logo-img {
-    max-width: 300px; /* Aanpassen aan de gewenste grootte */
-    max-height: 300px; /* Aanpassen aan de gewenste grootte */
-    height: auto; /* Behoudt de aspect ratio van de afbeelding */
-    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
-    background-color: rgba(211, 211, 211, 0.9); /* Lichtgrijze achtergrond met 80% opaciteit */
-    padding: 10px; /* Voegt wat ruimte toe rondom de afbeelding */
-    display: block; /* Zorgt ervoor dat de afbeelding correct wordt weergegeven */
-    margin: 20px auto 40px; /* Centreert de afbeelding en voegt wat ruimte onderaan toe */
+    max-width: 300px;
+    max-height: 300px;
+    height: auto;
+    border-radius: 50%;
+    background-color: rgba(211, 211, 211, 0.9);
+    padding: 10px;
+    display: block;
+    margin: 20px auto 40px;
 }
 
 /* REGISTER/LOGIN SCREEN (INDEX) */
 /*_______________*/
 .card {
-    background: hsla(0, 0%, 100%, 0.8); /* Lichtgekleurde achtergrond met 80% opaciteit */
-    backdrop-filter: blur(30px); /* Vervaagt de achtergrond voor een glasachtig effect */
-    margin-top: 50px; /* Ruimte boven de card, kan worden aangepast */
-    padding: 20px; /* Binnenste vulling van de card */
-    border-radius: 15px; /* Afronding van de hoeken */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Zachte schaduw */
+    background: hsla(0, 0%, 100%, 0.8);
+    backdrop-filter: blur(30px);
+    margin-top: 50px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 #loginCard {
-    margin-top: 50px; /* Aangepaste margin-top voor de card */
+    margin-top: 50px;
 }
 #loginCard .form-label {
     text-align: left;
@@ -132,34 +131,33 @@ a:hover {
   top: 0;
   left: 0;
   background-color: var(--blue-black);
-  color: #fff; /* Tekstkleur */
-
-  overflow-y: auto; /* Voeg scrollbalk toe voor de sidebar-inhoud indien nodig */
+  color: #fff;
+  overflow-y: auto;
 }
 
 #sidebarContent a {
-  color: #fff; /* Linkkleur */
+  color: #fff;
 }
 #sidebarContent a:hover {
-  color: #f8f9fa; /* Linkkleur bij hover */
+  color: #f8f9fa;
 }
 #sidebarContent .dropdown-menu {
-  background-color: #212529; /* Achtergrondkleur dropdown-menu */
+  background-color: #212529;
 }
 #sidebarContent .dropdown-menu a {
-  color: #fff; /* Kleur dropdown-link */
+  color: #fff;
 }
 #sidebarContent .dropdown-menu a:hover {
-  background-color: #343a40; /* Achtergrondkleur dropdown-link bij hover */
+  background-color: #343a40;
 }
 #sidebarContent .nav-link {
-  padding: .5rem .5rem; /* Padding voor nav-links */
+  padding: .5rem .5rem;
 }
 #sidebarContent .nav-link.active {
-  background-color: #495057; /* Achtergrondkleur actieve nav-link */
+  background-color: #495057;
 }
 #sidebarContent .dropdown-toggle::after {
-  display: none; /* Verberg dropdown-pijl */
+  display: none;
 }
 #sidebarContent .sidebar-header {
   padding: 1rem;
@@ -193,63 +191,31 @@ a:hover {
 }
 
 .avatar-image {
-    width: 100px; /* Pas dit aan naar de gewenste breedte */
-    height: 100px; /* Pas dit aan naar de gewenste hoogte */
-    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
-    margin-right: 10px; /* Optioneel: voegt wat ruimte toe aan de rechterkant */
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
-
 .hidden {
     display: none;
 }
 /*_______________*/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* HTML GENERAL
 /*_______________*/
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-
-
-
 .logo{
     position: fixed;
     top: 10px;
     right: 10px;
     width: 400px;
     height: auto;
-    z-index: -1; /* Places the logo behind other elements */
+    z-index: -1;
 }
-
-
 .banner {
   display: flex;
   flex-direction: column;
@@ -265,19 +231,11 @@ a:hover {
 _______________*/
 .dashboard-container {
     display: flex;
-    /*justify-content: flex-start;
-    align-items: flex-start; */
     width: 100%;
-    /*padding: 20px;
-    box-sizing: border-box;*/
+
     height: 100%;
 }
-
 /*_______________*/
-
-
-
-
 
 /* BACKGROUND IMAGE
 _______________*/
@@ -289,7 +247,7 @@ _______________*/
     height: 100%;
     background-size: cover;
     background-position: center;
-    z-index: -1; /* Duwt afbeelding naar achtergrond */
+    z-index: -1;
 }
 /*_______________*/
 
@@ -315,11 +273,9 @@ _______________*/
 
 /* CALENDAR
 _______________*/
-
-/* VOLLEDIGE KALENDER */
 #calendarMonth {
     display: flex;
-    flex-direction: column; /* Ensure calendar content stacks vertically */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 75vh;
@@ -573,10 +529,7 @@ _______________*/
     }
 }
 
-
-
 /* Add employee */
-
 .container {
     background-color: black;
     text-color: red;
@@ -588,8 +541,7 @@ _______________*/
 }
 /*_______________*/
 
-
-/*  show day shifts when clicked on a day in the calendar *//*
+/*  show day shifts when clicked on a day in the calendar */
 #shiftsContainer {
     display: block;
     font-family: Arial, sans-serif;
@@ -642,7 +594,6 @@ _______________*/
 }
 
 /* styling for edit planning */
-
 #editShifts{
         max-width: 100%;
         min-width: 480px;
@@ -662,7 +613,6 @@ _______________*/
 }
 
 /*styling for day that is fully planned */
-
 .calendar-day div.plannedOK {
 
         color: var(--green);
@@ -670,14 +620,11 @@ _______________*/
 }
 
 /*styling for day that is not fully planned */
-
 .calendar-day div.plannedNOK {
     background-color:  rgba(255, 0, 0, 0.3) ;
     color: white; /* Text color */
     border-radius: 15%;
-
 }
-
 
 /* styling for closed day*/
 .calendar-day div.closedDay {
@@ -685,9 +632,6 @@ _______________*/
         color: var(--red);
         border-radius: 15%;
 }
-
-
-
 
 /* styling for current day when open*/
 .calendar-day div.currOpenDay {
@@ -697,8 +641,6 @@ _______________*/
     border-radius: 15%;
 }
 
-
-
 /* styling for current day when closed*/
 .calendar-day div.currClosedDay {
     opacity: 0.2;
@@ -706,8 +648,6 @@ _______________*/
     color: var(--red);
     border-radius: 15%;
 }
-
-
 
 #weekPlanningContainer {
     max-width: 75%;
@@ -717,13 +657,9 @@ _______________*/
     margin-right: 10%;
 
 }
-
 .staffDetail .row {
     margin-bottom: 10px;"
 }
-
-
-
 .avatar-preview {
       width: 150px;
       height: 150px;
@@ -737,19 +673,18 @@ _______________*/
       object-fit: cover;
 
     }
-
 #userImage {
-    min-width: 75px; /* Nieuwe breedte */
-    min-height: 75px; /* Nieuwe hoogte */
-    object-fit: cover; /* Behoudt de aspect ratio en vult de ruimte */
-    border-radius: 50%; /* Maakt de afbeelding cirkelvormig */
+    min-width: 100px;
+    min-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 50%;
 }
-
 .shiftName {
     flex: 0.95;
     font-weight: bold;
 }
-
 .edit-button {
     margin-left: auto;
 }

@@ -7,9 +7,7 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
-
     <link rel="shortcut icon" href="#">
-
     <title>Week Planning Proposal</title>
 </head>
 <body>
@@ -21,33 +19,24 @@
 <div th:unless="${isAdmin}">
     <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
 </div>
-
-
 <div class="card " id="weekPlanningContainer">
     <h2 class="text-dark text-center">Week Planning Proposal</h2><br><br>
-
     <div th:if="${#lists.isEmpty(weekWrapper) or weekWrapper.?[planningDetails.empty].size() == weekWrapper.size()}"
          class="d-flex flex-column justify-content-center align-items-center">
         <h3 class="text-center text-black">This week has already been planned</h3>
         <a class="btn btn-primary mt-3" th:href="@{/dashboard}">Go back</a>
     </div>
-
     <div class="row" th:unless="${#lists.isEmpty(weekWrapper) or weekWrapper.?[planningDetails.empty].size() == weekWrapper.size()}">
-
         <div class="col" th:each="planning, iStat : ${weekWrapper}">
             <div class="card bg-Primary mb-3">
                 <div class="card-header text-center">
                     <h6>
-
-
                         <span th:style="${planning.planningStatusDto.planningStatusName == 'Planned NOK'} ? 'color: #C70039; font-size: 26px;' : 'color: green; font-size: 26px;'" th:text="${planning.workingDayDto.date.dayOfWeek}"></span><br>
                         <span style="color: black; font-size: 26px;" th:text="${#temporals.format(planning.workingDayDto.date, 'dd-MM-yy')}"></span><br><br>
                         <span style="color: black; font-size: 20px;" th:text="'Opening hours: ' + ${planning.workingDayDto.startTime} + ' - ' + ${planning.workingDayDto.endTime}"></span><br><br>
                         <span style="color: black; font-size: 16px;" th:text="'Min occupation = ' + ${planning.workingDayDto.minimalOccupation}"></span><br>
                     </h6>
                 </div>
-
-
                 <table class="table table-Primary table-striped table-hover">
                     <thead>
                     <tr>
@@ -59,7 +48,6 @@
                     <tr th:each="detail, jStat : ${planning.planningDetails}">
                         <td th:if="${detail.staff != null}" th:text="${detail.staff.firstName} + ', ' + ${detail.staff.lastName}"></td>
                         <td th:unless="${detail.staff != null}" th:style="'color: #C70039;'" th:text="'OPEN SHIFT'"></td>
-
                         <td th:if="${detail.startTime != null}"
                             th:text="${detail.startTime} + ' - ' + ${detail.endTime}"></td>
                         <td th:unless="${detail.startTime != null}" th:text="'FREE!'"></td>
@@ -79,7 +67,6 @@
 
     </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

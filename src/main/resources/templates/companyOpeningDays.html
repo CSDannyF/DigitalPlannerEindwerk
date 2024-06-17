@@ -23,23 +23,17 @@
 </div>
 
 <section class="text-center">
-
     <div class="p-5" id="loginBanner">
         <h1>Digital Planner</h1>
     </div>
-
-
     <div class="card w-50 mx-auto" id="loginCard">
         <div class="card-body py-5 px-md-5">
             <div class="row d-flex justify-content-center">
-
                 <h2>Company opening days</h2>
-
                 <form action="#" th:action="@{/company/openingdays}" th:object="${form}" method="POST">
                     <fieldset>
                         <table style="width:100%" class="table">
                             <h4>Specify the fixed weekly opening days</h4>
-
                             <thead>
                             <tr>
                                 <th>Day</th>
@@ -50,7 +44,6 @@
                                 </th>
                             </tr>
                             </thead>
-
                             <tbody>
                             <tr th:each="openingDays, itemStat: *{openingDaysList}">
                                 <input type="hidden" th:field="*{openingDaysList[__${itemStat.index}__].DayId}"/>

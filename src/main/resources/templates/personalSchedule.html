@@ -8,8 +8,6 @@
             crossorigin="anonymous"></script>
     <link th:href="@{/css/stylesheet.css}" type="text/css" rel="stylesheet">
     <title>My schedule</title>
-
-
     <style>
         .table td, .table th {
             padding: 0.5rem; /* Adjust the padding as needed */
@@ -17,7 +15,6 @@
     </style>
 </head>
 <br><br><br><br><br>
-
 <body class="bg-light">
 
 <!-- Insert sidebar fragment based on user role -->
@@ -27,17 +24,12 @@
 <div th:unless="${isAdmin}">
     <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
 </div>
-
 <section class="text-center">
     <div class="p-5" id="shiftBanner"></div>
-
-
     <div class="card w-50 mx-auto" id="loginCard">
         <div class="card-body py-5 px-md-5">
             <div class="row d-flex justify-content-center">
-
                 <h2>My Personal Schedule</h2>
-
                 <fieldset>
                     <div th:if="${shiftsByWeek == null or #lists.isEmpty(shiftsByWeek)}">
                         <p>There is no personal schedule yet.</p>
@@ -71,6 +63,5 @@
         </div>
     </div>
 </section>
-
 </body>
 </html>

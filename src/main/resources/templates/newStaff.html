@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:background-color="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
@@ -7,7 +7,6 @@
   <title>Digital Planner</title>
 </head>
 <body>
-
 <div class="container-flex">
 
   <!-- Insert sidebar fragment based on user role -->
@@ -17,103 +16,76 @@
   <div th:unless="${isAdmin}">
     <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
   </div>
-
   <div class="row justify-content-center">
     <div class="col-6">
-
       <div class="card" id="popupCard">
         <div class="card-header">
           <h3>New Staff</h3>
         </div>
         <div class="card-body">
-
           <form class="needs-validation" action="#" th:action="@{/staff/newStaff}" th:object="${staffDto}" method="post" novalidate>
             <div class="mb-5">
-
               <label class="form-label" for="firstName">First name
                 <input th:field="*{firstName}" type="text" placeholder="first name" class="form-control" id="firstName" required>
                 <div class="invalid-feedback">First name is required</div>
               </label>
-
               <label class="form-label float-right" for="lastName">Last name
                 <input th:field="*{lastName}" type="text" placeholder="last name" class="form-control" id="lastName" required>
                 <div class="invalid-feedback">Last name is required</div>
               </label>
-
               <label class="form-label" for="addressLine1">Address line 1
                 <input th:field="*{addressLine1}" type="text" placeholder="addressline1" class="form-control" id="addressLine1" required>
                 <div class="invalid-feedback">Address line 1 is required</div>
               </label>
-
               <label class="form-label">Address line 2
                 <input th:field="*{addressLine2}" type="text" placeholder="addressline2" class="form-control">
               </label>
-
               <label class="form-label" for="zipcode">Zipcode
                 <input th:field="*{zipcode}" type="text" placeholder="zipcode" class="form-control" id="zipcode" required>
                 <div class="invalid-feedback">Zipcode is required</div>
               </label>
-
               <label class="form-label" for="city">City
                 <input th:field="*{city}" type="text" placeholder="city" class="form-control" id="city" required>
                 <div class="invalid-feedback">City is required</div>
               </label>
-
               <label class="form-label" for="phoneNumber">Phone number
                 <input th:field="*{phoneNumber}" type="text" placeholder="phonenumber" class="form-control" id="phoneNumber" required>
                 <div class="invalid-feedback">Phone number is required</div>
               </label>
-
               <label class="form-label" for="birthDate">Birth date
                 <input th:field="*{birthDate}" type="date" class="form-control" id="birthDate" required>
                 <div class="invalid-feedback">Birth date is required</div>
               </label>
-
               <label class="form-label" th:object="${userLogin}" for="email">Email
                 <input th:field="*{email}" type="email" placeholder="email" class="form-control" id="email" required>
                 <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                 <div class="invalid-feedback"></div>
               </label>
-
               <label class="form-label" th:object="${departmentDto}">Department
                 <select  class="form-select" aria-label="Default select example" th:field="*{departmentId}">
                   <option th:each="department: ${departments}" th:value="${department.departmentId}" th:text="${department.departmentName}"></option>
                   <option th:value="0" th:selected="selected"></option>
                 </select>
               </label>
-
               <label class="form-label" th:object="${staffFunctionDto}">Staff Function
                 <select class="form-select" aria-label="Default select example" th:field="*{functionId}">
                   <option th:each="staffFunction: ${staffFunctions}" th:value="${staffFunction.functionId}" th:text="${staffFunction.functionName}"></option>
                   <option th:value="0" th:selected="selected"></option>
                 </select>
               </label>
-
-              <!--
-              <label class="form-label" th:object="${staffDto}">Person in charge
-                <select class="form-select" aria-label="Default select example" th:field="*{staffId}">
-                  <option th:each="staffDto: ${staffMembers}" th:value="${staffDto.staffId}" th:text="${staffDto.firstName} + ' ' + ${staffDto.lastName}"></option>
-                  <option value="0" th:selected="selected"></option>
-                </select>
-              </label>
-              -->
-
               <label class="form-label" for="startDate">Start date
                 <input th:field="*{startDate}" type="date" class="form-control" id="startDate" required>
                 <div class="invalid-feedback">Start date is required</div>
               </label>
-
               <label class="form-label">End date
                 <input th:field="*{endDate}" type="date" class="form-control">
               </label>
-
               <label class="form-label" th:object="${contractTypeDto}">Contract type
                 <select  class="form-select" aria-label="Default select example" th:field="*{contractTypeId}">
                   <option th:each="contractType: ${contractTypes}" th:value="${contractType.contractTypeId}" th:text="${contractType.contractTypeName}"></option>
                   <option th:value="0" th:selected="selected"></option>
                 </select>
               </label>
-
               <br>
               <label class="form-label">Fixed days off
                 <form class="form-check" th:object="${dayOffWeekDto}">
@@ -127,22 +99,17 @@
                   </ul>
                 </form>
               </label>
-
               <br>
               <a class="btn btn-primary" type="button" th:href="@{/staff/staffList}">Go back</a>
               <button class="btn btn-primary" type="submit">Create</button>
               <p class="text-danger" th:if="${error}" th:text="${error}"></p>
             </div>
           </form>
-
         </div>
-
       </div>
     </div>
   </div>
 </div>
-
 <script type="text/javascript" th:src="@{/js/validation.js}"></script>
-
 </body>
 </html>

@@ -6,7 +6,6 @@
 <title>Digital Planner</title>
 </head>
 <body>
-
 <div class="container-flex">
 
   <!-- Insert sidebar fragment based on user role -->
@@ -16,31 +15,25 @@
   <div th:unless="${isAdmin}">
     <div th:insert="~{fragments/sidebarUser_fragment :: sidebarContent}"></div>
   </div>
-
   <div class="row justify-content-center">
     <div class="col-6">
-
       <div class="card" id="popupCard">
         <div class="card-header">
           <h3>My profile</h3>
         </div>
         <div class="card-body">
-
           <div th:if="${staff != null}">
             <div class="mb-5 staffDetail">
-
               <div class="row">
                 <div class="col">
                   <h6>First name</h6>
                   <h5 th:text="${staff.firstName}"></h5>
                 </div>
-
                 <div class="col">
                   <h6>Last name</h6>
                   <h5 th:text="${staff.lastName}"></h5>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col">
                   <h6>Address line 1</h6>
@@ -51,39 +44,26 @@
                   <h5 th:text="${staff.addressLine2}"></h5>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col">
                   <h6>City</h6>
                   <h5 th:text="${staff.city}"></h5>
-
                   <h6>Phone number</h6>
                   <h5 th:text="${staff.phoneNumber}"></h5>
-
                   <h6>Department</h6>
                   <h5 th:text="${staff.department.departmentName}"></h5>
-
                   <h6>Start date</h6>
                   <h5 th:text="${staff.startDate}"></h5>
-
                   <h6>Contract type</h6>
                   <h5 th:text="${staff.contractType.contractTypeName}"></h5>
                 </div>
                 <div class="col">
                   <h6>Zipcode</h6>
                   <h5 th:text="${staff.zipcode}"></h5>
-
-                  <!--
-                  <h6>Person responsible</h6>
-                  <h5 th:text="${staff.personResponsible}"></h5>
-                  -->
-
                   <h6>Function</h6>
                   <h5 th:text="${staff.function.functionName}"></h5>
-
                   <h6>End date</h6>
                   <h5 th:text="${staff.endDate}"></h5>
-
                   <label><h6>Fixed days off</h6>
                     <ul>
                       <li th:each="day: ${staff.fixedDaysOff}">
@@ -91,10 +71,8 @@
                       </li>
                     </ul>
                   </label>
-
                 </div>
               </div>
-
             </div>
           </div>
           <br>
@@ -104,8 +82,6 @@
                 <h6>Email</h6>
                 <h5 th:text="${loggedInUser.email}"></h5>
               </div>
-
-
               <div class="col">
                 <form th:action="@{/saveImage}" th:object="${loggedInUser}" method="post" enctype="multipart/form-data">
                   <div class="form-group">
@@ -123,18 +99,13 @@
               </div>
             </div>
           </div>
-
           <br>
           <a class="btn btn-primary" th:href="@{/newUserPassword}">Edit password</a>
-
         </div>
-
       </div>
     </div>
   </div>
 </div>
-
 <script type="text/javascript" th:src="@{/js/profileavatar.js}"></script>
-
 </body>
 </html>
