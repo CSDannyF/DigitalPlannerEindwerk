@@ -25,7 +25,7 @@ DigitalPlanner is a web application designed to manage employee scheduling. The 
 - **Spring Boot**: Framework for building the backend.
 - **Thymeleaf**: Template engine for dynamic web pages.
 - **Hibernate**: ORM tool for database interactions.
-- **MySQL Database: Relational database management system.
+- **MySQL Database**: Relational database management system.
 - **Maven**: Dependency management and build tool.
 
 ## Prerequisites
